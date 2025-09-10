@@ -404,27 +404,27 @@ const TechBuddyWebsite = () => {
                 <h3 className="text-2xl font-bold text-white mb-6">Get In Touch</h3>
                 
                 <div className="space-y-6">
-                  <a href="tel:+919876543210" className="flex items-center group cursor-pointer">
+                  <a href="tel:+919600338406" className="flex items-center group cursor-pointer">
                     <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
                       <Phone className="w-6 h-6 text-white" />
                     </div>
                     <div>
                       <div className="text-white font-semibold">Call Us</div>
-                      <div className="text-gray-400">+91 98765 43210</div>
+                      <div className="text-gray-400">+91 96003 38406</div>
                     </div>
                   </a>
 
-                  <a href="mailto:hello@techbuddygalaxy.com" className="flex items-center group cursor-pointer">
+                  <a href="mailto:techbuddygalaxy@gmail.com" className="flex items-center group cursor-pointer">
                     <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
                       <Mail className="w-6 h-6 text-white" />
                     </div>
                     <div>
                       <div className="text-white font-semibold">Email Us</div>
-                      <div className="text-gray-400">hello@techbuddygalaxy.com</div>
+                      <div className="text-gray-400">techbuddygalaxy@gmail.com</div>
                     </div>
                   </a>
 
-                  <a href="https://wa.me/919876543210" className="flex items-center group cursor-pointer">
+                  <a href="https://wa.me/919600338406" className="flex items-center group cursor-pointer">
                     <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
                       <MessageCircle className="w-6 h-6 text-white" />
                     </div>
