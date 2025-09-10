@@ -1,5 +1,6 @@
 "use client"
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { 
   Menu, 
   X, 
@@ -134,7 +135,7 @@ const TechBuddyWebsite = () => {
       <nav className="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-purple-500/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <img src="/tbg.png" alt="Tech Buddy Galaxy Logo" className="h-10 w-auto" />
+            <Image src="/tbg.png" alt="Tech Buddy Galaxy Logo" width={40} height={40} className="h-10 w-auto" />
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-8">
@@ -215,7 +216,7 @@ const TechBuddyWebsite = () => {
               <span className="text-white">Galaxy</span>
             </h1>
             <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
-              "Give me 100 energetic youth and I shall transform India." - Swami Vivekananda
+              &ldquo;Give me 100 energetic youth and I shall transform India.&rdquo; - Swami Vivekananda
               <br />
               <span className="text-purple-300 font-medium">
                 We turn ideas into billion-dollar realities with Gen-Z creativity and cutting-edge technology.
@@ -267,7 +268,7 @@ const TechBuddyWebsite = () => {
               <div className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 backdrop-blur-sm border border-purple-500/20 rounded-2xl p-8">
                 <Quote className="w-8 h-8 text-purple-400 mb-4" />
                 <blockquote className="text-lg text-gray-300 mb-4">
-                  "Small aim is a crime; have great aim."
+                  &ldquo;Small aim is a crime; have great aim.&rdquo;
                 </blockquote>
                 <cite className="text-purple-400 font-medium">- A.P.J. Abdul Kalam</cite>
               </div>
@@ -352,7 +353,7 @@ const TechBuddyWebsite = () => {
               Why Choose <span className="text-purple-400">Us?</span>
             </h2>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              "When you partner with us, you don't just hire a team—you hire the future."
+              &ldquo;When you partner with us, you don&rsquo;t just hire a team&mdash;you hire the future.&rdquo;
             </p>
           </div>
 
@@ -389,7 +390,7 @@ const TechBuddyWebsite = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-              Let's Build Something <span className="text-purple-400">Amazing</span>
+              Let&apos;s Build Something <span className="text-purple-400">Amazing</span>
             </h2>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
               Ready to transform your idea into reality? Get in touch with us today!
@@ -558,7 +559,7 @@ const TechBuddyWebsite = () => {
                 Transforming ideas into billion-dollar realities with Gen-Z creativity and cutting-edge technology.
               </p>
               <div className="text-sm text-purple-300">
-                "The best way to predict the future is to create it." - Peter Drucker
+                &ldquo;The best way to predict the future is to create it.&rdquo; - Peter Drucker
               </div>
             </div>
 
