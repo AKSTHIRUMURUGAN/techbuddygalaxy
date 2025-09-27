@@ -73,57 +73,59 @@ const NewFooter = () => {
 
   return (
     <footer className="bg-gray-900 text-gray-300 border-t border-gray-800">
-      <div className="mx-auto max-w-7xl px-6 py-12 md:py-16 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {/* Company Info */}
-          <div className="space-y-4">
-            <div className="flex items-center">
-              <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                TechBuddyGalaxy
-              </span>
-            </div>
-            <p className="text-sm leading-6 text-gray-400">
-              Empowering businesses with cutting-edge technology solutions and innovative digital experiences.
-            </p>
-            <div className="flex space-x-4">
-              {socialLinks.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`p-2 rounded-full bg-gray-800 text-gray-400 hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 hover:text-white transition-all ${item.className}`}
-                >
-                  <span className="sr-only">{item.name}</span>
-                  <item.icon className="h-5 w-5" />
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Quick Links */}
-          <div>
-            <h3 className="text-sm font-semibold leading-6 text-white">Quick Links</h3>
-            <ul className="mt-6 space-y-4">
-              {quickLinks.map((item) => (
-                <li key={item.name}>
-                  <Link 
+      <div className="mx-auto max-w-7xl px-6 py-8 md:py-10 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Company Info & Quick Links */}
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <div className="flex items-center">
+                <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                  TechBuddyGalaxy
+                </span>
+              </div>
+              <p className="text-sm leading-6 text-gray-400">
+                🚀 Turning ideas into digital magic! We build apps that users love and businesses need. Ready to create something amazing together?
+              </p>
+              <div className="flex space-x-4">
+                {socialLinks.map((item) => (
+                  <a
+                    key={item.name}
                     href={item.href}
-                    className="text-sm leading-6 text-gray-400 hover:text-white transition-colors"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`p-2 rounded-full bg-gray-800 text-gray-400 hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 hover:text-white transition-all ${item.className}`}
                   >
-                    {item.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+                    <span className="sr-only">{item.name}</span>
+                    <item.icon className="h-5 w-5" />
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-semibold leading-6 text-white">Navigate</h3>
+              <ul className="mt-6 space-y-3">
+                {quickLinks.map((item) => (
+                  <li key={item.name}>
+                    <Link 
+                      href={item.href}
+                      className="text-sm leading-6 text-gray-400 hover:text-white transition-colors"
+                    >
+                      {item.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           
 
-          {/* Contact & Newsletter */}
-          <div className="space-y-6">
+          {/* Contact */}
+          <div>
             <div>
-              <h3 className="text-sm font-semibold leading-6 text-white">Contact Us</h3>
+              <h3 className="text-sm font-semibold leading-6 text-white">Let's Connect! 💬</h3>
+              <p className="text-xs text-gray-500 mt-2 mb-4">Drop us a line, we're always excited to chat about cool projects!</p>
               <ul className="mt-6 space-y-4">
                 {contactInfo.map((item, index) => (
                   <li key={index} className="flex items-start">
@@ -142,44 +144,10 @@ const NewFooter = () => {
                 ))}
               </ul>
             </div>
-
-            <div>
-              <h3 className="text-sm font-semibold leading-6 text-white">Newsletter</h3>
-              <form onSubmit={handleSubscribe} className="mt-4">
-                <div className="flex gap-x-4">
-                  <label htmlFor="email-address" className="sr-only">
-                    Email address
-                  </label>
-                  <input
-                    id="email-address"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="min-w-0 flex-auto rounded-md border-0 bg-white/5 px-3.5 py-2 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-purple-500 sm:text-sm sm:leading-6"
-                    placeholder="Enter your email"
-                  />
-                  <button
-                    type="submit"
-                    className="flex-none rounded-md bg-gradient-to-r from-purple-600 to-pink-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:from-purple-500 hover:to-pink-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600 flex items-center"
-                  >
-                    <span className="sr-only">Subscribe</span>
-                    <Send className="h-4 w-4" />
-                  </button>
-                </div>
-                {isSubscribed && (
-                  <p className="mt-2 text-sm text-green-400">
-                    Thank you for subscribing!
-                  </p>
-                )}
-              </form>
-            </div>
           </div>
         </div>
 
-        <div className="mt-16 border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+        <div className="mt-8 border-t border-gray-800 pt-6 flex flex-col md:flex-row justify-between items-center">
           <p className="text-xs leading-5 text-gray-400">
             &copy; {currentYear} Tech Buddy Galaxy. All rights reserved.
           </p>
