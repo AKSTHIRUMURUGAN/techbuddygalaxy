@@ -1,10 +1,8 @@
 "use client";
-import { useState } from 'react';
 import Navigation from '@/components/Navigation';
 import Hero from '@/components/Hero';
 import About from '@/components/About';
 import Services from '@/components/Services';
-import Team from '@/components/Team';
 import Contact from '@/components/ContactForm';
 import dynamic from 'next/dynamic';
 
@@ -29,7 +27,6 @@ const TechBuddyWebsite = () => {
         <About />
         <Services />
         <IdeaToReality />
-        {/* <Team /> */}
         <Contact />
       </main>
 

@@ -148,21 +148,10 @@ const NewFooter = () => {
           </div>
         </div>
 
-        <div className="mt-8 border-t border-gray-800 pt-6 flex flex-col md:flex-row justify-between items-center">
+        <div className="mt-8 border-t border-gray-800 pt-6 flex flex-col md:flex-row justify-center items-center">
           <p className="text-xs leading-5 text-gray-400">
-            &copy; {currentYear} Tech Buddy Galaxy — Crafted with passion in Chennai.
+            &copy; {currentYear} Tech Buddy Galaxy — Crafted with passionate Gen-Z minds.
           </p>
-          <div className="flex flex-wrap gap-4 md:gap-6 mt-4 md:mt-0">
-            <Link href="/privacy-policy" className="text-xs leading-5 text-gray-400 hover:text-white transition-colors">
-              Privacy Policy
-            </Link>
-            <Link href="/terms" className="text-xs leading-5 text-gray-400 hover:text-white transition-colors">
-              Terms of Service
-            </Link>
-            <Link href="/cookies" className="text-xs leading-5 text-gray-400 hover:text-white transition-colors">
-              Cookies
-            </Link>
-          </div>
         </div>
       </div>
     </footer>

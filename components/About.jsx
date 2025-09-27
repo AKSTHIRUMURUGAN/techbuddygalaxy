@@ -138,9 +138,12 @@ export default function About() {
           >
             <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl border border-purple-500/20">
               <img
-                src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1484&auto=format&fit=crop"
+                src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=800&auto=format&fit=crop&fm=webp"
                 alt="Diverse team collaborating on technology solutions"
                 className="w-full h-auto object-cover"
+                loading="lazy"
+                width="800"
+                height="533"
               />
             </div>
             <div className="absolute -bottom-6 -left-6 w-40 h-40 bg-purple-500/20 rounded-full filter blur-3xl -z-10"></div>
