@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import fs from 'fs';
-import path from 'path';
+import { getCollection } from '../../../lib/mongodb';
 
 // Helper function to verify admin session
 async function verifyAdminSession() {
@@ -47,40 +46,58 @@ export async function POST(request) {
       );
     }
 
-    // Create admin-data directory if it doesn't exist
-    const mappingsDir = path.join(process.cwd(), 'admin-data');
-    if (!fs.existsSync(mappingsDir)) {
-      fs.mkdirSync(mappingsDir, { recursive: true });
-    }
+    try {
+      // Get template mappings collection
+      const mappingsCollection = await getCollection('template-mappings');
+      
+      // Create mapping document
+      const mappingDocument = {
+        templateId,
+        templateUrl,
+        fieldMappings,
+        updatedAt: new Date(),
+        createdAt: new Date()
+      };
 
-    // Load existing mappings
-    const mappingsFile = path.join(mappingsDir, 'template-mappings.json');
-    let existingMappings = {};
-    
-    if (fs.existsSync(mappingsFile)) {
-      try {
-        const mappingsData = fs.readFileSync(mappingsFile, 'utf8');
-        existingMappings = JSON.parse(mappingsData);
-      } catch (error) {
-        console.warn('Could not parse existing mappings:', error.message);
+      // Check if mapping already exists
+      const existingMapping = await mappingsCollection.findOne({ templateId });
+      
+      if (existingMapping) {
+        // Update existing mapping
+        mappingDocument.createdAt = existingMapping.createdAt; // Preserve original creation date
+        const result = await mappingsCollection.replaceOne(
+          { templateId },
+          mappingDocument
+        );
+        
+        if (result.modifiedCount === 0) {
+          throw new Error('Failed to update template mapping');
+        }
+        
+        console.log('Template mapping updated in MongoDB:', templateId);
+      } else {
+        // Insert new mapping
+        const result = await mappingsCollection.insertOne(mappingDocument);
+        
+        if (!result.insertedId) {
+          throw new Error('Failed to insert template mapping');
+        }
+        
+        console.log('Template mapping saved to MongoDB:', templateId);
       }
+
+      return NextResponse.json({
+        success: true,
+        message: 'Template mapping saved successfully'
+      });
+      
+    } catch (dbError) {
+      console.error('MongoDB error saving template mapping:', dbError);
+      return NextResponse.json(
+        { error: 'Failed to save template mapping to database' },
+        { status: 500 }
+      );
     }
-
-    // Save or update mapping for this template
-    existingMappings[templateId] = {
-      templateId,
-      templateUrl,
-      fieldMappings,
-      updatedAt: new Date().toISOString()
-    };
-
-    // Save updated mappings
-    fs.writeFileSync(mappingsFile, JSON.stringify(existingMappings, null, 2));
-
-    return NextResponse.json({
-      success: true,
-      message: 'Template mapping saved successfully'
-    });
 
   } catch (error) {
     console.error('Error saving template mapping:', error);
@@ -106,33 +123,40 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const templateId = searchParams.get('templateId');
     
-    // Load existing mappings
-    const mappingsDir = path.join(process.cwd(), 'admin-data');
-    const mappingsFile = path.join(mappingsDir, 'template-mappings.json');
-    let existingMappings = {};
-    
-    if (fs.existsSync(mappingsFile)) {
-      try {
-        const mappingsData = fs.readFileSync(mappingsFile, 'utf8');
-        existingMappings = JSON.parse(mappingsData);
-      } catch (error) {
-        console.warn('Could not parse existing mappings:', error.message);
+    try {
+      // Get template mappings collection
+      const mappingsCollection = await getCollection('template-mappings');
+      
+      if (templateId) {
+        // Return mapping for specific template
+        const mapping = await mappingsCollection.findOne({ templateId });
+        
+        return NextResponse.json({
+          success: true,
+          mapping: mapping || null
+        });
+      } else {
+        // Return all mappings
+        const mappings = await mappingsCollection.find({}).toArray();
+        
+        // Convert to the expected format (object with templateId as keys)
+        const mappingsObject = {};
+        mappings.forEach(mapping => {
+          mappingsObject[mapping.templateId] = mapping;
+        });
+        
+        return NextResponse.json({
+          success: true,
+          mappings: mappingsObject
+        });
       }
-    }
-
-    if (templateId) {
-      // Return mapping for specific template
-      const mapping = existingMappings[templateId] || null;
-      return NextResponse.json({
-        success: true,
-        mapping
-      });
-    } else {
-      // Return all mappings
-      return NextResponse.json({
-        success: true,
-        mappings: existingMappings
-      });
+      
+    } catch (dbError) {
+      console.error('MongoDB error fetching template mappings:', dbError);
+      return NextResponse.json(
+        { error: 'Failed to fetch template mappings from database' },
+        { status: 500 }
+      );
     }
 
   } catch (error) {

@@ -107,21 +107,45 @@ export async function POST(request) {
 
     // Save application data to MongoDB
     try {
+      console.log('Attempting to connect to MongoDB...');
+      console.log('MongoDB URI available:', !!process.env.MONGODB_URI);
+      
       const applicationsCollection = await getCollection('applications');
+      console.log('MongoDB collection obtained successfully');
+      
+      // Log application data structure (without sensitive info)
+      console.log('Application data structure:', {
+        applicationId: applicationData.applicationId,
+        name: applicationData.name,
+        email: applicationData.email,
+        position: applicationData.position,
+        hasResume: !!applicationData.resumeUrl,
+        submittedAt: applicationData.submittedAt
+      });
+      
       const result = await applicationsCollection.insertOne(applicationData);
+      console.log('MongoDB insert result:', {
+        insertedId: result.insertedId?.toString(),
+        acknowledged: result.acknowledged
+      });
       
       if (result.insertedId) {
         console.log('Application saved to MongoDB successfully:', applicationData.applicationId);
       } else {
-        throw new Error('Failed to insert application into database');
+        throw new Error('Failed to insert application into database - no insertedId returned');
       }
     } catch (error) {
-      console.error('Error saving application to MongoDB:', error);
+      console.error('Detailed MongoDB error:', {
+        message: error.message,
+        name: error.name,
+        code: error.code,
+        stack: error.stack,
+        mongodbUri: process.env.MONGODB_URI ? 'Set' : 'Not set'
+      });
       
       // If MongoDB save fails but resume was uploaded, we should clean up R2
       if (applicationData.resumeFileName && R2Storage.isAvailable()) {
         try {
-          // Note: You might want to implement a cleanup method in R2Storage
           console.warn('Application save failed, but resume was uploaded. Manual cleanup may be required.');
         } catch (cleanupError) {
           console.error('Failed to cleanup uploaded resume:', cleanupError);
@@ -129,7 +153,14 @@ export async function POST(request) {
       }
       
       return NextResponse.json(
-        { error: 'Failed to save application to database. Please try again.' },
+        { 
+          error: 'Failed to save application to database. Please try again.',
+          debug: process.env.NODE_ENV === 'development' ? {
+            message: error.message,
+            code: error.code,
+            name: error.name
+          } : undefined
+        },
         { status: 500 }
       );
     }
@@ -158,9 +189,22 @@ export async function POST(request) {
     });
 
   } catch (error) {
-    console.error('Error processing application:', error);
+    console.error('Top-level error processing application:', {
+      message: error.message,
+      name: error.name,
+      stack: error.stack,
+      mongodbUri: process.env.MONGODB_URI ? 'Set' : 'Not set',
+      r2Available: R2Storage.isAvailable()
+    });
+    
     return NextResponse.json(
-      { error: 'Failed to process application. Please try again.' },
+      { 
+        error: 'Failed to process application. Please try again.',
+        debug: process.env.NODE_ENV === 'development' ? {
+          message: error.message,
+          name: error.name
+        } : undefined
+      },
       { status: 500 }
     );
   }

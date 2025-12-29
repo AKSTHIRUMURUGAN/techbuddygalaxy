@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { getCollection } from '../../../lib/mongodb';
 import fs from 'fs';
 import path from 'path';
 
@@ -47,32 +48,43 @@ export async function POST(request) {
       );
     }
 
-    // Load application data
-    const applicationsDir = path.join(process.cwd(), 'applications');
-    const applicationFile = path.join(applicationsDir, `${applicationId}.json`);
-    
-    if (!fs.existsSync(applicationFile)) {
+    // Load application data from MongoDB
+    let applicationData;
+    try {
+      const applicationsCollection = await getCollection('applications');
+      applicationData = await applicationsCollection.findOne({ applicationId });
+      
+      if (!applicationData) {
+        return NextResponse.json(
+          { error: 'Application not found' },
+          { status: 404 }
+        );
+      }
+      
+      console.log('Application data loaded from MongoDB:', applicationId);
+    } catch (dbError) {
+      console.error('Error loading application from MongoDB:', dbError);
       return NextResponse.json(
-        { error: 'Application not found' },
-        { status: 404 }
+        { error: 'Failed to load application data' },
+        { status: 500 }
       );
     }
 
-    const applicationData = JSON.parse(fs.readFileSync(applicationFile, 'utf8'));
-
-    // Load field mappings for this template
-    const mappingsDir = path.join(process.cwd(), 'admin-data');
-    const mappingsFile = path.join(mappingsDir, 'template-mappings.json');
+    // Load field mappings for this template from MongoDB
     let fieldMappings = {};
-    
-    if (fs.existsSync(mappingsFile)) {
-      try {
-        const mappingsData = fs.readFileSync(mappingsFile, 'utf8');
-        const allMappings = JSON.parse(mappingsData);
-        fieldMappings = allMappings[templateId]?.fieldMappings || {};
-      } catch (error) {
-        console.warn('Could not load field mappings:', error.message);
+    try {
+      const mappingsCollection = await getCollection('template-mappings');
+      const mappingDocument = await mappingsCollection.findOne({ templateId });
+      
+      if (mappingDocument) {
+        fieldMappings = mappingDocument.fieldMappings || {};
+        console.log('Field mappings loaded from MongoDB:', templateId);
+      } else {
+        console.warn('No field mappings found for template:', templateId);
       }
+    } catch (dbError) {
+      console.error('Error loading field mappings from MongoDB:', dbError);
+      // Continue without mappings - this is not a fatal error
     }
 
     // Prepare template data using field mappings

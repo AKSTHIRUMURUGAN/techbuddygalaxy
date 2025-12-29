@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import fs from 'fs';
-import path from 'path';
+import { getCollection } from '../../../lib/mongodb';
 
 // Helper function to verify admin session
 async function verifyAdminSession() {
@@ -70,18 +69,24 @@ export async function GET() {
       }
     ];
 
-    // Try to read custom templates from file
+    // Load custom templates from MongoDB
     let customTemplates = [];
     try {
-      const templatesDir = path.join(process.cwd(), 'admin-data');
-      const templatesFile = path.join(templatesDir, 'templates.json');
+      const templatesCollection = await getCollection('templates');
+      customTemplates = await templatesCollection.find({}).toArray();
       
-      if (fs.existsSync(templatesFile)) {
-        const templatesData = fs.readFileSync(templatesFile, 'utf8');
-        customTemplates = JSON.parse(templatesData);
-      }
-    } catch (error) {
-      console.warn('Could not load custom templates:', error.message);
+      // Convert MongoDB _id to string and ensure proper date formatting
+      customTemplates = customTemplates.map(template => ({
+        ...template,
+        _id: template._id.toString(),
+        createdAt: template.createdAt instanceof Date ? template.createdAt.toISOString() : template.createdAt,
+        updatedAt: template.updatedAt instanceof Date ? template.updatedAt.toISOString() : template.updatedAt
+      }));
+      
+      console.log(`Loaded ${customTemplates.length} custom templates from MongoDB`);
+    } catch (dbError) {
+      console.error('Error loading custom templates from MongoDB:', dbError);
+      // Continue with empty custom templates - this is not a fatal error
     }
 
     // Combine default and custom templates
@@ -122,45 +127,46 @@ export async function POST(request) {
       );
     }
 
-    // Create admin-data directory if it doesn't exist
-    const templatesDir = path.join(process.cwd(), 'admin-data');
-    if (!fs.existsSync(templatesDir)) {
-      fs.mkdirSync(templatesDir, { recursive: true });
-    }
+    try {
+      // Get templates collection
+      const templatesCollection = await getCollection('templates');
+      
+      // Create new template document
+      const newTemplate = {
+        id: `custom-${Date.now()}`,
+        title,
+        type,
+        url,
+        description: description || '',
+        createdAt: new Date()
+      };
 
-    // Load existing custom templates
-    const templatesFile = path.join(templatesDir, 'templates.json');
-    let customTemplates = [];
-    
-    if (fs.existsSync(templatesFile)) {
-      try {
-        const templatesData = fs.readFileSync(templatesFile, 'utf8');
-        customTemplates = JSON.parse(templatesData);
-      } catch (error) {
-        console.warn('Could not parse existing templates:', error.message);
+      // Insert into MongoDB
+      const result = await templatesCollection.insertOne(newTemplate);
+      
+      if (!result.insertedId) {
+        throw new Error('Failed to insert template into database');
       }
+      
+      console.log('Template added to MongoDB:', newTemplate.id);
+
+      return NextResponse.json({
+        success: true,
+        message: 'Template added successfully',
+        template: {
+          ...newTemplate,
+          _id: result.insertedId.toString(),
+          createdAt: newTemplate.createdAt.toISOString()
+        }
+      });
+      
+    } catch (dbError) {
+      console.error('MongoDB error adding template:', dbError);
+      return NextResponse.json(
+        { error: 'Failed to add template to database' },
+        { status: 500 }
+      );
     }
-
-    // Add new template
-    const newTemplate = {
-      id: `custom-${Date.now()}`,
-      title,
-      type,
-      url,
-      description: description || '',
-      createdAt: new Date().toISOString()
-    };
-
-    customTemplates.push(newTemplate);
-
-    // Save updated templates
-    fs.writeFileSync(templatesFile, JSON.stringify(customTemplates, null, 2));
-
-    return NextResponse.json({
-      success: true,
-      message: 'Template added successfully',
-      template: newTemplate
-    });
 
   } catch (error) {
     console.error('Error adding template:', error);
@@ -200,50 +206,61 @@ export async function PUT(request) {
       );
     }
 
-    // Load existing custom templates
-    const templatesDir = path.join(process.cwd(), 'admin-data');
-    const templatesFile = path.join(templatesDir, 'templates.json');
-    let customTemplates = [];
-    
-    if (fs.existsSync(templatesFile)) {
-      try {
-        const templatesData = fs.readFileSync(templatesFile, 'utf8');
-        customTemplates = JSON.parse(templatesData);
-      } catch (error) {
+    try {
+      // Get templates collection
+      const templatesCollection = await getCollection('templates');
+      
+      // Find and update the template
+      const result = await templatesCollection.updateOne(
+        { id },
+        {
+          $set: {
+            title,
+            type,
+            url,
+            description: description || '',
+            updatedAt: new Date()
+          }
+        }
+      );
+      
+      if (result.matchedCount === 0) {
         return NextResponse.json(
-          { error: 'Could not load templates' },
+          { error: 'Template not found' },
+          { status: 404 }
+        );
+      }
+      
+      if (result.modifiedCount === 0) {
+        return NextResponse.json(
+          { error: 'Failed to update template' },
           { status: 500 }
         );
       }
-    }
+      
+      // Get the updated template
+      const updatedTemplate = await templatesCollection.findOne({ id });
+      
+      console.log('Template updated in MongoDB:', id);
 
-    // Find and update the template
-    const templateIndex = customTemplates.findIndex(t => t.id === id);
-    if (templateIndex === -1) {
+      return NextResponse.json({
+        success: true,
+        message: 'Template updated successfully',
+        template: {
+          ...updatedTemplate,
+          _id: updatedTemplate._id.toString(),
+          createdAt: updatedTemplate.createdAt instanceof Date ? updatedTemplate.createdAt.toISOString() : updatedTemplate.createdAt,
+          updatedAt: updatedTemplate.updatedAt instanceof Date ? updatedTemplate.updatedAt.toISOString() : updatedTemplate.updatedAt
+        }
+      });
+      
+    } catch (dbError) {
+      console.error('MongoDB error updating template:', dbError);
       return NextResponse.json(
-        { error: 'Template not found' },
-        { status: 404 }
+        { error: 'Failed to update template in database' },
+        { status: 500 }
       );
     }
-
-    // Update template
-    customTemplates[templateIndex] = {
-      ...customTemplates[templateIndex],
-      title,
-      type,
-      url,
-      description: description || '',
-      updatedAt: new Date().toISOString()
-    };
-
-    // Save updated templates
-    fs.writeFileSync(templatesFile, JSON.stringify(customTemplates, null, 2));
-
-    return NextResponse.json({
-      success: true,
-      message: 'Template updated successfully',
-      template: customTemplates[templateIndex]
-    });
 
   } catch (error) {
     console.error('Error updating template:', error);
@@ -284,43 +301,50 @@ export async function DELETE(request) {
       );
     }
 
-    // Load existing custom templates
-    const templatesDir = path.join(process.cwd(), 'admin-data');
-    const templatesFile = path.join(templatesDir, 'templates.json');
-    let customTemplates = [];
-    
-    if (fs.existsSync(templatesFile)) {
-      try {
-        const templatesData = fs.readFileSync(templatesFile, 'utf8');
-        customTemplates = JSON.parse(templatesData);
-      } catch (error) {
+    try {
+      // Get templates collection
+      const templatesCollection = await getCollection('templates');
+      
+      // Find the template before deleting
+      const templateToDelete = await templatesCollection.findOne({ id });
+      
+      if (!templateToDelete) {
         return NextResponse.json(
-          { error: 'Could not load templates' },
+          { error: 'Template not found' },
+          { status: 404 }
+        );
+      }
+      
+      // Delete the template
+      const result = await templatesCollection.deleteOne({ id });
+      
+      if (result.deletedCount === 0) {
+        return NextResponse.json(
+          { error: 'Failed to delete template' },
           { status: 500 }
         );
       }
-    }
+      
+      console.log('Template deleted from MongoDB:', id);
 
-    // Find and remove the template
-    const templateIndex = customTemplates.findIndex(t => t.id === id);
-    if (templateIndex === -1) {
+      return NextResponse.json({
+        success: true,
+        message: 'Template deleted successfully',
+        deletedTemplate: {
+          ...templateToDelete,
+          _id: templateToDelete._id.toString(),
+          createdAt: templateToDelete.createdAt instanceof Date ? templateToDelete.createdAt.toISOString() : templateToDelete.createdAt,
+          updatedAt: templateToDelete.updatedAt instanceof Date ? templateToDelete.updatedAt.toISOString() : templateToDelete.updatedAt
+        }
+      });
+      
+    } catch (dbError) {
+      console.error('MongoDB error deleting template:', dbError);
       return NextResponse.json(
-        { error: 'Template not found' },
-        { status: 404 }
+        { error: 'Failed to delete template from database' },
+        { status: 500 }
       );
     }
-
-    const deletedTemplate = customTemplates[templateIndex];
-    customTemplates.splice(templateIndex, 1);
-
-    // Save updated templates
-    fs.writeFileSync(templatesFile, JSON.stringify(customTemplates, null, 2));
-
-    return NextResponse.json({
-      success: true,
-      message: 'Template deleted successfully',
-      deletedTemplate
-    });
 
   } catch (error) {
     console.error('Error deleting template:', error);

@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import fs from 'fs';
-import path from 'path';
+import { getCollection } from '../../../lib/mongodb';
 
 // Helper function to verify admin session
 async function verifyAdminSession() {
@@ -78,18 +77,23 @@ export async function GET() {
       }
     ];
 
-    // Try to read custom positions from file
+    // Load custom positions from MongoDB
     let customPositions = [];
     try {
-      const positionsDir = path.join(process.cwd(), 'admin-data');
-      const positionsFile = path.join(positionsDir, 'positions.json');
+      const positionsCollection = await getCollection('positions');
+      customPositions = await positionsCollection.find({}).toArray();
       
-      if (fs.existsSync(positionsFile)) {
-        const positionsData = fs.readFileSync(positionsFile, 'utf8');
-        customPositions = JSON.parse(positionsData);
-      }
-    } catch (error) {
-      console.warn('Could not load custom positions:', error.message);
+      // Convert MongoDB _id to string and ensure proper date formatting
+      customPositions = customPositions.map(position => ({
+        ...position,
+        _id: position._id.toString(),
+        createdAt: position.createdAt instanceof Date ? position.createdAt.toISOString() : position.createdAt
+      }));
+      
+      console.log(`Loaded ${customPositions.length} custom positions from MongoDB`);
+    } catch (dbError) {
+      console.error('Error loading custom positions from MongoDB:', dbError);
+      // Continue with empty custom positions - this is not a fatal error
     }
 
     // Combine default and custom positions
@@ -130,44 +134,45 @@ export async function POST(request) {
       );
     }
 
-    // Create admin-data directory if it doesn't exist
-    const positionsDir = path.join(process.cwd(), 'admin-data');
-    if (!fs.existsSync(positionsDir)) {
-      fs.mkdirSync(positionsDir, { recursive: true });
-    }
+    try {
+      // Get positions collection
+      const positionsCollection = await getCollection('positions');
+      
+      // Create new position document
+      const newPosition = {
+        id: `custom-${Date.now()}`,
+        title,
+        description: description || '',
+        isDefault: false,
+        createdAt: new Date()
+      };
 
-    // Load existing custom positions
-    const positionsFile = path.join(positionsDir, 'positions.json');
-    let customPositions = [];
-    
-    if (fs.existsSync(positionsFile)) {
-      try {
-        const positionsData = fs.readFileSync(positionsFile, 'utf8');
-        customPositions = JSON.parse(positionsData);
-      } catch (error) {
-        console.warn('Could not parse existing positions:', error.message);
+      // Insert into MongoDB
+      const result = await positionsCollection.insertOne(newPosition);
+      
+      if (!result.insertedId) {
+        throw new Error('Failed to insert position into database');
       }
+      
+      console.log('Position added to MongoDB:', newPosition.id);
+
+      return NextResponse.json({
+        success: true,
+        message: 'Position added successfully',
+        position: {
+          ...newPosition,
+          _id: result.insertedId.toString(),
+          createdAt: newPosition.createdAt.toISOString()
+        }
+      });
+      
+    } catch (dbError) {
+      console.error('MongoDB error adding position:', dbError);
+      return NextResponse.json(
+        { error: 'Failed to add position to database' },
+        { status: 500 }
+      );
     }
-
-    // Add new position
-    const newPosition = {
-      id: `custom-${Date.now()}`,
-      title,
-      description: description || '',
-      isDefault: false,
-      createdAt: new Date().toISOString()
-    };
-
-    customPositions.push(newPosition);
-
-    // Save updated positions
-    fs.writeFileSync(positionsFile, JSON.stringify(customPositions, null, 2));
-
-    return NextResponse.json({
-      success: true,
-      message: 'Position added successfully',
-      position: newPosition
-    });
 
   } catch (error) {
     console.error('Error adding position:', error);
@@ -208,43 +213,49 @@ export async function DELETE(request) {
       );
     }
 
-    // Load existing custom positions
-    const positionsDir = path.join(process.cwd(), 'admin-data');
-    const positionsFile = path.join(positionsDir, 'positions.json');
-    let customPositions = [];
-    
-    if (fs.existsSync(positionsFile)) {
-      try {
-        const positionsData = fs.readFileSync(positionsFile, 'utf8');
-        customPositions = JSON.parse(positionsData);
-      } catch (error) {
+    try {
+      // Get positions collection
+      const positionsCollection = await getCollection('positions');
+      
+      // Find the position before deleting
+      const positionToDelete = await positionsCollection.findOne({ id });
+      
+      if (!positionToDelete) {
         return NextResponse.json(
-          { error: 'Could not load positions' },
+          { error: 'Position not found' },
+          { status: 404 }
+        );
+      }
+      
+      // Delete the position
+      const result = await positionsCollection.deleteOne({ id });
+      
+      if (result.deletedCount === 0) {
+        return NextResponse.json(
+          { error: 'Failed to delete position' },
           { status: 500 }
         );
       }
-    }
+      
+      console.log('Position deleted from MongoDB:', id);
 
-    // Find and remove the position
-    const positionIndex = customPositions.findIndex(p => p.id === id);
-    if (positionIndex === -1) {
+      return NextResponse.json({
+        success: true,
+        message: 'Position deleted successfully',
+        deletedPosition: {
+          ...positionToDelete,
+          _id: positionToDelete._id.toString(),
+          createdAt: positionToDelete.createdAt instanceof Date ? positionToDelete.createdAt.toISOString() : positionToDelete.createdAt
+        }
+      });
+      
+    } catch (dbError) {
+      console.error('MongoDB error deleting position:', dbError);
       return NextResponse.json(
-        { error: 'Position not found' },
-        { status: 404 }
+        { error: 'Failed to delete position from database' },
+        { status: 500 }
       );
     }
-
-    const deletedPosition = customPositions[positionIndex];
-    customPositions.splice(positionIndex, 1);
-
-    // Save updated positions
-    fs.writeFileSync(positionsFile, JSON.stringify(customPositions, null, 2));
-
-    return NextResponse.json({
-      success: true,
-      message: 'Position deleted successfully',
-      deletedPosition
-    });
 
   } catch (error) {
     console.error('Error deleting position:', error);

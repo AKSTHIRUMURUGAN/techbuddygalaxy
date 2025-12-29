@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { getCollection } from '../../../lib/mongodb';
 
 export async function GET() {
   try {
@@ -44,18 +43,23 @@ export async function GET() {
       }
     ];
 
-    // Try to read custom positions from file
+    // Load custom positions from MongoDB
     let customPositions = [];
     try {
-      const positionsDir = path.join(process.cwd(), 'admin-data');
-      const positionsFile = path.join(positionsDir, 'positions.json');
+      const positionsCollection = await getCollection('positions');
+      customPositions = await positionsCollection.find({}).toArray();
       
-      if (fs.existsSync(positionsFile)) {
-        const positionsData = fs.readFileSync(positionsFile, 'utf8');
-        customPositions = JSON.parse(positionsData);
-      }
-    } catch (error) {
-      console.warn('Could not load custom positions:', error.message);
+      // Convert MongoDB _id to string and ensure proper date formatting
+      customPositions = customPositions.map(position => ({
+        ...position,
+        _id: position._id.toString(),
+        createdAt: position.createdAt instanceof Date ? position.createdAt.toISOString() : position.createdAt
+      }));
+      
+      console.log(`Loaded ${customPositions.length} custom positions from MongoDB`);
+    } catch (dbError) {
+      console.error('Error loading custom positions from MongoDB:', dbError);
+      // Continue with empty custom positions - this is not a fatal error
     }
 
     // Combine default and custom positions
