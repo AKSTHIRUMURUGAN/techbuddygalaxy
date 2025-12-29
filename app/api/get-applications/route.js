@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import fs from 'fs';
-import path from 'path';
+import { getCollection } from '../../../lib/mongodb';
 
 // Helper function to verify admin session
 async function verifyAdminSession() {
@@ -38,47 +37,30 @@ export async function GET() {
       );
     }
 
-    const applicationsDir = path.join(process.cwd(), 'applications');
-    
-    // Check if applications directory exists
-    if (!fs.existsSync(applicationsDir)) {
-      return NextResponse.json({
-        success: true,
-        applications: [],
-        message: 'No applications directory found'
-      });
-    }
+    // Get applications from MongoDB
+    const applicationsCollection = await getCollection('applications');
+    const applications = await applicationsCollection
+      .find({})
+      .sort({ submittedAt: -1 }) // Sort by submission date (newest first)
+      .toArray();
 
-    // Read all application files
-    const files = fs.readdirSync(applicationsDir);
-    const jsonFiles = files.filter(file => file.endsWith('.json'));
-    
-    const applications = [];
-    
-    for (const file of jsonFiles) {
-      try {
-        const filePath = path.join(applicationsDir, file);
-        const fileContent = fs.readFileSync(filePath, 'utf8');
-        const application = JSON.parse(fileContent);
-        applications.push(application);
-      } catch (error) {
-        console.error(`Error reading application file ${file}:`, error);
-      }
-    }
-
-    // Sort applications by submission date (newest first)
-    applications.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+    // Convert MongoDB _id to string and ensure proper date formatting
+    const formattedApplications = applications.map(app => ({
+      ...app,
+      _id: app._id.toString(),
+      submittedAt: app.submittedAt instanceof Date ? app.submittedAt.toISOString() : app.submittedAt
+    }));
 
     return NextResponse.json({
       success: true,
-      applications,
-      count: applications.length
+      applications: formattedApplications,
+      count: formattedApplications.length
     });
 
   } catch (error) {
-    console.error('Error fetching applications:', error);
+    console.error('Error fetching applications from MongoDB:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch applications', details: error.message },
+      { error: 'Failed to fetch applications from database', details: error.message },
       { status: 500 }
     );
   }

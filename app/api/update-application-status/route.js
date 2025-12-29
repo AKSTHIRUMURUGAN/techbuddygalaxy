@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import fs from 'fs';
-import path from 'path';
+import { getCollection } from '../../../lib/mongodb';
 import { EmailService } from '../../../lib/email';
 
 // Helper function to verify admin session
@@ -48,68 +47,59 @@ export async function POST(request) {
       );
     }
 
-    // Find and update the application file
-    const applicationsDir = path.join(process.cwd(), 'applications');
-    
-    // Check if applications directory exists
-    if (!fs.existsSync(applicationsDir)) {
-      console.error('Applications directory does not exist:', applicationsDir);
+    // Get application from MongoDB
+    const applicationsCollection = await getCollection('applications');
+    const application = await applicationsCollection.findOne({ applicationId });
+
+    if (!application) {
       return NextResponse.json(
-        { error: 'Applications directory not found. This might be a production environment issue.' },
-        { status: 500 }
+        { error: 'Application not found' },
+        { status: 404 }
       );
     }
     
-    const applicationFile = path.join(applicationsDir, `${applicationId}.json`);
-    
-    if (!fs.existsSync(applicationFile)) {
-      console.error('Application file not found:', applicationFile);
+    // Update application status in MongoDB
+    const updateResult = await applicationsCollection.updateOne(
+      { applicationId },
+      {
+        $set: {
+          status,
+          statusMessage: message || '',
+          statusUpdatedAt: new Date()
+        }
+      }
+    );
+
+    if (updateResult.matchedCount === 0) {
       return NextResponse.json(
         { error: 'Application not found' },
         { status: 404 }
       );
     }
 
-    // Read current application data
-    let applicationData;
-    try {
-      const fileContent = fs.readFileSync(applicationFile, 'utf8');
-      applicationData = JSON.parse(fileContent);
-    } catch (parseError) {
-      console.error('Error parsing application file:', parseError);
+    if (updateResult.modifiedCount === 0) {
       return NextResponse.json(
-        { error: 'Invalid application data format' },
-        { status: 500 }
-      );
-    }
-    
-    // Update status
-    applicationData.status = status;
-    applicationData.statusMessage = message || '';
-    applicationData.statusUpdatedAt = new Date().toISOString();
-    
-    // Save updated application
-    try {
-      fs.writeFileSync(applicationFile, JSON.stringify(applicationData, null, 2));
-    } catch (writeError) {
-      console.error('Error writing application file:', writeError);
-      return NextResponse.json(
-        { error: 'Failed to save application update. File system may be read-only.' },
+        { error: 'Failed to update application status' },
         { status: 500 }
       );
     }
 
+    // Get updated application data for email
+    const updatedApplication = await applicationsCollection.findOne({ applicationId });
+
     // Send email notification based on status
     try {
       if (status === 'approved') {
-        await EmailService.sendApprovalEmail(applicationData);
+        await EmailService.sendApprovalEmail(updatedApplication);
       } else if (status === 'rejected') {
-        await EmailService.sendRejectionEmail(applicationData, message);
+        await EmailService.sendRejectionEmail(updatedApplication, message);
       }
     } catch (emailError) {
       console.warn('Failed to send status email:', emailError.message);
       // Don't fail the entire operation if email fails
     }
+
+    console.log('Application status updated in MongoDB:', applicationId, status);
 
     return NextResponse.json({
       success: true,
@@ -119,20 +109,9 @@ export async function POST(request) {
 
   } catch (error) {
     console.error('Error updating application status:', error);
-    
-    // Provide more specific error information
-    let errorMessage = 'Failed to update application status';
-    if (error.code === 'ENOENT') {
-      errorMessage = 'Application file or directory not found';
-    } else if (error.code === 'EACCES') {
-      errorMessage = 'Permission denied - file system may be read-only';
-    } else if (error.code === 'EROFS') {
-      errorMessage = 'Read-only file system - cannot update application';
-    }
-    
     return NextResponse.json(
       { 
-        error: errorMessage,
+        error: 'Failed to update application status',
         details: process.env.NODE_ENV === 'development' ? error.message : undefined
       },
       { status: 500 }

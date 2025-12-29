@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { getCollection } from '../../../../lib/mongodb';
 import { R2Storage } from '../../../../lib/r2-storage';
-import fs from 'fs';
-import path from 'path';
 
 // Helper function to verify admin session
 async function verifyAdminSession() {
@@ -48,73 +47,56 @@ export async function GET(_, { params }) {
       );
     }
 
-    // Find the application file
-    const applicationsDir = path.join(process.cwd(), 'applications');
-    const applicationFile = path.join(applicationsDir, `${applicationId}.json`);
-    
-    if (!fs.existsSync(applicationFile)) {
+    // Get application data from MongoDB
+    const applicationsCollection = await getCollection('applications');
+    const application = await applicationsCollection.findOne({ applicationId });
+
+    if (!application) {
       return NextResponse.json(
         { error: 'Application not found' },
         { status: 404 }
       );
     }
-
-    // Read application data
-    const applicationData = JSON.parse(fs.readFileSync(applicationFile, 'utf8'));
     
-    if (!applicationData.resumeFileName) {
+    if (!application.resumeFileName) {
       return NextResponse.json(
         { error: 'No resume found for this application' },
         { status: 404 }
       );
     }
 
-    let resumeBuffer;
-    let contentType = 'application/octet-stream';
+    // Check if R2 storage is available
+    if (!R2Storage.isAvailable()) {
+      return NextResponse.json(
+        { error: 'Cloud storage not available' },
+        { status: 500 }
+      );
+    }
 
     try {
-      // Try to download from R2 first if resumeUrl exists
-      if (applicationData.resumeUrl && R2Storage.isAvailable()) {
-        try {
-          const resumeStream = await R2Storage.downloadFile(applicationData.resumeFileName);
-          const chunks = [];
-          
-          for await (const chunk of resumeStream) {
-            chunks.push(chunk);
-          }
-          
-          resumeBuffer = Buffer.concat(chunks);
-          console.log('Resume downloaded from R2');
-        } catch (r2Error) {
-          console.warn('R2 download failed, trying local storage:', r2Error.message);
-          resumeBuffer = null;
-        }
-      }
-
-      // Fallback to local storage if R2 failed or not available
-      if (!resumeBuffer) {
-        const resumePath = path.join(applicationsDir, applicationData.resumeFileName);
-        
-        if (!fs.existsSync(resumePath)) {
-          return NextResponse.json(
-            { error: 'Resume file not found' },
-            { status: 404 }
-          );
-        }
-
-        resumeBuffer = fs.readFileSync(resumePath);
-        console.log('Resume loaded from local storage');
-      }
-
-      // Determine content type based on file extension
-      const fileExtension = path.extname(applicationData.resumeFileName).toLowerCase();
+      // Download resume from R2
+      const resumeStream = await R2Storage.downloadFile(application.resumeFileName);
+      const chunks = [];
       
-      if (fileExtension === '.pdf') {
-        contentType = 'application/pdf';
-      } else if (fileExtension === '.doc') {
-        contentType = 'application/msword';
-      } else if (fileExtension === '.docx') {
-        contentType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      for await (const chunk of resumeStream) {
+        chunks.push(chunk);
+      }
+      
+      const resumeBuffer = Buffer.concat(chunks);
+
+      // Determine content type based on stored type or file extension
+      let contentType = application.resumeType || 'application/octet-stream';
+      
+      if (!application.resumeType) {
+        const fileExtension = application.resumeFileName.split('.').pop().toLowerCase();
+        
+        if (fileExtension === 'pdf') {
+          contentType = 'application/pdf';
+        } else if (fileExtension === 'doc') {
+          contentType = 'application/msword';
+        } else if (fileExtension === 'docx') {
+          contentType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        }
       }
 
       // Return the resume file
@@ -122,15 +104,15 @@ export async function GET(_, { params }) {
         status: 200,
         headers: {
           'Content-Type': contentType,
-          'Content-Disposition': `attachment; filename="${applicationData.resumeOriginalName || applicationData.resumeFileName}"`,
+          'Content-Disposition': `attachment; filename="${application.resumeOriginalName || application.resumeFileName}"`,
           'Content-Length': resumeBuffer.length.toString(),
         },
       });
 
     } catch (error) {
-      console.error('Error retrieving resume:', error);
+      console.error('Error downloading resume from R2:', error);
       return NextResponse.json(
-        { error: 'Failed to retrieve resume file' },
+        { error: 'Failed to download resume from cloud storage' },
         { status: 500 }
       );
     }

@@ -298,6 +298,20 @@ export default function AdminDashboard() {
                   <p className="text-red-100">System diagnostics and troubleshooting</p>
                 </div>
               </Link>
+
+              {/* Migration Tool */}
+              <Link href="/admin/migrate">
+                <div className="bg-gradient-to-br from-yellow-500 to-yellow-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="text-4xl">☁️</div>
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">Migrate to R2</h3>
+                  <p className="text-yellow-100">Move data to cloud storage</p>
+                </div>
+              </Link>
             </div>
 
             {/* Quick Stats */}

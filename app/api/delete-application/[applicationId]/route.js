@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import fs from 'fs';
-import path from 'path';
+import { getCollection } from '../../../../lib/mongodb';
 import { R2Storage } from '../../../../lib/r2-storage';
 
 // Helper function to verify admin session
@@ -48,65 +47,39 @@ export async function DELETE(request, { params }) {
       );
     }
 
-    // Find the application file
-    const applicationsDir = path.join(process.cwd(), 'applications');
-    const applicationFile = path.join(applicationsDir, `${applicationId}.json`);
-    
-    if (!fs.existsSync(applicationFile)) {
+    // Get application from MongoDB to check if it exists and get resume info
+    const applicationsCollection = await getCollection('applications');
+    const application = await applicationsCollection.findOne({ applicationId });
+
+    if (!application) {
       return NextResponse.json(
         { error: 'Application not found' },
         { status: 404 }
       );
     }
 
-    // Read application data to get resume info
-    let applicationData;
-    try {
-      applicationData = JSON.parse(fs.readFileSync(applicationFile, 'utf8'));
-    } catch (error) {
-      console.error('Error reading application file:', error);
-      return NextResponse.json(
-        { error: 'Failed to read application data' },
-        { status: 500 }
-      );
-    }
-
-    // Delete resume file if it exists
-    if (applicationData.resumeFileName) {
+    // Delete resume from R2 if it exists
+    if (application.resumeFileName && R2Storage.isAvailable()) {
       try {
-        // Try to delete from R2 first if resumeUrl exists
-        if (applicationData.resumeUrl && R2Storage.isAvailable()) {
-          try {
-            // Note: R2Storage doesn't have a delete method in the current implementation
-            // You might want to add one or handle this differently
-            console.log('Resume stored in R2, manual cleanup may be required');
-          } catch (r2Error) {
-            console.warn('Could not delete resume from R2:', r2Error.message);
-          }
-        }
-
-        // Delete local resume file if it exists
-        const resumePath = path.join(applicationsDir, applicationData.resumeFileName);
-        if (fs.existsSync(resumePath)) {
-          fs.unlinkSync(resumePath);
-          console.log('Local resume file deleted');
-        }
+        await R2Storage.deleteFile(application.resumeFileName);
+        console.log('Resume deleted from R2:', application.resumeFileName);
       } catch (error) {
-        console.warn('Could not delete resume file:', error.message);
+        console.warn('Could not delete resume from R2:', error.message);
         // Continue with application deletion even if resume deletion fails
       }
     }
 
-    // Delete the application file
-    try {
-      fs.unlinkSync(applicationFile);
-    } catch (error) {
-      console.error('Error deleting application file:', error);
+    // Delete application from MongoDB
+    const deleteResult = await applicationsCollection.deleteOne({ applicationId });
+
+    if (deleteResult.deletedCount === 0) {
       return NextResponse.json(
-        { error: 'Failed to delete application file' },
-        { status: 500 }
+        { error: 'Application not found or already deleted' },
+        { status: 404 }
       );
     }
+
+    console.log('Application deleted from MongoDB:', applicationId);
 
     return NextResponse.json({
       success: true,
