@@ -285,15 +285,19 @@ export default function AdminDashboard() {
                 </div>
               </Link>
 
-              {/* Settings Placeholder */}
-              <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white p-6 rounded-lg shadow-lg opacity-75">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="text-4xl">⚙️</div>
-                  <div className="text-indigo-200 text-sm">Coming Soon</div>
+              {/* Debug Information */}
+              <Link href="/admin/debug">
+                <div className="bg-gradient-to-br from-red-500 to-red-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="text-4xl">🔧</div>
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">Debug Info</h3>
+                  <p className="text-red-100">System diagnostics and troubleshooting</p>
                 </div>
-                <h3 className="text-xl font-bold mb-2">Settings</h3>
-                <p className="text-indigo-100">System configuration and settings</p>
-              </div>
+              </Link>
             </div>
 
             {/* Quick Stats */}

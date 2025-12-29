@@ -118,16 +118,38 @@ export async function POST(request) {
     // Save application data to local file
     try {
       const applicationsDir = path.join(process.cwd(), 'applications');
-      if (!fs.existsSync(applicationsDir)) {
-        fs.mkdirSync(applicationsDir, { recursive: true });
+      
+      // Try to create directory if it doesn't exist
+      try {
+        if (!fs.existsSync(applicationsDir)) {
+          fs.mkdirSync(applicationsDir, { recursive: true });
+        }
+      } catch (dirError) {
+        console.error('Cannot create applications directory (read-only filesystem?):', dirError);
+        // In production environments like Vercel, we can't write to filesystem
+        // You might want to use a database or external storage service instead
+        return NextResponse.json(
+          { error: 'Cannot save application in this environment. Please contact support.' },
+          { status: 500 }
+        );
       }
 
       const applicationFile = path.join(applicationsDir, `${applicationData.applicationId}.json`);
       fs.writeFileSync(applicationFile, JSON.stringify(applicationData, null, 2));
+      console.log('Application saved successfully to:', applicationFile);
     } catch (error) {
       console.error('Error saving application:', error);
+      
+      // Provide more specific error information
+      let errorMessage = 'Failed to save application. Please try again.';
+      if (error.code === 'EROFS') {
+        errorMessage = 'Cannot save application - read-only file system. Please contact support.';
+      } else if (error.code === 'EACCES') {
+        errorMessage = 'Permission denied when saving application. Please contact support.';
+      }
+      
       return NextResponse.json(
-        { error: 'Failed to save application. Please try again.' },
+        { error: errorMessage },
         { status: 500 }
       );
     }
