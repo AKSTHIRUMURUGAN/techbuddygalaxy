@@ -1,0 +1,35 @@
+{
+  "applicationId": "f9bb8b75-fc14-4689-acc2-d12f0d73f547",
+  "name": "A.K.S.THIRUMURUGAN",
+  "email": "thirumuruganaks@gmail.com",
+  "phone": "+919600338406",
+  "position": "Intern",
+  "isStudent": true,
+  "college": "REC",
+  "department": "Computer Science",
+  "year": "4th Year",
+  "github": "https://github.com/thiru",
+  "linkedin": "https://linkedin.com/in/thiru",
+  "portfolio": "https://thirumurugan.me",
+  "skills": "css,js,html",
+  "experience": "5  years",
+  "motivation": "i like tech buddy space",
+  "availability": "Flexible",
+  "submittedAt": "2025-12-29T09:09:46.276Z",
+  "resumeUrl": "https://pub-02e215ce4a1540b6aa1dbd75f706cde9.r2.dev/resumes/f9bb8b75-fc14-4689-acc2-d12f0d73f547-1766999386276.pdf",
+  "resumeFileName": "resumes/f9bb8b75-fc14-4689-acc2-d12f0d73f547-1766999386276.pdf",
+  "resumeOriginalName": "RESUME (1) (1).pdf",
+  "resumeSize": 107577,
+  "resumeType": "application/pdf",
+  "status": "approved",
+  "statusMessage": "hi",
+  "statusUpdatedAt": "2025-12-29T09:11:30.635Z",
+  "documents": [
+    {
+      "type": "loi",
+      "title": "loi",
+      "url": "http://localhost:3000/api/temp-documents/A-K-S-THIRUMURUGAN-2025-12-29T09-11-45-838Z.docx",
+      "sentAt": "2025-12-29T09:11:49.337Z"
+    }
+  ]
+}

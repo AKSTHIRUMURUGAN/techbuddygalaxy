@@ -1,0 +1,187 @@
+import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
+import fs from 'fs';
+import path from 'path';
+
+// Helper function to verify admin session
+async function verifyAdminSession() {
+  const cookieStore = await cookies();
+  const sessionToken = cookieStore.get('admin-session');
+  
+  if (!sessionToken) {
+    return false;
+  }
+
+  try {
+    const decoded = Buffer.from(sessionToken.value, 'base64').toString();
+    const [username, timestamp] = decoded.split(':');
+    
+    // Check if session is expired (24 hours)
+    const sessionAge = Date.now() - parseInt(timestamp);
+    const maxAge = 24 * 60 * 60 * 1000; // 24 hours
+    
+    return sessionAge <= maxAge;
+  } catch (error) {
+    return false;
+  }
+}
+
+export async function POST(request) {
+  try {
+    // Verify admin authentication
+    const isAuthenticated = await verifyAdminSession();
+    
+    if (!isAuthenticated) {
+      return NextResponse.json(
+        { error: 'Unauthorized access' },
+        { status: 401 }
+      );
+    }
+
+    const { templateId, templateUrl, applicationId, customData = {} } = await request.json();
+    
+    if (!templateId || !templateUrl || !applicationId) {
+      return NextResponse.json(
+        { error: 'Template ID, URL, and application ID are required' },
+        { status: 400 }
+      );
+    }
+
+    // Load application data
+    const applicationsDir = path.join(process.cwd(), 'applications');
+    const applicationFile = path.join(applicationsDir, `${applicationId}.json`);
+    
+    if (!fs.existsSync(applicationFile)) {
+      return NextResponse.json(
+        { error: 'Application not found' },
+        { status: 404 }
+      );
+    }
+
+    const applicationData = JSON.parse(fs.readFileSync(applicationFile, 'utf8'));
+
+    // Load field mappings for this template
+    const mappingsDir = path.join(process.cwd(), 'admin-data');
+    const mappingsFile = path.join(mappingsDir, 'template-mappings.json');
+    let fieldMappings = {};
+    
+    if (fs.existsSync(mappingsFile)) {
+      try {
+        const mappingsData = fs.readFileSync(mappingsFile, 'utf8');
+        const allMappings = JSON.parse(mappingsData);
+        fieldMappings = allMappings[templateId]?.fieldMappings || {};
+      } catch (error) {
+        console.warn('Could not load field mappings:', error.message);
+      }
+    }
+
+    // Prepare template data using field mappings
+    const templateData = {};
+    
+    // Add common system data
+    templateData.currentDate = new Date().toLocaleDateString();
+    templateData.company = 'TechBuddy Space';
+    
+    // Map application data to template fields
+    Object.entries(fieldMappings).forEach(([placeholderKey, schemaKey]) => {
+      if (schemaKey && schemaKey !== 'custom') {
+        // Map from application data
+        if (schemaKey === 'submittedAt') {
+          templateData[placeholderKey] = new Date(applicationData[schemaKey]).toLocaleDateString();
+        } else if (schemaKey === 'currentDate') {
+          templateData[placeholderKey] = new Date().toLocaleDateString();
+        } else {
+          templateData[placeholderKey] = applicationData[schemaKey] || '';
+        }
+      }
+    });
+
+    // Add any custom data provided (for manual fields)
+    Object.entries(customData).forEach(([key, value]) => {
+      templateData[key] = value;
+    });
+
+    // Generate document using existing API
+    let generateResponse;
+    try {
+      generateResponse = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/generate-from-url`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          templateUrl,
+          data: templateData
+        }),
+      });
+    } catch (error) {
+      console.error('Error calling generate-from-url:', error);
+      return NextResponse.json(
+        { error: 'Failed to connect to document generation service' },
+        { status: 500 }
+      );
+    }
+
+    if (!generateResponse.ok) {
+      console.error('Generate response not ok:', generateResponse.status, generateResponse.statusText);
+      return NextResponse.json(
+        { error: `Document generation failed: ${generateResponse.status} ${generateResponse.statusText}` },
+        { status: 500 }
+      );
+    }
+
+    // Get the document as a buffer
+    let documentBuffer;
+    try {
+      documentBuffer = await generateResponse.arrayBuffer();
+    } catch (error) {
+      console.error('Error reading document buffer:', error);
+      return NextResponse.json(
+        { error: 'Failed to read generated document' },
+        { status: 500 }
+      );
+    }
+    
+    const docBuffer = Buffer.from(documentBuffer);
+    
+    // Generate a filename
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const safeName = (templateData.name || 'document').replace(/[^a-zA-Z0-9]/g, '-');
+    const filename = `${safeName}-${timestamp}.docx`;
+    
+    // Save document temporarily
+    try {
+      const tempDir = path.join(process.cwd(), 'temp-documents');
+      if (!fs.existsSync(tempDir)) {
+        fs.mkdirSync(tempDir, { recursive: true });
+      }
+      
+      const tempFilePath = path.join(tempDir, filename);
+      fs.writeFileSync(tempFilePath, docBuffer);
+      
+      // Create a public URL for the temporary file
+      const documentUrl = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/temp-documents/${filename}`;
+
+      return NextResponse.json({
+        success: true,
+        documentUrl: documentUrl,
+        filename: filename,
+        templateData: templateData,
+        applicationId: applicationId
+      });
+    } catch (error) {
+      console.error('Error saving temporary document:', error);
+      return NextResponse.json(
+        { error: 'Failed to save generated document' },
+        { status: 500 }
+      );
+    }
+
+  } catch (error) {
+    console.error('Error generating document with mapping:', error);
+    return NextResponse.json(
+      { error: 'Failed to generate document with mapping' },
+      { status: 500 }
+    );
+  }
+}

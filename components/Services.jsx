@@ -149,6 +149,71 @@ export default function Services() {
           </p>
         </div>
 
+        {/* Featured Tools */}
+        <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 rounded-2xl p-8 md:p-12 border border-purple-500/20 mb-16">
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <span className="inline-block text-sm font-semibold tracking-wider text-purple-400 mb-3">Featured Tools</span>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">
+              Professional <span className="gradient-text">Document Generators</span>
+            </h2>
+            <p className="text-xl text-gray-300">
+              Create professional appointment letters instantly with our advanced PDF generation tools.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="group bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-xl p-6 border border-blue-500/20 hover:border-blue-500/40 transition-all duration-300"
+            >
+              <div className="flex items-center mb-4">
+                <div className="p-3 rounded-xl bg-blue-500/20 mr-4">
+                  <FileTextIcon className="w-6 h-6 text-blue-400" />
+                </div>
+                <h3 className="text-xl font-bold text-white">PDFKit Generator</h3>
+              </div>
+              <p className="text-gray-300 mb-6">
+                Generate clean, professional appointment letters using PDFKit library with programmatic PDF creation.
+              </p>
+              <a
+                href="/appointment-pdfkit"
+                className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+              >
+                Try PDFKit Version
+                <ArrowRight className="ml-2 w-4 h-4" />
+              </a>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="group bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-xl p-6 border border-purple-500/20 hover:border-purple-500/40 transition-all duration-300"
+            >
+              <div className="flex items-center mb-4">
+                <div className="p-3 rounded-xl bg-purple-500/20 mr-4">
+                  <FileTextIcon className="w-6 h-6 text-purple-400" />
+                </div>
+                <h3 className="text-xl font-bold text-white">Puppeteer Generator</h3>
+              </div>
+              <p className="text-gray-300 mb-6">
+                Create beautifully styled appointment letters using Puppeteer with HTML/CSS rendering for enhanced design.
+              </p>
+              <a
+                href="/appointment-puppeteer"
+                className="inline-flex items-center bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+              >
+                Try Puppeteer Version
+                <ArrowRight className="ml-2 w-4 h-4" />
+              </a>
+            </motion.div>
+          </div>
+        </div>
+
         {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 mb-20">
           {serviceCategories.map((category, index) => (

@@ -1,0 +1,98 @@
+{
+  "workspace": {
+    "name": "TechBuddy Galaxy API",
+    "type": "personal"
+  },
+  "collection": {
+    "name": "Appointment Letter API",
+    "description": "API endpoints for generating appointment letters using PDFKit and Puppeteer"
+  },
+  "environment": {
+    "name": "Local Development",
+    "values": [
+      {
+        "key": "base_url",
+        "value": "http://localhost:3000",
+        "enabled": true
+      }
+    ]
+  },
+  "requests": [
+    {
+      "name": "Generate Appointment Letter (PDFKit)",
+      "method": "POST",
+      "url": "{{base_url}}/api/generate-appointment-pdfkit",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "employeeName": "John Doe",
+        "position": "Software Engineer",
+        "department": "Engineering",
+        "startDate": "2025-01-15",
+        "salary": "75000",
+        "reportingManager": "Jane Smith",
+        "companyName": "TechBuddy Galaxy",
+        "companyAddress": "123 Tech Street, Innovation City, TC 12345",
+        "hrName": "John Smith",
+        "hrTitle": "HR Manager"
+      },
+      "tests": [
+        "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+        "pm.test('Response is PDF', function () { pm.expect(pm.response.headers.get('Content-Type')).to.include('application/pdf'); });",
+        "pm.test('Has attachment header', function () { pm.expect(pm.response.headers.get('Content-Disposition')).to.include('attachment'); });"
+      ]
+    },
+    {
+      "name": "Generate Appointment Letter (Puppeteer)",
+      "method": "POST",
+      "url": "{{base_url}}/api/generate-appointment-puppeteer",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "employeeName": "Jane Doe",
+        "position": "Product Manager",
+        "department": "Product",
+        "startDate": "2025-02-01",
+        "salary": "85000",
+        "reportingManager": "Mike Johnson",
+        "companyName": "TechBuddy Galaxy",
+        "companyAddress": "123 Tech Street, Innovation City, TC 12345",
+        "hrName": "John Smith",
+        "hrTitle": "HR Manager",
+        "workLocation": "Main Office",
+        "probationPeriod": "6 months"
+      },
+      "tests": [
+        "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+        "pm.test('Response is PDF', function () { pm.expect(pm.response.headers.get('Content-Type')).to.include('application/pdf'); });",
+        "pm.test('Has attachment header', function () { pm.expect(pm.response.headers.get('Content-Disposition')).to.include('attachment'); });"
+      ]
+    },
+    {
+      "name": "Test Invalid Request (Missing Required Fields)",
+      "method": "POST",
+      "url": "{{base_url}}/api/generate-appointment-pdfkit",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "employeeName": "",
+        "position": ""
+      },
+      "tests": [
+        "pm.test('Should handle missing fields gracefully', function () { pm.response.to.have.status(500); });"
+      ]
+    }
+  ]
+}
