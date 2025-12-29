@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import fs from 'fs';
-import path from 'path';
+import { getCollection } from '../../../lib/mongodb';
 import { EmailService } from '../../../lib/email';
 
 // Helper function to verify admin session
@@ -48,38 +47,48 @@ export async function POST(request) {
       );
     }
 
+    // Connect to MongoDB
+    let applicationsCollection;
+    try {
+      applicationsCollection = await getCollection('applications');
+    } catch (dbError) {
+      console.error('Database connection failed:', dbError);
+      return NextResponse.json(
+        { error: 'Database connection failed' },
+        { status: 500 }
+      );
+    }
+
     // Find the application
-    const applicationsDir = path.join(process.cwd(), 'applications');
-    const applicationFile = path.join(applicationsDir, `${applicationId}.json`);
+    const applicationData = await applicationsCollection.findOne({ applicationId });
     
-    if (!fs.existsSync(applicationFile)) {
+    if (!applicationData) {
       return NextResponse.json(
         { error: 'Application not found' },
         { status: 404 }
       );
     }
 
-    // Read application data
-    const applicationData = JSON.parse(fs.readFileSync(applicationFile, 'utf8'));
-
     // Send document email
     try {
+      // Use the provided documentUrl which is the fresh R2 link
       await EmailService.sendDocumentEmail(applicationData, documentType, documentUrl, templateTitle);
       
-      // Update application with document info
-      if (!applicationData.documents) {
-        applicationData.documents = [];
-      }
-      
-      applicationData.documents.push({
+      // Create document entry
+      const documentEntry = {
         type: documentType,
         title: templateTitle,
         url: documentUrl,
         sentAt: new Date().toISOString()
-      });
+      };
       
-      // Save updated application
-      fs.writeFileSync(applicationFile, JSON.stringify(applicationData, null, 2));
+      // Update application with document info in MongoDB
+      await applicationsCollection.updateOne(
+        { applicationId },
+        { 
+          $push: { documents: documentEntry }
+        }
+      );
 
       return NextResponse.json({
         success: true,

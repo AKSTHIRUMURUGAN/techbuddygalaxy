@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { getCollection } from '../../../lib/mongodb';
-import fs from 'fs';
-import path from 'path';
+import { R2Storage } from '../../../lib/r2-storage';
 
 // Helper function to verify admin session
 async function verifyAdminSession() {
@@ -161,18 +160,20 @@ export async function POST(request) {
     const safeName = (templateData.name || 'document').replace(/[^a-zA-Z0-9]/g, '-');
     const filename = `${safeName}-${timestamp}.docx`;
     
-    // Save document temporarily
+    // Save document to R2 storage instead of local temp folder
     try {
-      const tempDir = path.join(process.cwd(), 'temp-documents');
-      if (!fs.existsSync(tempDir)) {
-        fs.mkdirSync(tempDir, { recursive: true });
+      if (!R2Storage.isAvailable()) {
+        return NextResponse.json(
+          { error: 'Cloud storage not available for document storage' },
+          { status: 500 }
+        );
       }
       
-      const tempFilePath = path.join(tempDir, filename);
-      fs.writeFileSync(tempFilePath, docBuffer);
+      // Upload document to R2
+      const r2Key = `generated-documents/${filename}`;
+      const documentUrl = await R2Storage.uploadFile(r2Key, docBuffer, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
       
-      // Create a public URL for the temporary file
-      const documentUrl = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/temp-documents/${filename}`;
+      console.log('Document uploaded to R2 successfully:', r2Key);
 
       return NextResponse.json({
         success: true,
@@ -181,10 +182,11 @@ export async function POST(request) {
         templateData: templateData,
         applicationId: applicationId
       });
+      
     } catch (error) {
-      console.error('Error saving temporary document:', error);
+      console.error('Error saving document to R2:', error);
       return NextResponse.json(
-        { error: 'Failed to save generated document' },
+        { error: 'Failed to save generated document to cloud storage' },
         { status: 500 }
       );
     }
