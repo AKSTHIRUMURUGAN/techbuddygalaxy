@@ -3,71 +3,32 @@ import { getCollection } from '../../../lib/mongodb';
 
 export async function GET() {
   try {
-    // Default positions
-    const defaultPositions = [
-      {
-        id: 'intern',
-        title: 'Intern',
-        description: 'Internship position',
-        isDefault: true
-      },
-      {
-        id: 'sde-1',
-        title: 'Software Development Engineer I',
-        description: 'Entry level software engineer',
-        isDefault: true
-      },
-      {
-        id: 'sde-2',
-        title: 'Software Development Engineer II',
-        description: 'Mid level software engineer',
-        isDefault: true
-      },
-      {
-        id: 'frontend-dev',
-        title: 'Frontend Developer',
-        description: 'Frontend development position',
-        isDefault: true
-      },
-      {
-        id: 'backend-dev',
-        title: 'Backend Developer',
-        description: 'Backend development position',
-        isDefault: true
-      },
-      {
-        id: 'fullstack-dev',
-        title: 'Full Stack Developer',
-        description: 'Full stack development position',
-        isDefault: true
-      }
-    ];
-
-    // Load custom positions from MongoDB
-    let customPositions = [];
+    // Load positions from MongoDB only (no default positions)
+    let positions = [];
     try {
       const positionsCollection = await getCollection('positions');
-      customPositions = await positionsCollection.find({}).toArray();
+      positions = await positionsCollection.find({}).toArray();
       
       // Convert MongoDB _id to string and ensure proper date formatting
-      customPositions = customPositions.map(position => ({
+      positions = positions.map(position => ({
         ...position,
         _id: position._id.toString(),
+        id: position._id.toString(),
         createdAt: position.createdAt instanceof Date ? position.createdAt.toISOString() : position.createdAt
       }));
       
-      console.log(`Loaded ${customPositions.length} custom positions from MongoDB`);
+      console.log(`Loaded ${positions.length} positions from MongoDB`);
     } catch (dbError) {
-      console.error('Error loading custom positions from MongoDB:', dbError);
-      // Continue with empty custom positions - this is not a fatal error
+      console.error('Error loading positions from MongoDB:', dbError);
+      return NextResponse.json(
+        { error: 'Failed to load positions from database' },
+        { status: 500 }
+      );
     }
-
-    // Combine default and custom positions
-    const allPositions = [...defaultPositions, ...customPositions];
 
     return NextResponse.json({
       success: true,
-      positions: allPositions
+      positions: positions
     });
 
   } catch (error) {

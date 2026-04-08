@@ -37,77 +37,38 @@ export async function GET() {
       );
     }
 
-    // Default positions
-    const defaultPositions = [
-      {
-        id: 'intern',
-        title: 'Intern',
-        description: 'Internship position',
-        isDefault: true
-      },
-      {
-        id: 'sde-1',
-        title: 'Software Development Engineer I',
-        description: 'Entry level software engineer',
-        isDefault: true
-      },
-      {
-        id: 'sde-2',
-        title: 'Software Development Engineer II',
-        description: 'Mid level software engineer',
-        isDefault: true
-      },
-      {
-        id: 'frontend-dev',
-        title: 'Frontend Developer',
-        description: 'Frontend development position',
-        isDefault: true
-      },
-      {
-        id: 'backend-dev',
-        title: 'Backend Developer',
-        description: 'Backend development position',
-        isDefault: true
-      },
-      {
-        id: 'fullstack-dev',
-        title: 'Full Stack Developer',
-        description: 'Full stack development position',
-        isDefault: true
-      }
-    ];
-
-    // Load custom positions from MongoDB
-    let customPositions = [];
+    // Load positions from MongoDB only (no default positions)
+    let positions = [];
     try {
       const positionsCollection = await getCollection('positions');
-      customPositions = await positionsCollection.find({}).toArray();
+      positions = await positionsCollection.find({}).toArray();
       
       // Convert MongoDB _id to string and ensure proper date formatting
-      customPositions = customPositions.map(position => ({
+      positions = positions.map(position => ({
         ...position,
         _id: position._id.toString(),
-        createdAt: position.createdAt instanceof Date ? position.createdAt.toISOString() : position.createdAt
+        id: position._id.toString(),
+        createdAt: position.createdAt instanceof Date ? position.createdAt.toISOString() : position.createdAt,
+        isDefault: false // All positions from DB are custom
       }));
       
-      console.log(`Loaded ${customPositions.length} custom positions from MongoDB`);
+      console.log(`Loaded ${positions.length} positions from MongoDB`);
     } catch (dbError) {
-      console.error('Error loading custom positions from MongoDB:', dbError);
-      // Continue with empty custom positions - this is not a fatal error
+      console.error('Error loading positions from MongoDB:', dbError);
+      return NextResponse.json(
+        { error: 'Failed to load positions from database' },
+        { status: 500 }
+      );
     }
-
-    // Combine default and custom positions
-    const allPositions = [...defaultPositions, ...customPositions];
 
     return NextResponse.json({
       success: true,
-      positions: allPositions
+      positions: positions
     });
-
   } catch (error) {
-    console.error('Error fetching positions:', error);
+    console.error('Error in GET /api/get-positions:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch positions' },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
@@ -205,13 +166,8 @@ export async function DELETE(request) {
       );
     }
 
-    // Only allow deleting custom positions
-    if (!id.startsWith('custom-')) {
-      return NextResponse.json(
-        { error: 'Cannot delete default positions' },
-        { status: 400 }
-      );
-    }
+    // Only allow deleting custom positions (all positions are now custom)
+    // Remove this check since we don't have default positions anymore
 
     try {
       // Get positions collection
@@ -261,6 +217,83 @@ export async function DELETE(request) {
     console.error('Error deleting position:', error);
     return NextResponse.json(
       { error: 'Failed to delete position' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(request) {
+  try {
+    // Verify admin authentication
+    const isAuthenticated = await verifyAdminSession();
+    
+    if (!isAuthenticated) {
+      return NextResponse.json(
+        { error: 'Unauthorized access' },
+        { status: 401 }
+      );
+    }
+
+    const { id, title, description } = await request.json();
+    
+    if (!id || !title) {
+      return NextResponse.json(
+        { error: 'Position ID and title are required' },
+        { status: 400 }
+      );
+    }
+
+    try {
+      // Get positions collection
+      const positionsCollection = await getCollection('positions');
+      
+      // Update the position
+      const result = await positionsCollection.updateOne(
+        { id },
+        {
+          $set: {
+            title,
+            description: description || '',
+            updatedAt: new Date()
+          }
+        }
+      );
+      
+      if (result.matchedCount === 0) {
+        return NextResponse.json(
+          { error: 'Position not found' },
+          { status: 404 }
+        );
+      }
+      
+      // Get the updated position
+      const updatedPosition = await positionsCollection.findOne({ id });
+      
+      console.log('Position updated in MongoDB:', id);
+
+      return NextResponse.json({
+        success: true,
+        message: 'Position updated successfully',
+        position: {
+          ...updatedPosition,
+          _id: updatedPosition._id.toString(),
+          createdAt: updatedPosition.createdAt instanceof Date ? updatedPosition.createdAt.toISOString() : updatedPosition.createdAt,
+          updatedAt: updatedPosition.updatedAt instanceof Date ? updatedPosition.updatedAt.toISOString() : updatedPosition.updatedAt
+        }
+      });
+      
+    } catch (dbError) {
+      console.error('MongoDB error updating position:', dbError);
+      return NextResponse.json(
+        { error: 'Failed to update position in database' },
+        { status: 500 }
+      );
+    }
+
+  } catch (error) {
+    console.error('Error updating position:', error);
+    return NextResponse.json(
+      { error: 'Failed to update position' },
       { status: 500 }
     );
   }

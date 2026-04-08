@@ -37,64 +37,32 @@ export async function GET() {
       );
     }
 
-    // Default templates
-    const defaultTemplates = [
-      {
-        id: 'appointment-letter',
-        title: 'Appointment Letter',
-        type: 'appointment',
-        url: 'https://docs.google.com/document/d/1example-appointment/export?format=docx',
-        description: 'Official appointment letter for internship'
-      },
-      {
-        id: 'loi-template',
-        title: 'Letter of Intent',
-        type: 'loi',
-        url: 'https://docs.google.com/document/d/1example-loi/export?format=docx',
-        description: 'Letter of intent for internship program'
-      },
-      {
-        id: 'certificate-template',
-        title: 'Completion Certificate',
-        type: 'certificate',
-        url: 'https://docs.google.com/document/d/1example-certificate/export?format=docx',
-        description: 'Certificate of completion for internship'
-      },
-      {
-        id: 'experience-letter',
-        title: 'Experience Letter',
-        type: 'experience',
-        url: 'https://docs.google.com/document/d/1example-experience/export?format=docx',
-        description: 'Experience letter after internship completion'
-      }
-    ];
-
-    // Load custom templates from MongoDB
-    let customTemplates = [];
+    // Load templates from MongoDB only (no default templates)
+    let templates = [];
     try {
       const templatesCollection = await getCollection('templates');
-      customTemplates = await templatesCollection.find({}).toArray();
+      templates = await templatesCollection.find({}).toArray();
       
       // Convert MongoDB _id to string and ensure proper date formatting
-      customTemplates = customTemplates.map(template => ({
+      templates = templates.map(template => ({
         ...template,
         _id: template._id.toString(),
         createdAt: template.createdAt instanceof Date ? template.createdAt.toISOString() : template.createdAt,
         updatedAt: template.updatedAt instanceof Date ? template.updatedAt.toISOString() : template.updatedAt
       }));
       
-      console.log(`Loaded ${customTemplates.length} custom templates from MongoDB`);
+      console.log(`Loaded ${templates.length} templates from MongoDB`);
     } catch (dbError) {
-      console.error('Error loading custom templates from MongoDB:', dbError);
-      // Continue with empty custom templates - this is not a fatal error
+      console.error('Error loading templates from MongoDB:', dbError);
+      return NextResponse.json(
+        { error: 'Failed to load templates from database' },
+        { status: 500 }
+      );
     }
-
-    // Combine default and custom templates
-    const allTemplates = [...defaultTemplates, ...customTemplates];
 
     return NextResponse.json({
       success: true,
-      templates: allTemplates
+      templates: templates
     });
 
   } catch (error) {
@@ -198,13 +166,8 @@ export async function PUT(request) {
       );
     }
 
-    // Only allow editing custom templates
-    if (!id.startsWith('custom-')) {
-      return NextResponse.json(
-        { error: 'Cannot edit default templates' },
-        { status: 400 }
-      );
-    }
+    // Only allow editing custom templates (all templates are now custom)
+    // Remove this check since we don't have default templates anymore
 
     try {
       // Get templates collection
@@ -293,13 +256,8 @@ export async function DELETE(request) {
       );
     }
 
-    // Only allow deleting custom templates
-    if (!id.startsWith('custom-')) {
-      return NextResponse.json(
-        { error: 'Cannot delete default templates' },
-        { status: 400 }
-      );
-    }
+    // Only allow deleting custom templates (all templates are now custom)
+    // Remove this check since we don't have default templates anymore
 
     try {
       // Get templates collection

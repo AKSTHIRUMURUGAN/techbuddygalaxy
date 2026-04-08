@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 
 export default function PositionsAdminPage() {
   const [positions, setPositions] = useState([]);
@@ -8,11 +9,14 @@ export default function PositionsAdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingPosition, setEditingPosition] = useState(null);
   const [newPosition, setNewPosition] = useState({
     title: '',
     description: ''
   });
   const [adding, setAdding] = useState(false);
+  const [editing, setEditing] = useState(false);
   const [deleting, setDeleting] = useState(null);
 
   useEffect(() => {
@@ -57,7 +61,7 @@ export default function PositionsAdminPage() {
 
   const addPosition = async () => {
     if (!newPosition.title.trim()) {
-      alert('Please enter a position title');
+      toast.error('Please enter a position title');
       return;
     }
 
@@ -75,25 +79,62 @@ export default function PositionsAdminPage() {
         await fetchPositions();
         setShowAddModal(false);
         setNewPosition({ title: '', description: '' });
-        alert('Position added successfully!');
+        toast.success('Position added successfully!');
       } else {
         const errorData = await response.json();
-        alert(`Error: ${errorData.error}`);
+        toast.error(`Error: ${errorData.error}`);
       }
     } catch (error) {
       console.error('Error adding position:', error);
-      alert('Network error occurred');
+      toast.error('Network error occurred');
     } finally {
       setAdding(false);
     }
   };
 
-  const deletePosition = async (position) => {
-    if (position.isDefault) {
-      alert('Cannot delete default positions');
+  const openEditModal = (position) => {
+    setEditingPosition({
+      id: position.id,
+      title: position.title,
+      description: position.description || ''
+    });
+    setShowEditModal(true);
+  };
+
+  const updatePosition = async () => {
+    if (!editingPosition.title.trim()) {
+      toast.error('Please enter a position title');
       return;
     }
 
+    setEditing(true);
+    try {
+      const response = await fetch('/api/get-positions', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(editingPosition),
+      });
+
+      if (response.ok) {
+        await fetchPositions();
+        setShowEditModal(false);
+        setEditingPosition(null);
+        toast.success('Position updated successfully!');
+      } else {
+        const errorData = await response.json();
+        toast.error(`Error: ${errorData.error}`);
+      }
+    } catch (error) {
+      console.error('Error updating position:', error);
+      toast.error('Network error occurred');
+    } finally {
+      setEditing(false);
+    }
+  };
+
+  const deletePosition = async (position) => {
     if (!confirm(`Are you sure you want to delete "${position.title}"? This action cannot be undone.`)) {
       return;
     }
@@ -106,14 +147,14 @@ export default function PositionsAdminPage() {
 
       if (response.ok) {
         await fetchPositions();
-        alert('Position deleted successfully!');
+        toast.success('Position deleted successfully!');
       } else {
         const errorData = await response.json();
-        alert(`Error: ${errorData.error}`);
+        toast.error(`Error: ${errorData.error}`);
       }
     } catch (error) {
       console.error('Error deleting position:', error);
-      alert('Network error occurred');
+      toast.error('Network error occurred');
     } finally {
       setDeleting(null);
     }
@@ -190,26 +231,10 @@ export default function PositionsAdminPage() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {positions.map((position) => (
-                  <div key={position.id} className={`bg-white border-2 rounded-lg p-6 hover:shadow-lg transition-shadow ${
-                    position.isDefault 
-                      ? 'border-blue-200 hover:border-blue-300' 
-                      : 'border-indigo-200 hover:border-indigo-300'
-                  }`}>
+                  <div key={position.id} className="bg-white border-2 border-indigo-200 hover:border-indigo-300 rounded-lg p-6 hover:shadow-lg transition-shadow">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <h3 className="text-lg font-semibold text-gray-900">{position.title}</h3>
-                          {position.isDefault && (
-                            <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full font-medium">
-                              Default
-                            </span>
-                          )}
-                          {!position.isDefault && (
-                            <span className="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded-full font-medium">
-                              Custom
-                            </span>
-                          )}
-                        </div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">{position.title}</h3>
                       </div>
                     </div>
                     
@@ -224,34 +249,38 @@ export default function PositionsAdminPage() {
                     )}
                     
                     <div className="mt-4 pt-4 border-t border-gray-100">
-                      <div className="flex justify-end">
-                        {!position.isDefault && (
-                          <button
-                            onClick={() => deletePosition(position)}
-                            disabled={deleting === position.id}
-                            className="bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white text-sm font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center"
-                          >
-                            {deleting === position.id ? (
-                              <>
-                                <svg className="w-4 h-4 mr-2 animate-spin" fill="none" viewBox="0 0 24 24">
-                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                Deleting...
-                              </>
-                            ) : (
-                              <>
-                                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                </svg>
-                                Delete
-                              </>
-                            )}
-                          </button>
-                        )}
-                        {position.isDefault && (
-                          <span className="text-sm text-gray-500 italic">Default position</span>
-                        )}
+                      <div className="flex justify-between gap-2">
+                        <button
+                          onClick={() => openEditModal(position)}
+                          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center"
+                        >
+                          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => deletePosition(position)}
+                          disabled={deleting === position.id}
+                          className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white text-sm font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center"
+                        >
+                          {deleting === position.id ? (
+                            <>
+                              <svg className="w-4 h-4 mr-2 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                              </svg>
+                              Deleting...
+                            </>
+                          ) : (
+                            <>
+                              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                              Delete
+                            </>
+                          )}
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -322,7 +351,76 @@ export default function PositionsAdminPage() {
             </div>
           </div>
         )}
+
+        {/* Edit Position Modal */}
+        {showEditModal && editingPosition && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg max-w-md w-full">
+              <div className="bg-blue-600 text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
+                <h2 className="text-xl font-bold">Edit Position</h2>
+                <button
+                  onClick={() => {
+                    setShowEditModal(false);
+                    setEditingPosition(null);
+                  }}
+                  className="text-white hover:text-gray-200 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+              
+              <div className="p-6 space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Position Title *
+                  </label>
+                  <input
+                    type="text"
+                    value={editingPosition.title}
+                    onChange={(e) => setEditingPosition(prev => ({ ...prev, title: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="e.g., Senior Software Engineer"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Description
+                  </label>
+                  <textarea
+                    value={editingPosition.description}
+                    onChange={(e) => setEditingPosition(prev => ({ ...prev, description: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows="3"
+                    placeholder="Brief description of this position..."
+                  />
+                </div>
+                
+                <div className="flex space-x-3 pt-4">
+                  <button
+                    onClick={updatePosition}
+                    disabled={editing || !editingPosition.title.trim()}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
+                  >
+                    {editing ? 'Updating...' : 'Update Position'}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowEditModal(false);
+                      setEditingPosition(null);
+                    }}
+                    disabled={editing}
+                    className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded-lg transition duration-200"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 }
+

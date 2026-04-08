@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 
 export default function TemplatesAdminPage() {
   const [templates, setTemplates] = useState([]);
@@ -86,7 +87,7 @@ export default function TemplatesAdminPage() {
 
   const addTemplate = async () => {
     if (!newTemplate.title || !newTemplate.type || !newTemplate.url) {
-      alert('Please fill in all required fields');
+      toast.error('Please fill in all required fields');
       return;
     }
 
@@ -104,14 +105,14 @@ export default function TemplatesAdminPage() {
         await fetchTemplates();
         setShowAddModal(false);
         setNewTemplate({ title: '', type: '', url: '', description: '' });
-        alert('Template added successfully!');
+        toast.success('Template added successfully!');
       } else {
         const errorData = await response.json();
-        alert(`Error: ${errorData.error}`);
+        toast.error(`Error: ${errorData.error}`);
       }
     } catch (error) {
       console.error('Error adding template:', error);
-      alert('Network error occurred');
+      toast.error('Network error occurred');
     } finally {
       setAdding(false);
     }
@@ -119,7 +120,7 @@ export default function TemplatesAdminPage() {
 
   const editTemplate = (template) => {
     if (!template.id.startsWith('custom-')) {
-      alert('Cannot edit default templates');
+      toast.error('Cannot edit default templates');
       return;
     }
     
@@ -135,7 +136,7 @@ export default function TemplatesAdminPage() {
 
   const updateTemplate = async () => {
     if (!newTemplate.title || !newTemplate.type || !newTemplate.url) {
-      alert('Please fill in all required fields');
+      toast.error('Please fill in all required fields');
       return;
     }
 
@@ -157,14 +158,14 @@ export default function TemplatesAdminPage() {
         setShowEditModal(false);
         setEditingTemplate(null);
         setNewTemplate({ title: '', type: '', url: '', description: '' });
-        alert('Template updated successfully!');
+        toast.success('Template updated successfully!');
       } else {
         const errorData = await response.json();
-        alert(`Error: ${errorData.error}`);
+        toast.error(`Error: ${errorData.error}`);
       }
     } catch (error) {
       console.error('Error updating template:', error);
-      alert('Network error occurred');
+      toast.error('Network error occurred');
     } finally {
       setUpdating(false);
     }
@@ -172,7 +173,7 @@ export default function TemplatesAdminPage() {
 
   const deleteTemplate = async (template) => {
     if (!template.id.startsWith('custom-')) {
-      alert('Cannot delete default templates');
+      toast.error('Cannot delete default templates');
       return;
     }
 
@@ -188,14 +189,14 @@ export default function TemplatesAdminPage() {
 
       if (response.ok) {
         await fetchTemplates();
-        alert('Template deleted successfully!');
+        toast.success('Template deleted successfully!');
       } else {
         const errorData = await response.json();
-        alert(`Error: ${errorData.error}`);
+        toast.error(`Error: ${errorData.error}`);
       }
     } catch (error) {
       console.error('Error deleting template:', error);
-      alert('Network error occurred');
+      toast.error('Network error occurred');
     } finally {
       setDeleting(null);
     }
@@ -247,12 +248,12 @@ export default function TemplatesAdminPage() {
         setFormData(initialFormData);
       } else {
         const errorData = await response.json();
-        alert(`Error analyzing template: ${errorData.error}`);
+        toast.error(`Error analyzing template: ${errorData.error}`);
         setShowPreviewModal(false);
       }
     } catch (error) {
       console.error('Error analyzing template:', error);
-      alert('Network error occurred');
+      toast.error('Network error occurred');
       setShowPreviewModal(false);
     } finally {
       setAnalyzing(false);
@@ -297,11 +298,11 @@ export default function TemplatesAdminPage() {
         document.body.removeChild(a);
       } else {
         const errorData = await response.json();
-        alert(`Error generating document: ${errorData.error}`);
+        toast.error(`Error generating document: ${errorData.error}`);
       }
     } catch (error) {
       console.error('Error generating document:', error);
-      alert('Network error occurred');
+      toast.error('Network error occurred');
     } finally {
       setGenerating(false);
     }
@@ -361,12 +362,12 @@ export default function TemplatesAdminPage() {
         setFieldMappings(prev => ({ ...prev, ...autoMappings }));
       } else {
         const errorData = await response.json();
-        alert(`Error analyzing template: ${errorData.error}`);
+        toast.error(`Error analyzing template: ${errorData.error}`);
         setShowMappingModal(false);
       }
     } catch (error) {
       console.error('Error setting up field mapping:', error);
-      alert('Network error occurred');
+      toast.error('Network error occurred');
       setShowMappingModal(false);
     } finally {
       setAnalyzing(false);
@@ -388,18 +389,18 @@ export default function TemplatesAdminPage() {
       });
 
       if (response.ok) {
-        alert('Field mapping saved successfully!');
+        toast.success('Field mapping saved successfully!');
         setShowMappingModal(false);
         setMappingTemplate(null);
         setPlaceholders([]);
         setFieldMappings({});
       } else {
         const errorData = await response.json();
-        alert(`Error saving mapping: ${errorData.error}`);
+        toast.error(`Error saving mapping: ${errorData.error}`);
       }
     } catch (error) {
       console.error('Error saving field mapping:', error);
-      alert('Network error occurred');
+      toast.error('Network error occurred');
     }
   };
 

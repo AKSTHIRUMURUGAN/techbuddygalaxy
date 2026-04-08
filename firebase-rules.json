@@ -1,0 +1,22 @@
+{
+  "rules": {
+    "conversations": {
+      "$conversationId": {
+        ".read": "auth != null || root.child('conversations/' + $conversationId + '/metadata/participants').hasChild(data.val())",
+        ".write": "auth != null || root.child('conversations/' + $conversationId + '/metadata/participants').hasChild(data.val())",
+        "messages": {
+          "$messageId": {
+            ".read": true,
+            ".write": true,
+            ".validate": "newData.hasChildren(['senderId', 'receiverId', 'message', 'createdAt'])"
+          }
+        },
+        "metadata": {
+          ".read": true,
+          ".write": true,
+          ".validate": "newData.hasChildren(['lastMessage', 'lastMessageTime', 'participants'])"
+        }
+      }
+    }
+  }
+}

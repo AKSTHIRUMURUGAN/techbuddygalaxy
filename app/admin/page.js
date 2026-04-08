@@ -215,6 +215,90 @@ export default function AdminDashboard() {
                 </div>
               </Link>
 
+              {/* Task Management */}
+              <Link href="/admin/tasks">
+                <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="text-4xl">✅</div>
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">Task Management</h3>
+                  <p className="text-indigo-100">Create and assign tasks to interns</p>
+                </div>
+              </Link>
+
+              {/* Interns Management */}
+              <Link href="/admin/interns">
+                <div className="bg-gradient-to-br from-teal-500 to-teal-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="text-4xl">👥</div>
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">Interns</h3>
+                  <p className="text-teal-100">Manage intern accounts and performance</p>
+                </div>
+              </Link>
+
+              {/* Messages */}
+              <Link href="/admin/messages">
+                <div className="bg-gradient-to-br from-pink-500 to-pink-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="text-4xl">💬</div>
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">Messages</h3>
+                  <p className="text-pink-100">Chat with interns and team</p>
+                </div>
+              </Link>
+
+              {/* Attendance */}
+              <Link href="/admin/attendance">
+                <div className="bg-gradient-to-br from-cyan-500 to-cyan-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="text-4xl">⏰</div>
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">Attendance</h3>
+                  <p className="text-cyan-100">Track intern attendance</p>
+                </div>
+              </Link>
+
+              {/* Leaves */}
+              <Link href="/admin/leaves">
+                <div className="bg-gradient-to-br from-amber-500 to-amber-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="text-4xl">🏖️</div>
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">Leave Management</h3>
+                  <p className="text-amber-100">Approve/reject leave requests</p>
+                </div>
+              </Link>
+
+              {/* Leaderboard */}
+              <Link href="/admin/leaderboard">
+                <div className="bg-gradient-to-br from-yellow-500 to-orange-500 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="text-4xl">🏆</div>
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">Leaderboard</h3>
+                  <p className="text-yellow-100">View top performing interns</p>
+                </div>
+              </Link>
+
               {/* Position Management */}
               <Link href="/admin/positions">
                 <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer">

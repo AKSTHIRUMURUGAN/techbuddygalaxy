@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 
 export default function ApplicationsAdminPage() {
   const [applications, setApplications] = useState([]);
@@ -22,6 +23,7 @@ export default function ApplicationsAdminPage() {
   const [templateData, setTemplateData] = useState({});
   const [manualFields, setManualFields] = useState([]);
   const [deletingApplication, setDeletingApplication] = useState(null);
+  const [givingAccess, setGivingAccess] = useState(null);
 
   useEffect(() => {
     checkAuthentication();
@@ -198,7 +200,7 @@ export default function ApplicationsAdminPage() {
         await fetchApplications();
         setShowStatusModal(false);
         setStatusMessage('');
-        alert(`Application ${status} successfully!`);
+        toast.success(`Application ${status} successfully!`);
       } else {
         const text = await response.text();
         let errorMessage = 'Unknown error';
@@ -210,11 +212,11 @@ export default function ApplicationsAdminPage() {
             errorMessage = `Server error: ${response.status}`;
           }
         }
-        alert(`Error: ${errorMessage}`);
+        toast.error(`Error: ${errorMessage}`);
       }
     } catch (error) {
       console.error('Error updating status:', error);
-      alert('Network error occurred');
+      toast.error('Network error occurred');
     } finally {
       setStatusUpdating(false);
     }
@@ -231,7 +233,7 @@ export default function ApplicationsAdminPage() {
     try {
       const template = templates.find(t => t.id === templateId);
       if (!template) {
-        alert('Template not found');
+        toast.error('Template not found');
         return;
       }
 
@@ -266,16 +268,16 @@ export default function ApplicationsAdminPage() {
           }),
         });
 
-        alert(`${template.title} generated and sent successfully!`);
+        toast.success(`${template.title} generated and sent successfully!`);
         setShowTemplateModal(false);
         setTemplateData({});
       } else {
         const errorData = await response.json();
-        alert(`Error: ${errorData.error}`);
+        toast.error(`Error: ${errorData.error}`);
       }
     } catch (error) {
       console.error('Error generating document:', error);
-      alert('Network error occurred');
+      toast.error('Network error occurred');
     }
   };
 
@@ -327,16 +329,47 @@ export default function ApplicationsAdminPage() {
       if (response.ok) {
         // Refresh applications list
         await fetchApplications();
-        alert('Application deleted successfully!');
+        toast.success('Application deleted successfully!');
       } else {
         const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-        alert(`Error: ${errorData.error}`);
+        toast.error(`Error: ${errorData.error}`);
       }
     } catch (error) {
       console.error('Error deleting application:', error);
-      alert('Network error occurred');
+      toast.error('Network error occurred');
     } finally {
       setDeletingApplication(null);
+    }
+  };
+
+  const giveInternAccess = async (applicationId, applicantName) => {
+    if (!confirm(`Create intern account and send login credentials to "${applicantName}"?`)) {
+      return;
+    }
+
+    setGivingAccess(applicationId);
+    try {
+      const response = await fetch('/api/give-intern-access', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ applicationId }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        toast.success('Intern account created successfully! Login credentials have been sent via email.');
+        await fetchApplications();
+      } else {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        toast.error(`Error: ${errorData.error}`);
+      }
+    } catch (error) {
+      console.error('Error giving intern access:', error);
+      toast.error('Network error occurred');
+    } finally {
+      setGivingAccess(null);
     }
   };
 
@@ -576,6 +609,18 @@ export default function ApplicationsAdminPage() {
                           ) : app.status === 'approved' ? (
                             <>
                               <button
+                                onClick={() => giveInternAccess(app.applicationId, app.name)}
+                                disabled={givingAccess === app.applicationId || app.accessGiven}
+                                className={`${
+                                  app.accessGiven 
+                                    ? 'bg-gray-400 cursor-not-allowed' 
+                                    : 'bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400'
+                                } text-white px-3 py-1 rounded text-xs`}
+                                title={app.accessGiven ? 'Access already given' : 'Create intern account and send login credentials'}
+                              >
+                                {givingAccess === app.applicationId ? 'Processing...' : app.accessGiven ? 'Access Given' : 'Give Access'}
+                              </button>
+                              <button
                                 onClick={() => handleSendDocument(app)}
                                 className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-xs"
                               >
@@ -741,6 +786,23 @@ export default function ApplicationsAdminPage() {
                       <label className="text-sm font-medium text-gray-600">Submitted At</label>
                       <p className="text-gray-900">{formatDate(selectedApplication.submittedAt)}</p>
                     </div>
+                    {selectedApplication.accessGiven && (
+                      <div className="md:col-span-2">
+                        <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                          <div className="flex items-center">
+                            <svg className="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <div>
+                              <p className="text-sm font-medium text-green-800">Intern Access Given</p>
+                              <p className="text-xs text-green-600">
+                                Login credentials sent on {formatDate(selectedApplication.accessGivenAt)}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -919,3 +981,4 @@ export default function ApplicationsAdminPage() {
     </div>
   );
 }
+
