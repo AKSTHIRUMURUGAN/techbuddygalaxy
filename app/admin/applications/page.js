@@ -474,10 +474,6 @@ export default function ApplicationsAdminPage() {
                 )}
               </button>
             </form>
-
-            <div className="mt-6 text-center text-sm text-gray-500">
-              <p>Default credentials: admin / techbuddy2024</p>
-            </div>
           </div>
         </div>
       </div>

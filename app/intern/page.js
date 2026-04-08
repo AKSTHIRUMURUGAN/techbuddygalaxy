@@ -135,18 +135,10 @@ export default function InternLogin() {
             </button>
           </form>
 
+          {/* Footer Links */}
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              Don't have an account?{' '}
-              <a href="/intern/register" className="text-blue-600 hover:text-blue-700 font-medium">
-                Register here
-              </a>
-            </p>
-          </div>
-
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <p className="text-xs text-gray-500 text-center">
-              Demo credentials: intern@example.com / password123
+              Need help? Contact your administrator
             </p>
           </div>
         </div>

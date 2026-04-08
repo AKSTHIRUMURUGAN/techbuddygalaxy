@@ -112,12 +112,6 @@ export default function AdminLoginPage() {
               )}
             </button>
           </form>
-
-          <div className="mt-6 text-center text-sm text-gray-500">
-            <p>Demo Credentials:</p>
-            <p>Email: admin@techbuddyspace.com</p>
-            <p>Password: admin@123</p>
-          </div>
         </div>
       </div>
     </div>

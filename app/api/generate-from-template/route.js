@@ -46,7 +46,7 @@ export async function POST(request) {
     }
 
     // Use the existing dynamic template generation API
-    const generateResponse = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/generate-from-url`, {
+    const generateResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/generate-from-url`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ export async function POST(request) {
     const generateResult = await generateResponse.json();
 
     // Generate PDF version
-    const pdfResponse = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/generate-from-url-pdf`, {
+    const pdfResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/generate-from-url-pdf`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

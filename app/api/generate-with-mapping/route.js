@@ -115,7 +115,7 @@ export async function POST(request) {
     // Generate document using existing API
     let generateResponse;
     try {
-      generateResponse = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/generate-from-url`, {
+      generateResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/generate-from-url`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
