@@ -32,7 +32,6 @@ Create a `.env.local` file in the root directory:
 # MongoDB Connection
 MONGODB_URI=mongodb://localhost:27017/techbuddyspace
 # OR for MongoDB Atlas:
-# MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/techbuddyspace
 
 # JWT Secret (generate a random string)
 JWT_SECRET=your-super-secret-jwt-key-change-this
