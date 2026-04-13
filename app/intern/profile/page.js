@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'sonner';
+import { FiArrowLeft, FiEdit2, FiLoader, FiLock, FiMail, FiPhone, FiUser, FiX } from 'react-icons/fi';
 
 export default function InternProfile() {
   const [user, setUser] = useState(null);
@@ -205,26 +207,27 @@ export default function InternProfile() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-[#05070f] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading profile...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto mb-4"></div>
+          <p className="text-slate-300">Loading profile...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8 px-4">
+    <div className="min-h-screen bg-[#05070f] py-8 px-4 text-slate-100">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg shadow-xl">
-          <div className="bg-blue-600 text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
+        <div className="bg-slate-950/80 border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
+          <div className="bg-gradient-to-r from-cyan-600 to-violet-600 text-white px-6 py-5 rounded-t-2xl flex justify-between items-center">
             <div>
               <h1 className="text-2xl font-bold">My Profile</h1>
-              <p className="text-blue-100">Manage your account settings</p>
+              <p className="text-cyan-100">Manage your account settings</p>
             </div>
             <Link href="/intern/dashboard">
-              <button className="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-lg transition">
+              <button className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl transition inline-flex items-center border border-white/20">
+                <FiArrowLeft className="mr-2" />
                 Back to Dashboard
               </button>
             </Link>
@@ -235,64 +238,73 @@ export default function InternProfile() {
             <form onSubmit={handleProfileUpdate} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
                     Full Name
                   </label>
-                  <input
-                    type="text"
-                    value={profileData.name}
-                    onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
+                  <div className="relative">
+                    <FiUser className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                    <input
+                      type="text"
+                      value={profileData.name}
+                      onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
+                      className="w-full pl-10 pr-4 py-2 bg-slate-900 border border-white/15 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                      required
+                    />
+                  </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
                     Email
                   </label>
-                  <input
-                    type="email"
-                    value={profileData.email}
-                    disabled
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
+                  <div className="relative">
+                    <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                    <input
+                      type="email"
+                      value={profileData.email}
+                      disabled
+                      className="w-full pl-10 pr-4 py-2 border border-white/15 rounded-lg bg-slate-900/70 text-slate-400 cursor-not-allowed"
+                    />
+                  </div>
+                  <p className="text-xs text-slate-400 mt-1">Email cannot be changed</p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
                     Phone Number
                   </label>
-                  <input
-                    type="tel"
-                    value={profileData.phone}
-                    onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  <div className="relative">
+                    <FiPhone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                    <input
+                      type="tel"
+                      value={profileData.phone}
+                      onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
+                      className="w-full pl-10 pr-4 py-2 bg-slate-900 border border-white/15 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    />
+                  </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
                     Department
                   </label>
                   <input
                     type="text"
                     value={profileData.department}
                     onChange={(e) => setProfileData({ ...profileData, department: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 bg-slate-900 border border-white/15 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
                     Skills (comma-separated)
                   </label>
                   <input
                     type="text"
                     value={profileData.skills}
                     onChange={(e) => setProfileData({ ...profileData, skills: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 bg-slate-900 border border-white/15 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
                     placeholder="JavaScript, React, Node.js"
                   />
                 </div>
@@ -302,16 +314,18 @@ export default function InternProfile() {
                 <button
                   type="submit"
                   disabled={updating}
-                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-6 py-2 rounded-lg transition"
+                  className="bg-cyan-600 hover:bg-cyan-500 disabled:bg-cyan-800 text-white px-6 py-2 rounded-lg transition inline-flex items-center"
                 >
+                  {updating ? <FiLoader className="animate-spin mr-2" /> : <FiEdit2 className="mr-2" />}
                   {updating ? 'Updating...' : 'Update Profile'}
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setShowPasswordModal(true)}
-                  className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg transition"
+                  className="bg-amber-600 hover:bg-amber-500 text-white px-6 py-2 rounded-lg transition inline-flex items-center"
                 >
+                  <FiLock className="mr-2" />
                   Change Password
                 </button>
               </div>
@@ -322,9 +336,9 @@ export default function InternProfile() {
 
       {/* Password Change Modal */}
       {showPasswordModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full">
-            <div className="bg-orange-600 text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-slate-950 border border-white/10 rounded-2xl max-w-md w-full">
+            <div className="bg-amber-600 text-white px-6 py-4 rounded-t-2xl flex justify-between items-center">
               <h2 className="text-xl font-bold">Change Password</h2>
               <button
                 onClick={() => {
@@ -337,9 +351,9 @@ export default function InternProfile() {
                     confirmPassword: '',
                   });
                 }}
-                className="text-white hover:text-gray-200 text-2xl"
+                className="text-white hover:text-slate-200 text-2xl"
               >
-                ×
+                <FiX />
               </button>
             </div>
 
@@ -347,25 +361,25 @@ export default function InternProfile() {
               {/* Step 1: Enter Current Password */}
               {passwordStep === 1 && (
                 <div className="space-y-4">
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-slate-300">
                     Enter your current password to receive an OTP via email.
                   </p>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
                       Current Password
                     </label>
                     <input
                       type="password"
                       value={passwordData.currentPassword}
                       onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full px-4 py-2 bg-slate-900 border border-white/15 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
                       placeholder="Enter current password"
                     />
                   </div>
                   <button
                     onClick={handleSendOTP}
                     disabled={otpSending}
-                    className="w-full bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 text-white px-6 py-2 rounded-lg transition"
+                    className="w-full bg-amber-600 hover:bg-amber-500 disabled:bg-amber-800 text-white px-6 py-2 rounded-lg transition"
                   >
                     {otpSending ? 'Sending OTP...' : 'Send OTP'}
                   </button>
@@ -375,18 +389,18 @@ export default function InternProfile() {
               {/* Step 2: Verify OTP */}
               {passwordStep === 2 && (
                 <div className="space-y-4">
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-slate-300">
                     Enter the 6-digit OTP sent to your email: {user?.email}
                   </p>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
                       OTP Code
                     </label>
                     <input
                       type="text"
                       value={passwordData.otp}
                       onChange={(e) => setPasswordData({ ...passwordData, otp: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-center text-2xl tracking-widest"
+                      className="w-full px-4 py-2 bg-slate-900 border border-white/15 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-center text-2xl tracking-widest"
                       placeholder="000000"
                       maxLength="6"
                     />
@@ -395,13 +409,13 @@ export default function InternProfile() {
                     <button
                       onClick={handleVerifyOTP}
                       disabled={otpVerifying}
-                      className="flex-1 bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 text-white px-6 py-2 rounded-lg transition"
+                      className="flex-1 bg-amber-600 hover:bg-amber-500 disabled:bg-amber-800 text-white px-6 py-2 rounded-lg transition"
                     >
                       {otpVerifying ? 'Verifying...' : 'Verify OTP'}
                     </button>
                     <button
                       onClick={() => setPasswordStep(1)}
-                      className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                      className="px-4 py-2 border border-white/15 text-slate-200 rounded-lg hover:bg-slate-800"
                     >
                       Back
                     </button>
@@ -412,37 +426,37 @@ export default function InternProfile() {
               {/* Step 3: Enter New Password */}
               {passwordStep === 3 && (
                 <div className="space-y-4">
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-slate-300">
                     Enter your new password. It must be at least 6 characters long.
                   </p>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
                       New Password
                     </label>
                     <input
                       type="password"
                       value={passwordData.newPassword}
                       onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full px-4 py-2 bg-slate-900 border border-white/15 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
                       placeholder="Enter new password"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
                       Confirm New Password
                     </label>
                     <input
                       type="password"
                       value={passwordData.confirmPassword}
                       onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full px-4 py-2 bg-slate-900 border border-white/15 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
                       placeholder="Confirm new password"
                     />
                   </div>
                   <button
                     onClick={handleChangePassword}
                     disabled={passwordChanging}
-                    className="w-full bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 text-white px-6 py-2 rounded-lg transition"
+                    className="w-full bg-amber-600 hover:bg-amber-500 disabled:bg-amber-800 text-white px-6 py-2 rounded-lg transition"
                   >
                     {passwordChanging ? 'Changing Password...' : 'Change Password'}
                   </button>

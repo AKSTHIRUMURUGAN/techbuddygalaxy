@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { FiArrowLeft, FiMessageCircle, FiPaperclip, FiPlus, FiSend, FiSmile, FiX } from 'react-icons/fi';
 
 export default function MessagesPage() {
   const [user, setUser] = useState(null);
@@ -12,6 +13,8 @@ export default function MessagesPage() {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
+  const [conversationsLoading, setConversationsLoading] = useState(false);
+  const [messagesLoading, setMessagesLoading] = useState(false);
   const [allUsers, setAllUsers] = useState([]);
   const [showNewChat, setShowNewChat] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -33,6 +36,7 @@ export default function MessagesPage() {
 
   useEffect(() => {
     if (user) {
+      setConversationsLoading(true);
       fetchConversations();
       fetchAllUsers();
       // Reduced polling frequency to 10 seconds for conversations
@@ -52,6 +56,7 @@ export default function MessagesPage() {
     }
 
     if (selectedConversation) {
+      setMessagesLoading(true);
       fetchMessages();
       markAsRead();
       // Reduced polling frequency to 5 seconds for messages
@@ -98,6 +103,8 @@ export default function MessagesPage() {
       }
     } catch (error) {
       console.error('Error fetching conversations:', error);
+    } finally {
+      setConversationsLoading(false);
     }
   };
 
@@ -128,6 +135,8 @@ export default function MessagesPage() {
       }
     } catch (error) {
       console.error('Error fetching messages:', error);
+    } finally {
+      setMessagesLoading(false);
     }
   };
 
@@ -276,26 +285,27 @@ export default function MessagesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-[#05070f] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading messages...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto mb-4"></div>
+          <p className="text-slate-300">Loading messages...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-[#05070f] text-slate-100">
       <div className="h-screen flex flex-col">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-4 flex justify-between items-center">
+        <div className="bg-gradient-to-r from-cyan-600 to-violet-600 text-white px-6 py-4 flex justify-between items-center border-b border-white/10">
           <div>
-            <h1 className="text-2xl font-bold">💬 Messages</h1>
-            <p className="text-blue-100">Chat with team members</p>
+            <h1 className="text-2xl font-bold inline-flex items-center gap-2"><FiMessageCircle /> Messages</h1>
+            <p className="text-cyan-100">Chat with team members</p>
           </div>
           <Link href="/intern/dashboard">
-            <button className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg transition">
+            <button className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl transition inline-flex items-center border border-white/20">
+              <FiArrowLeft className="mr-2" />
               Back to Dashboard
             </button>
           </Link>
@@ -304,35 +314,42 @@ export default function MessagesPage() {
         {/* Chat Container */}
         <div className="flex-1 flex overflow-hidden">
           {/* Conversations List */}
-          <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
-            <div className="p-4 border-b border-gray-200">
+          <div className="w-80 bg-slate-950/80 border-r border-white/10 flex flex-col">
+            <div className="p-4 border-b border-white/10">
               <button
                 onClick={() => setShowNewChat(!showNewChat)}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition"
+                className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2 px-4 rounded-xl transition inline-flex items-center justify-center gap-2"
               >
-                + New Chat
+                <FiPlus /> New Chat
               </button>
             </div>
 
             <div className="flex-1 overflow-y-auto">
               {showNewChat ? (
                 <div className="p-4">
-                  <h3 className="font-bold text-gray-900 mb-3">Start New Chat</h3>
+                  <h3 className="font-bold text-white mb-3">Start New Chat</h3>
                   <div className="space-y-2">
                     {allUsers.map(u => (
                       <button
                         key={u._id}
                         onClick={() => startNewChat(u)}
-                        className="w-full text-left p-3 hover:bg-gray-100 rounded-lg transition"
+                        className="w-full text-left p-3 hover:bg-slate-800 rounded-lg transition border border-transparent hover:border-white/10"
                       >
-                        <div className="font-medium text-gray-900">{u.name}</div>
-                        <div className="text-sm text-gray-500">{u.role}</div>
+                        <div className="font-medium text-white">{u.name}</div>
+                        <div className="text-sm text-slate-400">{u.role}</div>
                       </button>
                     ))}
                   </div>
                 </div>
+              ) : conversationsLoading ? (
+                <div className="p-4 space-y-3">
+                  <div className="h-16 rounded-lg bg-slate-800/80 animate-pulse"></div>
+                  <div className="h-16 rounded-lg bg-slate-800/80 animate-pulse"></div>
+                  <div className="h-16 rounded-lg bg-slate-800/80 animate-pulse"></div>
+                  <p className="text-xs text-slate-400 text-center mt-2">Loading conversations...</p>
+                </div>
               ) : conversations.length === 0 ? (
-                <div className="p-4 text-center text-gray-500">
+                <div className="p-4 text-center text-slate-400">
                   <p>No conversations yet</p>
                   <p className="text-sm">Start a new chat</p>
                 </div>
@@ -341,9 +358,9 @@ export default function MessagesPage() {
                   <button
                     key={conv.conversationId}
                     onClick={() => setSelectedConversation(conv)}
-                    className={`w-full text-left p-4 border-b border-gray-100 hover:bg-gray-50 transition ${
+                    className={`w-full text-left p-4 border-b border-white/10 hover:bg-slate-900/70 transition ${
                       selectedConversation?.conversationId === conv.conversationId
-                        ? 'bg-blue-50'
+                        ? 'bg-cyan-500/10'
                         : ''
                     }`}
                   >
@@ -353,7 +370,7 @@ export default function MessagesPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-start">
-                          <div className="font-medium text-gray-900 truncate">
+                          <div className="font-medium text-white truncate">
                             {conv.otherUser.name}
                           </div>
                           {conv.unreadCount > 0 && (
@@ -362,10 +379,10 @@ export default function MessagesPage() {
                             </span>
                           )}
                         </div>
-                        <div className="text-sm text-gray-500 truncate">
+                        <div className="text-sm text-slate-400 truncate">
                           {conv.lastMessage}
                         </div>
-                        <div className="text-xs text-gray-400">
+                        <div className="text-xs text-slate-500">
                           {new Date(conv.lastMessageTime).toLocaleString()}
                         </div>
                       </div>
@@ -377,41 +394,46 @@ export default function MessagesPage() {
           </div>
 
           {/* Messages Area */}
-          <div className="flex-1 flex flex-col bg-gray-50">
+          <div className="flex-1 flex flex-col bg-slate-900/40">
             {selectedConversation ? (
               <>
                 {/* Chat Header */}
-                <div className="bg-white border-b border-gray-200 px-6 py-4">
+                <div className="bg-slate-950/80 border-b border-white/10 px-6 py-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
                         {selectedConversation.otherUser.name.charAt(0)}
                       </div>
                       <div>
-                        <div className="font-bold text-gray-900">
+                        <div className="font-bold text-white">
                           {selectedConversation.otherUser.name}
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm text-slate-400">
                           {selectedConversation.otherUser.role}
                         </div>
                       </div>
                     </div>
                     <button
                       onClick={closeConversation}
-                      className="text-gray-500 hover:text-gray-700 p-2 rounded-lg hover:bg-gray-100 transition"
+                      className="text-slate-400 hover:text-slate-200 p-2 rounded-lg hover:bg-slate-800 transition"
                       title="Close conversation"
                     >
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
+                      <FiX className="w-6 h-6" />
                     </button>
                   </div>
                 </div>
 
                 {/* Messages */}
                 <div className="flex-1 overflow-y-auto p-6 space-y-4">
-                  {messages.length === 0 ? (
-                    <div className="text-center text-gray-500 mt-8">
+                  {messagesLoading ? (
+                    <div className="mt-8 space-y-4">
+                      <div className="w-3/4 h-14 rounded-xl bg-slate-800/80 animate-pulse"></div>
+                      <div className="w-2/3 h-14 rounded-xl bg-slate-800/80 animate-pulse ml-auto"></div>
+                      <div className="w-1/2 h-14 rounded-xl bg-slate-800/80 animate-pulse"></div>
+                      <p className="text-xs text-slate-400 text-center mt-2">Loading messages...</p>
+                    </div>
+                  ) : messages.length === 0 ? (
+                    <div className="text-center text-slate-400 mt-8">
                       <p>No messages yet</p>
                       <p className="text-sm">Start the conversation</p>
                     </div>
@@ -465,9 +487,7 @@ export default function MessagesPage() {
                           {/* Message Footer */}
                           <div className="px-4 pb-2 flex items-center justify-between gap-2">
                             <p
-                              className={`text-xs ${
-                                msg.senderId === user.id ? 'text-blue-100' : 'text-gray-500'
-                              }`}
+                              className={`text-xs ${msg.senderId === user.id ? 'text-blue-100' : 'text-slate-500'}`}
                             >
                               {new Date(msg.createdAt).toLocaleTimeString()}
                             </p>
@@ -494,35 +514,31 @@ export default function MessagesPage() {
                 </div>
 
                 {/* Message Input */}
-                <div className="bg-white border-t border-gray-200 p-4">
+                <div className="bg-slate-950/80 border-t border-white/10 p-4">
                   {/* File Preview */}
                   {selectedFiles.length > 0 && (
-                    <div className="mb-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="mb-3 p-3 bg-slate-900 rounded-lg border border-white/10">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-gray-700">
+                        <span className="text-sm font-medium text-slate-300">
                           {selectedFiles.length} file(s) selected
                         </span>
                       </div>
                       <div className="space-y-2">
                         {selectedFiles.map((file, idx) => (
-                          <div key={idx} className="flex items-center justify-between bg-white p-2 rounded border border-gray-200">
+                          <div key={idx} className="flex items-center justify-between bg-slate-950 p-2 rounded border border-white/10">
                             <div className="flex items-center gap-2 flex-1 min-w-0">
-                              <svg className="w-5 h-5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-                              </svg>
+                              <FiPaperclip className="w-5 h-5 text-cyan-300 flex-shrink-0" />
                               <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-gray-900 truncate">{file.name}</p>
-                                <p className="text-xs text-gray-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                                <p className="text-sm font-medium text-slate-100 truncate">{file.name}</p>
+                                <p className="text-xs text-slate-400">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                               </div>
                             </div>
                             <button
                               type="button"
                               onClick={() => removeFile(idx)}
-                              className="text-red-500 hover:text-red-700 p-1 ml-2"
+                              className="text-red-400 hover:text-red-300 p-1 ml-2"
                             >
-                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                              </svg>
+                              <FiX className="w-5 h-5" />
                             </button>
                           </div>
                         ))}
@@ -532,14 +548,14 @@ export default function MessagesPage() {
 
                   {/* Emoji Picker */}
                   {showEmojiPicker && (
-                    <div className="mb-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="mb-3 p-3 bg-slate-900 rounded-lg border border-white/10">
                       <div className="flex flex-wrap gap-2">
                         {emojis.map((emoji, idx) => (
                           <button
                             key={idx}
                             type="button"
                             onClick={() => addEmoji(emoji)}
-                            className="text-2xl hover:bg-gray-200 rounded p-1 transition"
+                            className="text-2xl hover:bg-slate-800 rounded p-1 transition"
                           >
                             {emoji}
                           </button>
@@ -561,21 +577,19 @@ export default function MessagesPage() {
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
                       disabled={uploadingFile}
-                      className="bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition disabled:opacity-50"
+                      className="bg-slate-800 hover:bg-slate-700 text-slate-200 p-2 rounded-lg transition disabled:opacity-50"
                       title="Attach file (max 100MB)"
                     >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-                      </svg>
+                      <FiPaperclip className="w-5 h-5" />
                     </button>
                     
                     <button
                       type="button"
                       onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                      className="bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition"
+                      className="bg-slate-800 hover:bg-slate-700 text-slate-200 p-2 rounded-lg transition"
                       title="Add emoji"
                     >
-                      <span className="text-xl">😊</span>
+                      <FiSmile className="text-xl" />
                     </button>
                     
                     <input
@@ -583,13 +597,13 @@ export default function MessagesPage() {
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
                       placeholder="Type a message..."
-                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="flex-1 px-4 py-2 bg-slate-900 border border-white/15 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
                     />
                     
                     <button
                       type="submit"
                       disabled={(!newMessage.trim() && selectedFiles.length === 0) || uploadingFile}
-                      className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-bold px-6 py-2 rounded-lg transition flex items-center gap-2"
+                      className="bg-cyan-600 hover:bg-cyan-500 disabled:bg-cyan-800 text-white font-bold px-6 py-2 rounded-lg transition flex items-center gap-2"
                     >
                       {uploadingFile ? (
                         <>
@@ -600,16 +614,16 @@ export default function MessagesPage() {
                           Sending...
                         </>
                       ) : (
-                        'Send'
+                        <><FiSend />Send</>
                       )}
                     </button>
                   </form>
                 </div>
               </>
             ) : (
-              <div className="flex-1 flex items-center justify-center text-gray-500">
+              <div className="flex-1 flex items-center justify-center text-slate-400">
                 <div className="text-center">
-                  <div className="text-6xl mb-4">💬</div>
+                  <FiMessageCircle className="text-6xl mb-4 mx-auto text-slate-500" />
                   <p className="text-xl">Select a conversation to start chatting</p>
                 </div>
               </div>

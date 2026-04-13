@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { FiArrowLeft, FiMessageCircle, FiPaperclip, FiPlus, FiSend, FiSmile, FiX } from 'react-icons/fi';
 
 export default function AdminMessagesPage() {
   const [adminUser, setAdminUser] = useState({ id: 'admin', name: 'Admin', role: 'admin' });
@@ -264,60 +265,61 @@ export default function AdminMessagesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-[#05070f] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading messages...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto mb-4"></div>
+          <p className="text-slate-300">Loading messages...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-[#05070f] text-slate-100">
       <div className="h-screen flex flex-col">
-        <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-4 flex justify-between items-center">
+        <div className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-6 py-4 flex justify-between items-center border-b border-white/10">
           <div>
-            <h1 className="text-2xl font-bold">💬 Messages</h1>
-            <p className="text-purple-100">Chat with interns and team</p>
+            <h1 className="text-2xl font-bold inline-flex items-center gap-2"><FiMessageCircle /> Messages</h1>
+            <p className="text-violet-100">Chat with interns and team</p>
           </div>
           <Link href="/admin">
-            <button className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg transition">
+            <button className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl transition inline-flex items-center gap-2 border border-white/20">
+              <FiArrowLeft />
               Back to Dashboard
             </button>
           </Link>
         </div>
 
         <div className="flex-1 flex overflow-hidden">
-          <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
-            <div className="p-4 border-b border-gray-200">
+          <div className="w-80 bg-slate-950/80 border-r border-white/10 flex flex-col">
+            <div className="p-4 border-b border-white/10">
               <button
                 onClick={() => setShowNewChat(!showNewChat)}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition"
+                className="w-full bg-violet-600 hover:bg-violet-500 text-white font-bold py-2 px-4 rounded-xl transition inline-flex items-center justify-center gap-2"
               >
-                + New Chat
+                <FiPlus /> New Chat
               </button>
             </div>
 
             <div className="flex-1 overflow-y-auto">
               {showNewChat ? (
                 <div className="p-4">
-                  <h3 className="font-bold text-gray-900 mb-3">Start New Chat</h3>
+                  <h3 className="font-bold text-white mb-3">Start New Chat</h3>
                   <div className="space-y-2">
                     {allUsers.map(u => (
                       <button
                         key={u._id}
                         onClick={() => startNewChat(u)}
-                        className="w-full text-left p-3 hover:bg-gray-100 rounded-lg transition"
+                        className="w-full text-left p-3 hover:bg-slate-800 rounded-lg transition border border-transparent hover:border-white/10"
                       >
-                        <div className="font-medium text-gray-900">{u.name}</div>
-                        <div className="text-sm text-gray-500">{u.role} • {u.department}</div>
+                        <div className="font-medium text-white">{u.name}</div>
+                        <div className="text-sm text-slate-400">{u.role} • {u.department}</div>
                       </button>
                     ))}
                   </div>
                 </div>
               ) : conversations.length === 0 ? (
-                <div className="p-4 text-center text-gray-500">
+                <div className="p-4 text-center text-slate-400">
                   <p>No conversations yet</p>
                   <p className="text-sm">Start a new chat</p>
                 </div>
@@ -326,9 +328,9 @@ export default function AdminMessagesPage() {
                   <button
                     key={conv.conversationId}
                     onClick={() => setSelectedConversation(conv)}
-                    className={`w-full text-left p-4 border-b border-gray-100 hover:bg-gray-50 transition ${
+                    className={`w-full text-left p-4 border-b border-white/10 hover:bg-slate-900/70 transition ${
                       selectedConversation?.conversationId === conv.conversationId
-                        ? 'bg-purple-50'
+                        ? 'bg-violet-500/10'
                         : ''
                     }`}
                   >
@@ -338,7 +340,7 @@ export default function AdminMessagesPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-start">
-                          <div className="font-medium text-gray-900 truncate">
+                          <div className="font-medium text-white truncate">
                             {conv.otherUser.name}
                           </div>
                           {conv.unreadCount > 0 && (
@@ -347,10 +349,10 @@ export default function AdminMessagesPage() {
                             </span>
                           )}
                         </div>
-                        <div className="text-sm text-gray-500 truncate">
+                        <div className="text-sm text-slate-400 truncate">
                           {conv.lastMessage}
                         </div>
-                        <div className="text-xs text-gray-400">
+                        <div className="text-xs text-slate-500">
                           {new Date(conv.lastMessageTime).toLocaleString()}
                         </div>
                       </div>
@@ -361,19 +363,19 @@ export default function AdminMessagesPage() {
             </div>
           </div>
 
-          <div className="flex-1 flex flex-col bg-gray-50">
+          <div className="flex-1 flex flex-col bg-slate-900/40">
             {selectedConversation ? (
               <>
-                <div className="bg-white border-b border-gray-200 px-6 py-4">
+                <div className="bg-slate-950/80 border-b border-white/10 px-6 py-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white font-bold">
                       {selectedConversation.otherUser.name.charAt(0)}
                     </div>
                     <div>
-                      <div className="font-bold text-gray-900">
+                      <div className="font-bold text-white">
                         {selectedConversation.otherUser.name}
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-slate-400">
                         {selectedConversation.otherUser.role}
                       </div>
                     </div>
@@ -382,7 +384,7 @@ export default function AdminMessagesPage() {
 
                 <div className="flex-1 overflow-y-auto p-6 space-y-4">
                   {messages.length === 0 ? (
-                    <div className="text-center text-gray-500 mt-8">
+                    <div className="text-center text-slate-400 mt-8">
                       <p>No messages yet</p>
                       <p className="text-sm">Start the conversation</p>
                     </div>
@@ -437,7 +439,7 @@ export default function AdminMessagesPage() {
                           <div className="px-4 pb-2 flex items-center justify-between gap-2">
                             <p
                               className={`text-xs ${
-                                msg.senderId === adminUser.id ? 'text-purple-100' : 'text-gray-500'
+                                msg.senderId === adminUser.id ? 'text-purple-100' : 'text-slate-500'
                               }`}
                             >
                               {new Date(msg.createdAt).toLocaleTimeString()}
@@ -464,35 +466,31 @@ export default function AdminMessagesPage() {
                   <div ref={messagesEndRef} />
                 </div>
 
-                <div className="bg-white border-t border-gray-200 p-4">
+                <div className="bg-slate-950/80 border-t border-white/10 p-4">
                   {/* File Preview */}
                   {selectedFiles.length > 0 && (
-                    <div className="mb-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="mb-3 p-3 bg-slate-900 rounded-lg border border-white/10">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-gray-700">
+                        <span className="text-sm font-medium text-slate-300">
                           {selectedFiles.length} file(s) selected
                         </span>
                       </div>
                       <div className="space-y-2">
                         {selectedFiles.map((file, idx) => (
-                          <div key={idx} className="flex items-center justify-between bg-white p-2 rounded border border-gray-200">
+                          <div key={idx} className="flex items-center justify-between bg-slate-950 p-2 rounded border border-white/10">
                             <div className="flex items-center gap-2 flex-1 min-w-0">
-                              <svg className="w-5 h-5 text-purple-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-                              </svg>
+                              <FiPaperclip className="w-5 h-5 text-violet-300 flex-shrink-0" />
                               <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-gray-900 truncate">{file.name}</p>
-                                <p className="text-xs text-gray-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                                <p className="text-sm font-medium text-slate-100 truncate">{file.name}</p>
+                                <p className="text-xs text-slate-400">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                               </div>
                             </div>
                             <button
                               type="button"
                               onClick={() => removeFile(idx)}
-                              className="text-red-500 hover:text-red-700 p-1 ml-2"
+                              className="text-red-400 hover:text-red-300 p-1 ml-2"
                             >
-                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                              </svg>
+                              <FiX className="w-5 h-5" />
                             </button>
                           </div>
                         ))}
@@ -502,14 +500,14 @@ export default function AdminMessagesPage() {
 
                   {/* Emoji Picker */}
                   {showEmojiPicker && (
-                    <div className="mb-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="mb-3 p-3 bg-slate-900 rounded-lg border border-white/10">
                       <div className="flex flex-wrap gap-2">
                         {emojis.map((emoji, idx) => (
                           <button
                             key={idx}
                             type="button"
                             onClick={() => addEmoji(emoji)}
-                            className="text-2xl hover:bg-gray-200 rounded p-1 transition"
+                            className="text-2xl hover:bg-slate-800 rounded p-1 transition"
                           >
                             {emoji}
                           </button>
@@ -531,7 +529,7 @@ export default function AdminMessagesPage() {
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
                       disabled={uploadingFile}
-                      className="bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition disabled:opacity-50"
+                      className="bg-slate-800 hover:bg-slate-700 text-slate-200 p-2 rounded-lg transition disabled:opacity-50"
                       title="Attach file (max 100MB)"
                     >
                       {uploadingFile ? (
@@ -540,19 +538,17 @@ export default function AdminMessagesPage() {
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
                       ) : (
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-                        </svg>
+                        <FiPaperclip className="w-5 h-5" />
                       )}
                     </button>
                     
                     <button
                       type="button"
                       onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                      className="bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition"
+                      className="bg-slate-800 hover:bg-slate-700 text-slate-200 p-2 rounded-lg transition"
                       title="Add emoji"
                     >
-                      <span className="text-xl">😊</span>
+                      <FiSmile className="text-xl" />
                     </button>
                     
                     <input
@@ -560,13 +556,13 @@ export default function AdminMessagesPage() {
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
                       placeholder="Type a message..."
-                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="flex-1 px-4 py-2 bg-slate-900 border border-white/15 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
                     />
                     
                     <button
                       type="submit"
                       disabled={(!newMessage.trim() && selectedFiles.length === 0) || uploadingFile}
-                      className="bg-purple-600 hover:bg-purple-700 disabled:bg-purple-300 text-white font-bold px-6 py-2 rounded-lg transition flex items-center gap-2"
+                      className="bg-violet-600 hover:bg-violet-500 disabled:bg-violet-800 text-white font-bold px-6 py-2 rounded-lg transition flex items-center gap-2"
                     >
                       {uploadingFile ? (
                         <>
@@ -577,16 +573,16 @@ export default function AdminMessagesPage() {
                           Sending...
                         </>
                       ) : (
-                        'Send'
+                        <><FiSend />Send</>
                       )}
                     </button>
                   </form>
                 </div>
               </>
             ) : (
-              <div className="flex-1 flex items-center justify-center text-gray-500">
+              <div className="flex-1 flex items-center justify-center text-slate-400">
                 <div className="text-center">
-                  <div className="text-6xl mb-4">💬</div>
+                  <FiMessageCircle className="text-6xl mb-4 mx-auto text-slate-500" />
                   <p className="text-xl">Select a conversation to start chatting</p>
                 </div>
               </div>
@@ -597,16 +593,16 @@ export default function AdminMessagesPage() {
 
       {/* File Preview Modal */}
       {previewFile && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] flex flex-col">
-            <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-slate-950 border border-white/10 rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col">
+            <div className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-6 py-4 rounded-t-2xl flex justify-between items-center">
               <div>
                 <h2 className="text-xl font-bold">{previewFile.name}</h2>
                 <p className="text-sm text-purple-100">{(previewFile.size / 1024 / 1024).toFixed(2)} MB</p>
               </div>
               <button
                 onClick={() => setPreviewFile(null)}
-                className="text-white hover:text-gray-200 text-3xl"
+                className="text-white hover:text-slate-200 text-3xl"
               >
                 ×
               </button>
@@ -620,9 +616,9 @@ export default function AdminMessagesPage() {
                   <svg className="w-24 h-24 mx-auto text-red-500 mb-4" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
                   </svg>
-                  <p className="text-xl font-bold text-gray-900 mb-2">PDF Document</p>
-                  <p className="text-gray-600 mb-4">{previewFile.name}</p>
-                  <p className="text-sm text-gray-500 mb-6">{(previewFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                  <p className="text-xl font-bold text-slate-100 mb-2">PDF Document</p>
+                  <p className="text-slate-300 mb-4">{previewFile.name}</p>
+                  <p className="text-sm text-slate-400 mb-6">{(previewFile.size / 1024 / 1024).toFixed(2)} MB</p>
                   <a
                     href={previewFile.url}
                     target="_blank"
@@ -642,7 +638,7 @@ export default function AdminMessagesPage() {
                   <svg className="w-24 h-24 mx-auto text-purple-500 mb-4" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.37 4.37 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z" />
                   </svg>
-                  <p className="text-xl font-bold text-gray-900 mb-4">Audio File</p>
+                  <p className="text-xl font-bold text-slate-100 mb-4">Audio File</p>
                   <audio src={previewFile.url} controls className="w-full max-w-md mx-auto" />
                 </div>
               ) : previewFile.type.startsWith('text/') || 
@@ -652,8 +648,8 @@ export default function AdminMessagesPage() {
                   <svg className="w-24 h-24 mx-auto text-blue-500 mb-4" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
                   </svg>
-                  <p className="text-xl font-bold text-gray-900 mb-2">Text Document</p>
-                  <p className="text-gray-600 mb-4">{previewFile.name}</p>
+                  <p className="text-xl font-bold text-slate-100 mb-2">Text Document</p>
+                  <p className="text-slate-300 mb-4">{previewFile.name}</p>
                   <a
                     href={previewFile.url}
                     target="_blank"
@@ -674,9 +670,9 @@ export default function AdminMessagesPage() {
                   <svg className="w-24 h-24 mx-auto text-blue-600 mb-4" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
                   </svg>
-                  <p className="text-xl font-bold text-gray-900 mb-2">Word Document</p>
-                  <p className="text-gray-600 mb-4">{previewFile.name}</p>
-                  <p className="text-sm text-gray-500 mb-6">{(previewFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                  <p className="text-xl font-bold text-slate-100 mb-2">Word Document</p>
+                  <p className="text-slate-300 mb-4">{previewFile.name}</p>
+                  <p className="text-sm text-slate-400 mb-6">{(previewFile.size / 1024 / 1024).toFixed(2)} MB</p>
                   <button
                     onClick={() => downloadFile(previewFile)}
                     className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition inline-flex items-center gap-2"
@@ -695,9 +691,9 @@ export default function AdminMessagesPage() {
                   <svg className="w-24 h-24 mx-auto text-green-600 mb-4" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
                   </svg>
-                  <p className="text-xl font-bold text-gray-900 mb-2">Excel Spreadsheet</p>
-                  <p className="text-gray-600 mb-4">{previewFile.name}</p>
-                  <p className="text-sm text-gray-500 mb-6">{(previewFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                  <p className="text-xl font-bold text-slate-100 mb-2">Excel Spreadsheet</p>
+                  <p className="text-slate-300 mb-4">{previewFile.name}</p>
+                  <p className="text-sm text-slate-400 mb-6">{(previewFile.size / 1024 / 1024).toFixed(2)} MB</p>
                   <button
                     onClick={() => downloadFile(previewFile)}
                     className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition inline-flex items-center gap-2"
@@ -716,9 +712,9 @@ export default function AdminMessagesPage() {
                   <svg className="w-24 h-24 mx-auto text-orange-600 mb-4" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
                   </svg>
-                  <p className="text-xl font-bold text-gray-900 mb-2">PowerPoint Presentation</p>
-                  <p className="text-gray-600 mb-4">{previewFile.name}</p>
-                  <p className="text-sm text-gray-500 mb-6">{(previewFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                  <p className="text-xl font-bold text-slate-100 mb-2">PowerPoint Presentation</p>
+                  <p className="text-slate-300 mb-4">{previewFile.name}</p>
+                  <p className="text-sm text-slate-400 mb-6">{(previewFile.size / 1024 / 1024).toFixed(2)} MB</p>
                   <button
                     onClick={() => downloadFile(previewFile)}
                     className="bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded-lg transition inline-flex items-center gap-2"
@@ -736,9 +732,9 @@ export default function AdminMessagesPage() {
                   <svg className="w-24 h-24 mx-auto text-yellow-600 mb-4" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V8a2 2 0 00-2-2h-5L9 4H4zm7 5a1 1 0 10-2 0v1H8a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
                   </svg>
-                  <p className="text-xl font-bold text-gray-900 mb-2">Compressed Archive</p>
-                  <p className="text-gray-600 mb-4">{previewFile.name}</p>
-                  <p className="text-sm text-gray-500 mb-6">{(previewFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                  <p className="text-xl font-bold text-slate-100 mb-2">Compressed Archive</p>
+                  <p className="text-slate-300 mb-4">{previewFile.name}</p>
+                  <p className="text-sm text-slate-400 mb-6">{(previewFile.size / 1024 / 1024).toFixed(2)} MB</p>
                   <button
                     onClick={() => downloadFile(previewFile)}
                     className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-6 rounded-lg transition inline-flex items-center gap-2"
@@ -754,9 +750,9 @@ export default function AdminMessagesPage() {
                   <svg className="w-24 h-24 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                   </svg>
-                  <p className="text-xl font-bold text-gray-900 mb-2">File Attachment</p>
-                  <p className="text-gray-600 mb-2">{previewFile.name}</p>
-                  <p className="text-sm text-gray-500 mb-6">
+                  <p className="text-xl font-bold text-slate-100 mb-2">File Attachment</p>
+                  <p className="text-slate-300 mb-2">{previewFile.name}</p>
+                  <p className="text-sm text-slate-400 mb-6">
                     {previewFile.type || 'Unknown type'} • {(previewFile.size / 1024 / 1024).toFixed(2)} MB
                   </p>
                   <button
@@ -772,7 +768,7 @@ export default function AdminMessagesPage() {
               )}
             </div>
 
-            <div className="border-t border-gray-200 px-6 py-4 flex gap-3">
+            <div className="border-t border-white/10 px-6 py-4 flex gap-3">
               <button
                 onClick={() => downloadFile(previewFile)}
                 className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition flex items-center justify-center gap-2"
@@ -784,7 +780,7 @@ export default function AdminMessagesPage() {
               </button>
               <button
                 onClick={() => setPreviewFile(null)}
-                className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg transition"
+                className="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 px-6 rounded-lg transition"
               >
                 Close
               </button>

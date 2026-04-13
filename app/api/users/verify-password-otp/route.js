@@ -1,8 +1,5 @@
 import { NextResponse } from 'next/server';
-
-// Import the same OTP store from send-password-otp
-// In production, use Redis or database
-const otpStore = new Map();
+import passwordOtpStore from '@/lib/passwordOtpStore';
 
 export async function POST(request) {
   try {
@@ -15,7 +12,7 @@ export async function POST(request) {
       );
     }
 
-    const storedData = otpStore.get(userId);
+    const storedData = passwordOtpStore.get(userId);
 
     if (!storedData) {
       return NextResponse.json(
@@ -25,7 +22,7 @@ export async function POST(request) {
     }
 
     if (Date.now() > storedData.expiresAt) {
-      otpStore.delete(userId);
+      passwordOtpStore.delete(userId);
       return NextResponse.json(
         { success: false, error: 'OTP has expired' },
         { status: 400 }
@@ -40,7 +37,7 @@ export async function POST(request) {
     }
 
     // Mark OTP as verified
-    otpStore.set(userId, {
+    passwordOtpStore.set(userId, {
       ...storedData,
       verified: true,
     });

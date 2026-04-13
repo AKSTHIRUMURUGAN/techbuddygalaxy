@@ -2,6 +2,19 @@
 
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
+import {
+  FiArrowLeft,
+  FiEdit2,
+  FiExternalLink,
+  FiEye,
+  FiFileText,
+  FiLink2,
+  FiLoader,
+  FiPlus,
+  FiSave,
+  FiTrash2,
+  FiX
+} from 'react-icons/fi';
 
 export default function TemplatesAdminPage() {
   const [templates, setTemplates] = useState([]);
@@ -414,10 +427,10 @@ export default function TemplatesAdminPage() {
   // Redirect to login if not authenticated
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-[#05070f] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Checking authentication...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto mb-4"></div>
+          <p className="text-slate-300">Checking authentication...</p>
         </div>
       </div>
     );
@@ -430,25 +443,25 @@ export default function TemplatesAdminPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-[#05070f] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading templates...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-400 mx-auto mb-4"></div>
+          <p className="text-slate-300">Loading templates...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8 px-4">
+    <div className="min-h-screen bg-[#05070f] py-8 px-4 text-slate-100">
       <div className="max-w-6xl mx-auto">
-        <div className="bg-white rounded-lg shadow-xl">
+        <div className="bg-slate-950/80 border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
           {/* Header */}
-          <div className="bg-purple-600 text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
+          <div className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-6 py-5 flex justify-between items-center">
             <div>
               <h1 className="text-2xl font-bold">Document Templates</h1>
-              <p className="text-purple-100">Manage templates for generating documents</p>
-              <p className="text-purple-200 text-sm mt-1">
+              <p className="text-violet-100">Manage templates for generating documents</p>
+              <p className="text-violet-200 text-sm mt-1">
                 <span className="inline-block w-2 h-2 bg-blue-300 rounded-full mr-1"></span>
                 Default templates cannot be edited or deleted
                 <span className="mx-2">•</span>
@@ -465,20 +478,16 @@ export default function TemplatesAdminPage() {
             <div className="flex space-x-3">
               <button
                 onClick={() => setShowAddModal(true)}
-                className="bg-purple-700 hover:bg-purple-800 text-white px-4 py-2 rounded-lg transition duration-200 flex items-center"
+                className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl transition duration-200 flex items-center border border-white/20"
               >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                </svg>
+                <FiPlus className="w-4 h-4 mr-2" />
                 Add Template
               </button>
               <a
                 href="/admin/applications"
-                className="bg-purple-700 hover:bg-purple-800 text-white px-4 py-2 rounded-lg transition duration-200 flex items-center"
+                className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl transition duration-200 flex items-center border border-white/20"
               >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
+                <FiArrowLeft className="w-4 h-4 mr-2" />
                 Back to Applications
               </a>
             </div>
@@ -488,22 +497,22 @@ export default function TemplatesAdminPage() {
           <div className="p-6">
             {templates.length === 0 ? (
               <div className="text-center py-12">
-                <div className="text-6xl mb-4">📄</div>
-                <h3 className="text-xl font-semibold text-gray-700 mb-2">No Templates Available</h3>
-                <p className="text-gray-500">Add your first template to get started.</p>
+                <FiFileText className="text-6xl mb-4 mx-auto text-slate-500" />
+                <h3 className="text-xl font-semibold text-white mb-2">No Templates Available</h3>
+                <p className="text-slate-400">Add your first template to get started.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {templates.map((template) => (
-                  <div key={template.id} className={`bg-white border-2 rounded-lg p-6 hover:shadow-lg transition-shadow ${
+                  <div key={template.id} className={`bg-slate-900/60 border rounded-xl p-6 hover:shadow-lg transition-all ${
                     template.id.startsWith('custom-') 
-                      ? 'border-purple-200 hover:border-purple-300' 
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-violet-400/40 hover:border-violet-300/60' 
+                      : 'border-white/10 hover:border-white/20'
                   }`}>
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
-                          <h3 className="text-lg font-semibold text-gray-900">{template.title}</h3>
+                          <h3 className="text-lg font-semibold text-white">{template.title}</h3>
                           {template.id.startsWith('custom-') && (
                             <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full font-medium">
                               Custom
@@ -527,12 +536,12 @@ export default function TemplatesAdminPage() {
                       </div>
                     </div>
                     
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                    <p className="text-slate-300 text-sm mb-4 line-clamp-3">
                       {template.description || 'No description provided'}
                     </p>
                     
                     <div className="space-y-2">
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-slate-400">
                         <strong>URL:</strong> 
                         <span className="ml-1 font-mono break-all">
                           {template.url.length > 50 ? `${template.url.substring(0, 50)}...` : template.url}
@@ -540,22 +549,19 @@ export default function TemplatesAdminPage() {
                       </div>
                       
                       {template.createdAt && (
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-slate-400">
                           <strong>Added:</strong> {new Date(template.createdAt).toLocaleDateString()}
                         </div>
                       )}
                     </div>
                     
-                    <div className="mt-4 pt-4 border-t border-gray-100">
+                    <div className="mt-4 pt-4 border-t border-white/10">
                       <div className="flex space-x-2">
                         <button
                           onClick={() => previewTemplate(template)}
                           className="flex-1 bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center"
                         >
-                          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                          </svg>
+                          <FiEye className="w-4 h-4 mr-2" />
                           Preview & Test
                         </button>
                         
@@ -563,9 +569,7 @@ export default function TemplatesAdminPage() {
                           onClick={() => setupFieldMapping(template)}
                           className="flex-1 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center"
                         >
-                          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                          </svg>
+                          <FiLink2 className="w-4 h-4 mr-2" />
                           Map Fields
                         </button>
                       </div>
@@ -576,9 +580,7 @@ export default function TemplatesAdminPage() {
                           className="bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium py-2 px-3 rounded-lg transition duration-200"
                           title="View Template"
                         >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                          </svg>
+                          <FiExternalLink className="w-4 h-4" />
                         </button>
                         
                         {template.id.startsWith('custom-') && (
@@ -588,9 +590,7 @@ export default function TemplatesAdminPage() {
                               className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-3 rounded-lg transition duration-200"
                               title="Edit Template"
                             >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                              </svg>
+                              <FiEdit2 className="w-4 h-4" />
                             </button>
                             <button
                               onClick={() => deleteTemplate(template)}
@@ -599,14 +599,9 @@ export default function TemplatesAdminPage() {
                               title="Delete Template"
                             >
                               {deleting === template.id ? (
-                                <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
+                                <FiLoader className="w-4 h-4 animate-spin" />
                               ) : (
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                </svg>
+                                <FiTrash2 className="w-4 h-4" />
                               )}
                             </button>
                           </>
@@ -622,15 +617,15 @@ export default function TemplatesAdminPage() {
 
         {/* Add Template Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg max-w-md w-full">
-              <div className="bg-purple-600 text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-2xl max-w-md w-full">
+              <div className="bg-purple-600 text-white px-6 py-4 rounded-t-2xl flex justify-between items-center">
                 <h2 className="text-xl font-bold">Add New Template</h2>
                 <button
                   onClick={() => setShowAddModal(false)}
                   className="text-white hover:text-gray-200 text-2xl"
                 >
-                  ×
+                  <FiX />
                 </button>
               </div>
               
@@ -718,9 +713,9 @@ export default function TemplatesAdminPage() {
 
         {/* Edit Template Modal */}
         {showEditModal && editingTemplate && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg max-w-md w-full">
-              <div className="bg-blue-600 text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-2xl max-w-md w-full">
+              <div className="bg-blue-600 text-white px-6 py-4 rounded-t-2xl flex justify-between items-center">
                 <h2 className="text-xl font-bold">Edit Template</h2>
                 <button
                   onClick={() => {
@@ -730,7 +725,7 @@ export default function TemplatesAdminPage() {
                   }}
                   className="text-white hover:text-gray-200 text-2xl"
                 >
-                  ×
+                  <FiX />
                 </button>
               </div>
               
@@ -822,9 +817,9 @@ export default function TemplatesAdminPage() {
 
         {/* Template Preview & Test Modal */}
         {showPreviewModal && previewingTemplate && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="bg-green-600 text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="bg-green-600 text-white px-6 py-4 rounded-t-2xl flex justify-between items-center">
                 <div>
                   <h2 className="text-xl font-bold">Preview & Test Template</h2>
                   <p className="text-green-100 text-sm">{previewingTemplate.title}</p>
@@ -838,7 +833,7 @@ export default function TemplatesAdminPage() {
                   }}
                   className="text-white hover:text-gray-200 text-2xl"
                 >
-                  ×
+                  <FiX />
                 </button>
               </div>
               
@@ -924,17 +919,12 @@ export default function TemplatesAdminPage() {
                         >
                           {generating ? (
                             <>
-                              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                              </svg>
+                              <FiLoader className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
                               Generating Test Document...
                             </>
                           ) : (
                             <>
-                              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                              </svg>
+                              <FiSave className="w-5 h-5 mr-2" />
                               Generate Test {format === 'pdf' ? 'PDF' : 'Word'} Document
                             </>
                           )}
@@ -979,9 +969,9 @@ export default function TemplatesAdminPage() {
 
         {/* Field Mapping Modal */}
         {showMappingModal && mappingTemplate && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="bg-orange-600 text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="bg-orange-600 text-white px-6 py-4 rounded-t-2xl flex justify-between items-center">
                 <div>
                   <h2 className="text-xl font-bold">Map Template Fields</h2>
                   <p className="text-orange-100 text-sm">{mappingTemplate.title}</p>
@@ -995,7 +985,7 @@ export default function TemplatesAdminPage() {
                   }}
                   className="text-white hover:text-gray-200 text-2xl"
                 >
-                  ×
+                  <FiX />
                 </button>
               </div>
               
@@ -1074,9 +1064,7 @@ export default function TemplatesAdminPage() {
                         onClick={saveFieldMapping}
                         className="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center"
                       >
-                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12" />
-                        </svg>
+                        <FiSave className="w-5 h-5 mr-2" />
                         Save Field Mapping
                       </button>
                       <button

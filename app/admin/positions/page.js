@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
+import { FiArrowLeft, FiBriefcase, FiEdit2, FiLoader, FiPlus, FiTrash2, FiX } from 'react-icons/fi';
 
 export default function PositionsAdminPage() {
   const [positions, setPositions] = useState([]);
@@ -163,10 +164,10 @@ export default function PositionsAdminPage() {
   // Redirect to login if not authenticated
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-[#05070f] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Checking authentication...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-400 mx-auto mb-4"></div>
+          <p className="text-slate-300">Checking authentication...</p>
         </div>
       </div>
     );
@@ -179,21 +180,21 @@ export default function PositionsAdminPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-[#05070f] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading positions...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-400 mx-auto mb-4"></div>
+          <p className="text-slate-300">Loading positions...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8 px-4">
+    <div className="min-h-screen bg-[#05070f] py-8 px-4 text-slate-100">
       <div className="max-w-6xl mx-auto">
-        <div className="bg-white rounded-lg shadow-xl">
+        <div className="bg-slate-950/80 border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
           {/* Header */}
-          <div className="bg-indigo-600 text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
+          <div className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-6 py-5 flex justify-between items-center">
             <div>
               <h1 className="text-2xl font-bold">Position Management</h1>
               <p className="text-indigo-100">Manage available positions for applications and documents</p>
@@ -201,20 +202,16 @@ export default function PositionsAdminPage() {
             <div className="flex space-x-3">
               <button
                 onClick={() => setShowAddModal(true)}
-                className="bg-indigo-700 hover:bg-indigo-800 text-white px-4 py-2 rounded-lg transition duration-200 flex items-center"
+                className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl transition duration-200 flex items-center border border-white/20"
               >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                </svg>
+                <FiPlus className="w-4 h-4 mr-2" />
                 Add Position
               </button>
               <a
                 href="/admin/applications"
-                className="bg-indigo-700 hover:bg-indigo-800 text-white px-4 py-2 rounded-lg transition duration-200 flex items-center"
+                className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl transition duration-200 flex items-center border border-white/20"
               >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
+                <FiArrowLeft className="w-4 h-4 mr-2" />
                 Back to Applications
               </a>
             </div>
@@ -224,59 +221,52 @@ export default function PositionsAdminPage() {
           <div className="p-6">
             {positions.length === 0 ? (
               <div className="text-center py-12">
-                <div className="text-6xl mb-4">💼</div>
-                <h3 className="text-xl font-semibold text-gray-700 mb-2">No Positions Available</h3>
-                <p className="text-gray-500">Add your first position to get started.</p>
+                <FiBriefcase className="text-6xl mb-4 mx-auto text-slate-500" />
+                <h3 className="text-xl font-semibold text-white mb-2">No Positions Available</h3>
+                <p className="text-slate-400">Add your first position to get started.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {positions.map((position) => (
-                  <div key={position.id} className="bg-white border-2 border-indigo-200 hover:border-indigo-300 rounded-lg p-6 hover:shadow-lg transition-shadow">
+                  <div key={position.id} className="bg-slate-900/60 border border-indigo-400/30 hover:border-indigo-300/60 rounded-xl p-6 hover:shadow-lg transition-shadow">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">{position.title}</h3>
+                        <h3 className="text-lg font-semibold text-white mb-2">{position.title}</h3>
                       </div>
                     </div>
                     
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                    <p className="text-slate-300 text-sm mb-4 line-clamp-3">
                       {position.description || 'No description provided'}
                     </p>
                     
                     {position.createdAt && (
-                      <div className="text-xs text-gray-500 mb-4">
+                      <div className="text-xs text-slate-400 mb-4">
                         <strong>Added:</strong> {new Date(position.createdAt).toLocaleDateString()}
                       </div>
                     )}
                     
-                    <div className="mt-4 pt-4 border-t border-gray-100">
+                    <div className="mt-4 pt-4 border-t border-white/10">
                       <div className="flex justify-between gap-2">
                         <button
                           onClick={() => openEditModal(position)}
-                          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center"
+                          className="flex-1 bg-cyan-600 hover:bg-cyan-500 text-white text-sm font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center"
                         >
-                          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                          </svg>
+                          <FiEdit2 className="w-4 h-4 mr-2" />
                           Edit
                         </button>
                         <button
                           onClick={() => deletePosition(position)}
                           disabled={deleting === position.id}
-                          className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white text-sm font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center"
+                          className="flex-1 bg-red-600 hover:bg-red-500 disabled:bg-red-800 text-white text-sm font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center"
                         >
                           {deleting === position.id ? (
                             <>
-                              <svg className="w-4 h-4 mr-2 animate-spin" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                              </svg>
+                              <FiLoader className="w-4 h-4 mr-2 animate-spin" />
                               Deleting...
                             </>
                           ) : (
                             <>
-                              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                              </svg>
+                              <FiTrash2 className="w-4 h-4 mr-2" />
                               Delete
                             </>
                           )}
@@ -292,40 +282,40 @@ export default function PositionsAdminPage() {
 
         {/* Add Position Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg max-w-md w-full">
-              <div className="bg-indigo-600 text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-slate-950 border border-white/10 rounded-2xl max-w-md w-full">
+              <div className="bg-indigo-600 text-white px-6 py-4 rounded-t-2xl flex justify-between items-center">
                 <h2 className="text-xl font-bold">Add New Position</h2>
                 <button
                   onClick={() => setShowAddModal(false)}
-                  className="text-white hover:text-gray-200 text-2xl"
+                  className="text-white hover:text-slate-200 text-2xl"
                 >
-                  ×
+                  <FiX />
                 </button>
               </div>
               
               <div className="p-6 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
                     Position Title *
                   </label>
                   <input
                     type="text"
                     value={newPosition.title}
                     onChange={(e) => setNewPosition(prev => ({ ...prev, title: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 bg-slate-900 border border-white/15 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     placeholder="e.g., Senior Software Engineer"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
                     Description
                   </label>
                   <textarea
                     value={newPosition.description}
                     onChange={(e) => setNewPosition(prev => ({ ...prev, description: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 bg-slate-900 border border-white/15 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     rows="3"
                     placeholder="Brief description of this position..."
                   />
@@ -342,7 +332,7 @@ export default function PositionsAdminPage() {
                   <button
                     onClick={() => setShowAddModal(false)}
                     disabled={adding}
-                    className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded-lg transition duration-200"
+                    className="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
                   >
                     Cancel
                   </button>
@@ -354,43 +344,43 @@ export default function PositionsAdminPage() {
 
         {/* Edit Position Modal */}
         {showEditModal && editingPosition && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg max-w-md w-full">
-              <div className="bg-blue-600 text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-slate-950 border border-white/10 rounded-2xl max-w-md w-full">
+              <div className="bg-cyan-600 text-white px-6 py-4 rounded-t-2xl flex justify-between items-center">
                 <h2 className="text-xl font-bold">Edit Position</h2>
                 <button
                   onClick={() => {
                     setShowEditModal(false);
                     setEditingPosition(null);
                   }}
-                  className="text-white hover:text-gray-200 text-2xl"
+                  className="text-white hover:text-slate-200 text-2xl"
                 >
-                  ×
+                  <FiX />
                 </button>
               </div>
               
               <div className="p-6 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
                     Position Title *
                   </label>
                   <input
                     type="text"
                     value={editingPosition.title}
                     onChange={(e) => setEditingPosition(prev => ({ ...prev, title: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 bg-slate-900 border border-white/15 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
                     placeholder="e.g., Senior Software Engineer"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
                     Description
                   </label>
                   <textarea
                     value={editingPosition.description}
                     onChange={(e) => setEditingPosition(prev => ({ ...prev, description: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 bg-slate-900 border border-white/15 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
                     rows="3"
                     placeholder="Brief description of this position..."
                   />
@@ -400,7 +390,7 @@ export default function PositionsAdminPage() {
                   <button
                     onClick={updatePosition}
                     disabled={editing || !editingPosition.title.trim()}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
+                    className="flex-1 bg-cyan-600 hover:bg-cyan-500 disabled:bg-cyan-800 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
                   >
                     {editing ? 'Updating...' : 'Update Position'}
                   </button>
@@ -410,7 +400,7 @@ export default function PositionsAdminPage() {
                       setEditingPosition(null);
                     }}
                     disabled={editing}
-                    className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded-lg transition duration-200"
+                    className="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
                   >
                     Cancel
                   </button>

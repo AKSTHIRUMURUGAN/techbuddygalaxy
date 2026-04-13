@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers';
+import { ObjectId } from 'mongodb';
+import { getCollection } from '@/lib/mongodb';
+import { Collections } from '@/lib/models';
 
 export async function GET() {
   try {
@@ -28,13 +31,28 @@ export async function GET() {
       );
     }
 
+    // Fetch latest user profile fields from database
+    const usersCollection = await getCollection(Collections.USERS);
+    const user = await usersCollection.findOne({ _id: new ObjectId(decoded.userId) });
+
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: 'User not found' },
+        { status: 404 }
+      );
+    }
+
     return NextResponse.json({
       success: true,
       user: {
-        id: decoded.userId,
-        email: decoded.email,
-        name: decoded.name,
-        role: decoded.role,
+        id: user._id.toString(),
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        phone: user.phone || '',
+        department: user.department || '',
+        skills: user.skills || [],
+        profileImage: user.profileImage || '',
       },
     });
   } catch (error) {

@@ -393,10 +393,10 @@ export default function ApplicationsAdminPage() {
   // Loading state
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-[#05070f] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Checking authentication...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto mb-4"></div>
+          <p className="text-slate-300 tracking-wide">Checking authentication...</p>
         </div>
       </div>
     );
@@ -405,31 +405,33 @@ export default function ApplicationsAdminPage() {
   // Login form
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-slate-900 flex items-center justify-center px-4">
-        <div className="max-w-md w-full">
-          <div className="bg-white rounded-lg shadow-xl p-8">
+      <div className="min-h-screen bg-[#05070f] flex items-center justify-center px-4 relative overflow-hidden">
+        <div className="absolute -top-32 -left-20 h-80 w-80 rounded-full bg-cyan-500/20 blur-[100px] pointer-events-none"></div>
+        <div className="absolute -bottom-32 -right-20 h-80 w-80 rounded-full bg-indigo-500/20 blur-[100px] pointer-events-none"></div>
+        <div className="max-w-md w-full relative z-10">
+          <div className="bg-slate-950/70 border border-white/10 rounded-2xl shadow-2xl backdrop-blur-xl p-8">
             <div className="text-center mb-8">
               <div className="flex items-center justify-center mb-4">
-                <div className="text-4xl font-bold text-blue-900 mr-2">TB</div>
-                <div className="text-lg text-gray-600">Tech Buddy Space</div>
+                <div className="text-4xl font-bold text-cyan-300 mr-2">TB</div>
+                <div className="text-lg text-slate-300">Tech Buddy Space</div>
               </div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              <h1 className="text-2xl font-bold text-white mb-2">
                 Admin Login
               </h1>
-              <p className="text-gray-600">
+              <p className="text-slate-400">
                 Access the applications dashboard
               </p>
             </div>
 
             {loginError && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
+              <div className="bg-red-500/10 border border-red-400/30 text-red-300 px-4 py-3 rounded-xl mb-6">
                 {loginError}
               </div>
             )}
 
             <form onSubmit={handleLogin} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-slate-300 mb-2">
                   Username
                 </label>
                 <input
@@ -437,13 +439,13 @@ export default function ApplicationsAdminPage() {
                   value={loginForm.username}
                   onChange={(e) => setLoginForm(prev => ({ ...prev, username: e.target.value }))}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-slate-900/70 border border-white/15 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-400/70 focus:border-cyan-300/60 transition-colors"
                   placeholder="Enter username"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-slate-300 mb-2">
                   Password
                 </label>
                 <input
@@ -451,7 +453,7 @@ export default function ApplicationsAdminPage() {
                   value={loginForm.password}
                   onChange={(e) => setLoginForm(prev => ({ ...prev, password: e.target.value }))}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-slate-900/70 border border-white/15 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-400/70 focus:border-cyan-300/60 transition-colors"
                   placeholder="Enter password"
                 />
               </div>
@@ -459,7 +461,7 @@ export default function ApplicationsAdminPage() {
               <button
                 type="submit"
                 disabled={loggingIn || !loginForm.username || !loginForm.password}
-                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center"
+                className="w-full bg-gradient-to-r from-cyan-500 to-indigo-500 hover:from-cyan-400 hover:to-indigo-400 disabled:from-cyan-700 disabled:to-indigo-700 text-white font-bold py-3 px-6 rounded-xl transition duration-200 flex items-center justify-center"
               >
                 {loggingIn ? (
                   <>
@@ -483,28 +485,29 @@ export default function ApplicationsAdminPage() {
   // Applications loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-[#05070f] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading applications...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto mb-4"></div>
+          <p className="text-slate-300">Loading applications...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8 px-4">
+    <div className="min-h-screen bg-[#05070f] py-8 px-4 text-slate-100 relative overflow-hidden">
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 h-80 w-[60%] bg-indigo-500/10 blur-[140px] pointer-events-none"></div>
       <div className="max-w-7xl mx-auto">
-        <div className="bg-white rounded-lg shadow-xl">
+        <div className="bg-slate-950/75 border border-white/10 rounded-2xl shadow-2xl backdrop-blur-xl overflow-hidden relative z-10">
           {/* Header */}
-          <div className="bg-blue-600 text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
+          <div className="bg-gradient-to-r from-cyan-500/90 to-indigo-500/90 text-white px-6 py-5 flex justify-between items-center">
             <div>
-              <h1 className="text-2xl font-bold">Internship Applications</h1>
-              <p className="text-blue-100">Total Applications: {applications.length}</p>
+              <h1 className="text-2xl font-bold tracking-tight">Internship Applications</h1>
+              <p className="text-cyan-100 text-sm">Total Applications: {applications.length}</p>
             </div>
             <button
               onClick={handleLogout}
-              className="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-lg transition duration-200 flex items-center"
+              className="bg-white/15 hover:bg-white/25 text-white px-4 py-2 rounded-xl transition duration-200 flex items-center border border-white/20"
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -518,40 +521,40 @@ export default function ApplicationsAdminPage() {
             {applications.length === 0 ? (
               <div className="text-center py-12">
                 <div className="text-6xl mb-4">📝</div>
-                <h3 className="text-xl font-semibold text-gray-700 mb-2">No Applications Yet</h3>
-                <p className="text-gray-500">Applications will appear here once submitted.</p>
+                <h3 className="text-xl font-semibold text-white mb-2">No Applications Yet</h3>
+                <p className="text-slate-400">Applications will appear here once submitted.</p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto rounded-xl border border-white/10">
                 <table className="w-full table-auto">
                   <thead>
-                    <tr className="bg-gray-50">
-                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Name</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Email</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Position</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">College</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Department</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Submitted</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Status</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Actions</th>
+                    <tr className="bg-slate-900/80">
+                      <th className="px-4 py-3 text-left text-xs font-semibold tracking-wider uppercase text-slate-300">Name</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold tracking-wider uppercase text-slate-300">Email</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold tracking-wider uppercase text-slate-300">Position</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold tracking-wider uppercase text-slate-300">College</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold tracking-wider uppercase text-slate-300">Department</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold tracking-wider uppercase text-slate-300">Submitted</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold tracking-wider uppercase text-slate-300">Status</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold tracking-wider uppercase text-slate-300">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200">
+                  <tbody className="divide-y divide-white/10 bg-slate-950/50">
                     {applications.map((app) => (
-                      <tr key={app.applicationId} className="hover:bg-gray-50">
-                        <td className="px-4 py-4 text-sm font-medium text-gray-900">{app.name}</td>
-                        <td className="px-4 py-4 text-sm text-gray-600">{app.email}</td>
-                        <td className="px-4 py-4 text-sm text-gray-600">{app.position || 'Not specified'}</td>
-                        <td className="px-4 py-4 text-sm text-gray-600">
+                      <tr key={app.applicationId} className="hover:bg-slate-900/60 transition-colors">
+                        <td className="px-4 py-4 text-sm font-medium text-white">{app.name}</td>
+                        <td className="px-4 py-4 text-sm text-slate-300">{app.email}</td>
+                        <td className="px-4 py-4 text-sm text-slate-300">{app.position || 'Not specified'}</td>
+                        <td className="px-4 py-4 text-sm text-slate-300">
                           {app.isStudent ? app.college : 'Not a student'}
                         </td>
-                        <td className="px-4 py-4 text-sm text-gray-600">{app.department}</td>
-                        <td className="px-4 py-4 text-sm text-gray-600">{formatDate(app.submittedAt)}</td>
+                        <td className="px-4 py-4 text-sm text-slate-300">{app.department}</td>
+                        <td className="px-4 py-4 text-sm text-slate-300">{formatDate(app.submittedAt)}</td>
                         <td className="px-4 py-4 text-sm">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            app.status === 'approved' ? 'bg-green-100 text-green-800' :
-                            app.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                            'bg-yellow-100 text-yellow-800'
+                          <span className={`px-2.5 py-1 rounded-full text-xs font-medium border ${
+                            app.status === 'approved' ? 'bg-green-500/15 text-green-300 border-green-400/30' :
+                            app.status === 'rejected' ? 'bg-red-500/15 text-red-300 border-red-400/30' :
+                            'bg-yellow-500/15 text-yellow-300 border-yellow-400/30'
                           }`}>
                             {app.status || 'Pending'}
                           </span>
@@ -559,14 +562,14 @@ export default function ApplicationsAdminPage() {
                         <td className="px-4 py-4 text-sm space-x-2">
                           <button
                             onClick={() => setSelectedApplication(app)}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs"
+                            className="bg-cyan-600 hover:bg-cyan-500 text-white px-3 py-1.5 rounded-lg text-xs transition-colors"
                           >
                             View Details
                           </button>
                           {app.resumeFileName && (
                             <button
                               onClick={() => downloadResume(app.applicationId, app.resumeOriginalName)}
-                              className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs"
+                              className="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs transition-colors"
                             >
                               Resume
                             </button>
@@ -575,13 +578,13 @@ export default function ApplicationsAdminPage() {
                             <>
                               <button
                                 onClick={() => handleStatusAction(app, 'approved')}
-                                className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs"
+                                className="bg-green-600 hover:bg-green-500 text-white px-3 py-1.5 rounded-lg text-xs transition-colors"
                               >
                                 Approve
                               </button>
                               <button
                                 onClick={() => handleStatusAction(app, 'rejected')}
-                                className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs"
+                                className="bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded-lg text-xs transition-colors"
                               >
                                 Reject
                               </button>
@@ -590,14 +593,14 @@ export default function ApplicationsAdminPage() {
                             <>
                               <button
                                 onClick={() => handleStatusAction(app, 'approved')}
-                                className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs"
+                                className="bg-green-600 hover:bg-green-500 text-white px-3 py-1.5 rounded-lg text-xs transition-colors"
                               >
                                 Approve
                               </button>
                               <button
                                 onClick={() => deleteApplication(app.applicationId, app.name)}
                                 disabled={deletingApplication === app.applicationId}
-                                className="bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white px-3 py-1 rounded text-xs"
+                                className="bg-red-600 hover:bg-red-500 disabled:bg-red-800 text-white px-3 py-1.5 rounded-lg text-xs transition-colors"
                               >
                                 {deletingApplication === app.applicationId ? 'Deleting...' : 'Delete'}
                               </button>
@@ -609,23 +612,23 @@ export default function ApplicationsAdminPage() {
                                 disabled={givingAccess === app.applicationId || app.accessGiven}
                                 className={`${
                                   app.accessGiven 
-                                    ? 'bg-gray-400 cursor-not-allowed' 
-                                    : 'bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400'
-                                } text-white px-3 py-1 rounded text-xs`}
+                                    ? 'bg-slate-500 cursor-not-allowed' 
+                                    : 'bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-800'
+                                } text-white px-3 py-1.5 rounded-lg text-xs transition-colors`}
                                 title={app.accessGiven ? 'Access already given' : 'Create intern account and send login credentials'}
                               >
                                 {givingAccess === app.applicationId ? 'Processing...' : app.accessGiven ? 'Access Given' : 'Give Access'}
                               </button>
                               <button
                                 onClick={() => handleSendDocument(app)}
-                                className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-xs"
+                                className="bg-violet-600 hover:bg-violet-500 text-white px-3 py-1.5 rounded-lg text-xs transition-colors"
                               >
                                 Send Doc
                               </button>
                               <button
                                 onClick={() => deleteApplication(app.applicationId, app.name)}
                                 disabled={deletingApplication === app.applicationId}
-                                className="bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white px-3 py-1 rounded text-xs"
+                                className="bg-red-600 hover:bg-red-500 disabled:bg-red-800 text-white px-3 py-1.5 rounded-lg text-xs transition-colors"
                               >
                                 {deletingApplication === app.applicationId ? 'Deleting...' : 'Delete'}
                               </button>
@@ -634,7 +637,7 @@ export default function ApplicationsAdminPage() {
                             <button
                               onClick={() => deleteApplication(app.applicationId, app.name)}
                               disabled={deletingApplication === app.applicationId}
-                              className="bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white px-3 py-1 rounded text-xs"
+                              className="bg-red-600 hover:bg-red-500 disabled:bg-red-800 text-white px-3 py-1.5 rounded-lg text-xs transition-colors"
                             >
                               {deletingApplication === app.applicationId ? 'Deleting...' : 'Delete'}
                             </button>
@@ -651,13 +654,13 @@ export default function ApplicationsAdminPage() {
 
         {/* Application Details Modal */}
         {selectedApplication && !showStatusModal && !showTemplateModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="bg-blue-600 text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-slate-950 border border-white/10 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="bg-gradient-to-r from-cyan-500 to-indigo-500 text-white px-6 py-4 rounded-t-2xl flex justify-between items-center">
                 <h2 className="text-xl font-bold">Application Details</h2>
                 <button
                   onClick={() => setSelectedApplication(null)}
-                  className="text-white hover:text-gray-200 text-2xl"
+                  className="text-white hover:text-slate-200 text-2xl"
                 >
                   ×
                 </button>
@@ -666,29 +669,29 @@ export default function ApplicationsAdminPage() {
               <div className="p-6 space-y-6">
                 {/* Personal Information */}
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Personal Information</h3>
+                  <h3 className="text-lg font-semibold text-white mb-3">Personal Information</h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Name</label>
-                      <p className="text-gray-900">{selectedApplication.name}</p>
+                      <label className="text-sm font-medium text-slate-400">Name</label>
+                      <p className="text-slate-100">{selectedApplication.name}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Email</label>
-                      <p className="text-gray-900">{selectedApplication.email}</p>
+                      <label className="text-sm font-medium text-slate-400">Email</label>
+                      <p className="text-slate-100">{selectedApplication.email}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Phone</label>
-                      <p className="text-gray-900">{selectedApplication.phone}</p>
+                      <label className="text-sm font-medium text-slate-400">Phone</label>
+                      <p className="text-slate-100">{selectedApplication.phone}</p>
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Applied Position</label>
-                      <p className="text-gray-900 font-medium">{selectedApplication.position || 'Not specified'}</p>
+                      <label className="text-sm font-medium text-slate-400">Applied Position</label>
+                      <p className="text-slate-100 font-medium">{selectedApplication.position || 'Not specified'}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Availability</label>
-                      <p className="text-gray-900">{selectedApplication.availability || 'Not provided'}</p>
+                      <label className="text-sm font-medium text-slate-400">Availability</label>
+                      <p className="text-slate-100">{selectedApplication.availability || 'Not provided'}</p>
                     </div>
                   </div>
                 </div>
@@ -696,19 +699,19 @@ export default function ApplicationsAdminPage() {
                 {/* Education */}
                 {selectedApplication.isStudent && (
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">Education</h3>
+                    <h3 className="text-lg font-semibold text-white mb-3">Education</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
-                        <label className="text-sm font-medium text-gray-600">College</label>
-                        <p className="text-gray-900">{selectedApplication.college}</p>
+                        <label className="text-sm font-medium text-slate-400">College</label>
+                        <p className="text-slate-100">{selectedApplication.college}</p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-600">Department</label>
-                        <p className="text-gray-900">{selectedApplication.department}</p>
+                        <label className="text-sm font-medium text-slate-400">Department</label>
+                        <p className="text-slate-100">{selectedApplication.department}</p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-600">Year</label>
-                        <p className="text-gray-900">{selectedApplication.year}</p>
+                        <label className="text-sm font-medium text-slate-400">Year</label>
+                        <p className="text-slate-100">{selectedApplication.year}</p>
                       </div>
                     </div>
                   </div>
@@ -716,33 +719,33 @@ export default function ApplicationsAdminPage() {
 
                 {/* Professional Links */}
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Professional Links</h3>
+                  <h3 className="text-lg font-semibold text-white mb-3">Professional Links</h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-600">GitHub</label>
-                      <p className="text-gray-900">
+                      <label className="text-sm font-medium text-slate-400">GitHub</label>
+                      <p className="text-slate-100">
                         {selectedApplication.github ? (
-                          <a href={selectedApplication.github} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                          <a href={selectedApplication.github} target="_blank" rel="noopener noreferrer" className="text-cyan-300 hover:underline">
                             {selectedApplication.github}
                           </a>
                         ) : 'Not provided'}
                       </p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">LinkedIn</label>
-                      <p className="text-gray-900">
+                      <label className="text-sm font-medium text-slate-400">LinkedIn</label>
+                      <p className="text-slate-100">
                         {selectedApplication.linkedin ? (
-                          <a href={selectedApplication.linkedin} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                          <a href={selectedApplication.linkedin} target="_blank" rel="noopener noreferrer" className="text-cyan-300 hover:underline">
                             {selectedApplication.linkedin}
                           </a>
                         ) : 'Not provided'}
                       </p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Portfolio</label>
-                      <p className="text-gray-900">
+                      <label className="text-sm font-medium text-slate-400">Portfolio</label>
+                      <p className="text-slate-100">
                         {selectedApplication.portfolio ? (
-                          <a href={selectedApplication.portfolio} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                          <a href={selectedApplication.portfolio} target="_blank" rel="noopener noreferrer" className="text-cyan-300 hover:underline">
                             {selectedApplication.portfolio}
                           </a>
                         ) : 'Not provided'}
@@ -753,45 +756,45 @@ export default function ApplicationsAdminPage() {
 
                 {/* Additional Information */}
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Additional Information</h3>
+                  <h3 className="text-lg font-semibold text-white mb-3">Additional Information</h3>
                   <div className="space-y-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Skills</label>
-                      <p className="text-gray-900">{selectedApplication.skills || 'Not provided'}</p>
+                      <label className="text-sm font-medium text-slate-400">Skills</label>
+                      <p className="text-slate-100">{selectedApplication.skills || 'Not provided'}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Experience</label>
-                      <p className="text-gray-900">{selectedApplication.experience || 'Not provided'}</p>
+                      <label className="text-sm font-medium text-slate-400">Experience</label>
+                      <p className="text-slate-100">{selectedApplication.experience || 'Not provided'}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Motivation</label>
-                      <p className="text-gray-900">{selectedApplication.motivation || 'Not provided'}</p>
+                      <label className="text-sm font-medium text-slate-400">Motivation</label>
+                      <p className="text-slate-100">{selectedApplication.motivation || 'Not provided'}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Application Metadata */}
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Application Info</h3>
+                <div className="bg-slate-900/80 border border-white/10 p-4 rounded-xl">
+                  <h3 className="text-lg font-semibold text-white mb-3">Application Info</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Application ID</label>
-                      <p className="text-gray-900 font-mono text-sm">{selectedApplication.applicationId}</p>
+                      <label className="text-sm font-medium text-slate-400">Application ID</label>
+                      <p className="text-slate-100 font-mono text-sm">{selectedApplication.applicationId}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Submitted At</label>
-                      <p className="text-gray-900">{formatDate(selectedApplication.submittedAt)}</p>
+                      <label className="text-sm font-medium text-slate-400">Submitted At</label>
+                      <p className="text-slate-100">{formatDate(selectedApplication.submittedAt)}</p>
                     </div>
                     {selectedApplication.accessGiven && (
                       <div className="md:col-span-2">
-                        <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                        <div className="bg-green-500/10 border border-green-400/30 rounded-lg p-3">
                           <div className="flex items-center">
                             <svg className="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                             <div>
-                              <p className="text-sm font-medium text-green-800">Intern Access Given</p>
-                              <p className="text-xs text-green-600">
+                              <p className="text-sm font-medium text-green-300">Intern Access Given</p>
+                              <p className="text-xs text-green-200">
                                 Login credentials sent on {formatDate(selectedApplication.accessGivenAt)}
                               </p>
                             </div>
@@ -808,10 +811,10 @@ export default function ApplicationsAdminPage() {
 
         {/* Status Update Modal */}
         {showStatusModal && selectedApplication && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg max-w-md w-full">
-              <div className={`px-6 py-4 rounded-t-lg flex justify-between items-center ${
-                statusAction === 'approved' ? 'bg-green-600' : 'bg-red-600'
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-slate-950 border border-white/10 rounded-2xl max-w-md w-full">
+              <div className={`px-6 py-4 rounded-t-2xl flex justify-between items-center ${
+                statusAction === 'approved' ? 'bg-green-600/90' : 'bg-red-600/90'
               } text-white`}>
                 <h2 className="text-xl font-bold">
                   {statusAction === 'approved' ? 'Approve Application' : 'Reject Application'}
@@ -825,18 +828,18 @@ export default function ApplicationsAdminPage() {
               </div>
               
               <div className="p-6">
-                <p className="text-gray-700 mb-4">
+                <p className="text-slate-300 mb-4">
                   Are you sure you want to {statusAction} the application from <strong>{selectedApplication.name}</strong>?
                 </p>
                 
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
                     {statusAction === 'approved' ? 'Approval Message (Optional)' : 'Rejection Reason (Optional)'}
                   </label>
                   <textarea
                     value={statusMessage}
                     onChange={(e) => setStatusMessage(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 bg-slate-900/60 border border-white/15 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
                     rows="3"
                     placeholder={statusAction === 'approved' ? 
                       'Welcome message or next steps...' : 
@@ -851,8 +854,8 @@ export default function ApplicationsAdminPage() {
                     disabled={statusUpdating}
                     className={`flex-1 text-white font-bold py-2 px-4 rounded-lg transition duration-200 ${
                       statusAction === 'approved' 
-                        ? 'bg-green-600 hover:bg-green-700 disabled:bg-green-400'
-                        : 'bg-red-600 hover:bg-red-700 disabled:bg-red-400'
+                        ? 'bg-green-600 hover:bg-green-500 disabled:bg-green-800'
+                        : 'bg-red-600 hover:bg-red-500 disabled:bg-red-800'
                     }`}
                   >
                     {statusUpdating ? 'Processing...' : `Confirm ${statusAction === 'approved' ? 'Approval' : 'Rejection'}`}
@@ -860,7 +863,7 @@ export default function ApplicationsAdminPage() {
                   <button
                     onClick={() => setShowStatusModal(false)}
                     disabled={statusUpdating}
-                    className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded-lg transition duration-200"
+                    className="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
                   >
                     Cancel
                   </button>
@@ -872,9 +875,9 @@ export default function ApplicationsAdminPage() {
 
         {/* Template Selection Modal */}
         {showTemplateModal && selectedApplication && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="bg-purple-600 text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-slate-950 border border-white/10 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-6 py-4 rounded-t-2xl flex justify-between items-center">
                 <h2 className="text-xl font-bold">Send Document to {selectedApplication.name}</h2>
                 <button
                   onClick={() => setShowTemplateModal(false)}
@@ -886,13 +889,13 @@ export default function ApplicationsAdminPage() {
               
               <div className="p-6">
                 <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
                     Select Document Template
                   </label>
                   <select
                     value={selectedTemplate}
                     onChange={(e) => handleTemplateSelection(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3 py-2 bg-slate-900/60 border border-white/15 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
                   >
                     <option value="">Choose a template...</option>
                     {templates.map((template) => (
@@ -905,21 +908,21 @@ export default function ApplicationsAdminPage() {
 
                 {selectedTemplate && manualFields.length > 0 && (
                   <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">Manual Fields Required</h3>
-                    <p className="text-sm text-gray-600 mb-4">
+                    <h3 className="text-lg font-semibold text-white mb-3">Manual Fields Required</h3>
+                    <p className="text-sm text-slate-400 mb-4">
                       These fields were marked as &quot;Manual Entry&quot; during template setup and require your input:
                     </p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {manualFields.map((fieldKey) => (
                         <div key={fieldKey}>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                          <label className="block text-sm font-medium text-slate-300 mb-1">
                             {fieldKey.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())} *
                           </label>
                           <input
                             type="text"
                             value={templateData[fieldKey] || ''}
                             onChange={(e) => setTemplateData(prev => ({ ...prev, [fieldKey]: e.target.value }))}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            className="w-full px-3 py-2 bg-slate-900/60 border border-white/15 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
                             placeholder={`Enter ${fieldKey.replace(/([A-Z])/g, ' $1').toLowerCase()}`}
                             required
                           />
@@ -931,7 +934,7 @@ export default function ApplicationsAdminPage() {
 
                 {selectedTemplate && manualFields.length === 0 && (
                   <div className="mb-6">
-                    <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded">
+                    <div className="bg-green-500/10 border border-green-400/30 text-green-200 px-4 py-3 rounded-lg">
                       <p className="font-medium">✅ Fully Automated</p>
                       <p className="text-sm">All template fields are mapped to application data. No manual input required!</p>
                     </div>
@@ -942,20 +945,20 @@ export default function ApplicationsAdminPage() {
                   <button
                     onClick={() => generateDocument(selectedApplication, selectedTemplate)}
                     disabled={!selectedTemplate || (manualFields.length > 0 && manualFields.some(field => !templateData[field]))}
-                    className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-400 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
+                    className="flex-1 bg-violet-600 hover:bg-violet-500 disabled:bg-violet-800 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
                   >
                     Generate & Send Document
                   </button>
                   <button
                     onClick={() => setShowTemplateModal(false)}
-                    className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded-lg transition duration-200"
+                    className="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
                   >
                     Cancel
                   </button>
                 </div>
 
                 {selectedTemplate && (
-                  <div className="mt-4 bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded">
+                  <div className="mt-4 bg-cyan-500/10 border border-cyan-400/30 text-cyan-100 px-4 py-3 rounded-lg">
                     <h4 className="font-semibold mb-2">Automated Document Generation:</h4>
                     <ul className="list-disc list-inside space-y-1 text-sm">
                       <li>Applicant data (name, email, college, etc.) will be automatically populated</li>

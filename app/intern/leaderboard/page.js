@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { FiArrowLeft, FiAward, FiInfo, FiTarget, FiTrendingUp } from 'react-icons/fi';
 
 export default function InternLeaderboard() {
   const [leaderboard, setLeaderboard] = useState([]);
@@ -60,34 +61,35 @@ export default function InternLeaderboard() {
   };
 
   const getScoreColor = (score) => {
-    if (score >= 90) return 'text-green-600';
-    if (score >= 75) return 'text-blue-600';
-    if (score >= 60) return 'text-yellow-600';
-    return 'text-red-600';
+    if (score >= 90) return 'text-emerald-300';
+    if (score >= 75) return 'text-cyan-300';
+    if (score >= 60) return 'text-yellow-300';
+    return 'text-red-300';
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-[#05070f] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading leaderboard...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-400 mx-auto mb-4"></div>
+          <p className="text-slate-300">Loading leaderboard...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8 px-4">
+    <div className="min-h-screen bg-[#05070f] py-8 px-4 text-slate-100">
       <div className="max-w-6xl mx-auto">
-        <div className="bg-white rounded-lg shadow-xl">
-          <div className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
+        <div className="bg-slate-950/80 border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
+          <div className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-6 py-5 rounded-t-2xl flex justify-between items-center">
             <div>
-              <h1 className="text-2xl font-bold">🏆 Leaderboard</h1>
+              <h1 className="text-2xl font-bold inline-flex items-center gap-2"><FiAward /> Leaderboard</h1>
               <p className="text-yellow-100">See how you rank among your peers</p>
             </div>
             <Link href="/intern/dashboard">
-              <button className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg transition">
+              <button className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl transition inline-flex items-center border border-white/20">
+                <FiArrowLeft className="mr-2" />
                 Back to Dashboard
               </button>
             </Link>
@@ -96,17 +98,17 @@ export default function InternLeaderboard() {
           <div className="p-6">
             {/* My Rank Card */}
             {myRank && (
-              <div className="bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-300 rounded-lg p-6 mb-6">
+              <div className="bg-gradient-to-br from-violet-500/10 to-cyan-500/10 border border-violet-400/30 rounded-xl p-6 mb-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600 mb-1">Your Current Rank</p>
-                    <div className="text-4xl font-bold text-purple-600">
+                    <p className="text-sm text-slate-400 mb-1">Your Current Rank</p>
+                    <div className="text-4xl font-bold text-violet-300">
                       {getRankBadge(myRank)}
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm text-gray-600 mb-1">Keep Going!</p>
-                    <p className="text-lg font-semibold text-gray-900">
+                    <p className="text-sm text-slate-400 mb-1">Keep Going!</p>
+                    <p className="text-lg font-semibold text-slate-100">
                       {myRank === 1 ? "You're #1!" : `${myRank - 1} more to go!`}
                     </p>
                   </div>
@@ -117,7 +119,7 @@ export default function InternLeaderboard() {
             {/* Top 3 Podium */}
             {leaderboard.length >= 3 && (
               <div className="mb-8">
-                <h2 className="text-xl font-bold mb-4 text-center">Top Performers</h2>
+                <h2 className="text-xl font-bold mb-4 text-center text-white">Top Performers</h2>
                 <div className="flex items-end justify-center gap-4">
                   {/* 2nd Place */}
                   <div className="flex-1 max-w-xs">
@@ -163,10 +165,10 @@ export default function InternLeaderboard() {
 
             {/* Full Leaderboard */}
             <div>
-              <h2 className="text-xl font-bold mb-4">All Rankings</h2>
+              <h2 className="text-xl font-bold mb-4 text-white">All Rankings</h2>
               
               {leaderboard.length === 0 ? (
-                <div className="text-center py-12 text-gray-500">
+                <div className="text-center py-12 text-slate-400">
                   <div className="text-6xl mb-4">🏆</div>
                   <p className="text-xl mb-2">No rankings yet</p>
                   <p>Complete tasks to appear on the leaderboard</p>
@@ -178,10 +180,10 @@ export default function InternLeaderboard() {
                       key={entry.userId}
                       className={`border rounded-lg p-4 transition hover:shadow-md ${
                         entry.userId === user?.id
-                          ? 'border-purple-300 bg-purple-50'
+                          ? 'border-violet-400/40 bg-violet-500/10'
                           : entry.rank <= 3
-                          ? 'border-yellow-300 bg-yellow-50'
-                          : 'border-gray-200'
+                          ? 'border-yellow-400/30 bg-yellow-500/10'
+                          : 'border-white/10 bg-slate-900/50'
                       }`}
                     >
                       <div className="flex items-center justify-between">
@@ -191,15 +193,15 @@ export default function InternLeaderboard() {
                           </div>
 
                           <div className="flex-1">
-                            <h3 className="text-lg font-semibold text-gray-900">
+                            <h3 className="text-lg font-semibold text-white">
                               {entry.name}
                               {entry.userId === user?.id && (
-                                <span className="ml-2 text-sm bg-purple-600 text-white px-2 py-1 rounded">
+                                <span className="ml-2 text-sm bg-violet-600 text-white px-2 py-1 rounded">
                                   You
                                 </span>
                               )}
                             </h3>
-                            <p className="text-sm text-gray-600">
+                            <p className="text-sm text-slate-300">
                               {entry.department} • {entry.tasksCompleted} tasks completed
                             </p>
                           </div>
@@ -209,7 +211,7 @@ export default function InternLeaderboard() {
                           <div className={`text-2xl font-bold ${getScoreColor(entry.performanceScore)}`}>
                             {entry.performanceScore.toFixed(1)}
                           </div>
-                          <div className="text-xs text-gray-500">
+                          <div className="text-xs text-slate-400">
                             Rank Score: {entry.rankScore}
                           </div>
                         </div>
@@ -221,9 +223,9 @@ export default function InternLeaderboard() {
             </div>
 
             {/* Info Box */}
-            <div className="mt-6 bg-blue-50 border-2 border-blue-200 rounded-lg p-4">
-              <h3 className="font-bold text-blue-900 mb-2">How Rankings Work</h3>
-              <p className="text-sm text-blue-800">
+            <div className="mt-6 bg-cyan-500/10 border border-cyan-400/30 rounded-xl p-4">
+              <h3 className="font-bold text-cyan-100 mb-2 inline-flex items-center gap-2"><FiInfo />How Rankings Work</h3>
+              <p className="text-sm text-cyan-100/90">
                 Rankings are calculated based on your overall performance score (50%), 
                 number of tasks completed (30%), and consistency (20%). 
                 Keep completing tasks with high quality to climb the leaderboard!

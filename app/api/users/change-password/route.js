@@ -3,9 +3,7 @@ import { getCollection } from '@/lib/mongodb';
 import { Collections } from '@/lib/models';
 import { ObjectId } from 'mongodb';
 import bcrypt from 'bcryptjs';
-
-// Import the same OTP store
-const otpStore = new Map();
+import passwordOtpStore from '@/lib/passwordOtpStore';
 
 export async function POST(request) {
   try {
@@ -25,7 +23,7 @@ export async function POST(request) {
       );
     }
 
-    const storedData = otpStore.get(userId);
+    const storedData = passwordOtpStore.get(userId);
 
     if (!storedData || !storedData.verified) {
       return NextResponse.json(
@@ -64,7 +62,7 @@ export async function POST(request) {
     }
 
     // Clear OTP from store
-    otpStore.delete(userId);
+    passwordOtpStore.delete(userId);
 
     return NextResponse.json({
       success: true,

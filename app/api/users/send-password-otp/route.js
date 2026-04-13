@@ -4,9 +4,7 @@ import { Collections } from '@/lib/models';
 import { ObjectId } from 'mongodb';
 import bcrypt from 'bcryptjs';
 import EmailService from '@/lib/email';
-
-// Store OTPs temporarily (in production, use Redis or database)
-const otpStore = new Map();
+import passwordOtpStore from '@/lib/passwordOtpStore';
 
 export async function POST(request) {
   try {
@@ -42,7 +40,7 @@ export async function POST(request) {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     // Store OTP with expiry (5 minutes)
-    otpStore.set(userId, {
+    passwordOtpStore.set(userId, {
       otp,
       expiresAt: Date.now() + 5 * 60 * 1000,
     });

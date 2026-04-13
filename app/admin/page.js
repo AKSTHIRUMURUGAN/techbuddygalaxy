@@ -71,10 +71,13 @@ export default function AdminDashboard() {
   // Loading state
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Checking authentication...</p>
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="relative">
+            <div className="w-16 h-16 rounded-full border-t-2 border-l-2 border-blue-500 animate-spin"></div>
+            <div className="w-16 h-16 rounded-full border-r-2 border-b-2 border-purple-500 animate-spin absolute top-0 left-0" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
+          </div>
+          <p className="text-gray-400 font-medium tracking-widest uppercase text-sm animate-pulse">Initializing System...</p>
         </div>
       </div>
     );
@@ -83,31 +86,37 @@ export default function AdminDashboard() {
   // Login form
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-slate-900 flex items-center justify-center px-4">
-        <div className="max-w-md w-full">
-          <div className="bg-white rounded-lg shadow-xl p-8">
-            <div className="text-center mb-8">
-              <div className="flex items-center justify-center mb-4">
-                <div className="text-4xl font-bold text-blue-900 mr-2">TB</div>
-                <div className="text-lg text-gray-600">Tech Buddy Space</div>
+      <div className="min-h-screen bg-[#050505] flex items-center justify-center px-4 relative overflow-hidden">
+        {/* Abstract Background Effects */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-[120px] pointer-events-none mix-blend-screen"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-[120px] pointer-events-none mix-blend-screen"></div>
+
+        <div className="max-w-md w-full relative z-10">
+          <div className="backdrop-blur-xl bg-white/[0.02] border border-white/[0.05] rounded-3xl shadow-2xl p-10">
+            <div className="text-center mb-10">
+              <div className="flex items-center justify-center mb-6">
+                <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-2xl font-bold text-white shadow-lg shadow-blue-500/30">
+                  TB
+                </div>
               </div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                Admin Dashboard
+              <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-2 tracking-tight">
+                Admin Portal
               </h1>
-              <p className="text-gray-600">
-                Login to access admin features
+              <p className="text-gray-400 text-sm font-medium">
+                Secure Authentication Required
               </p>
             </div>
 
             {loginError && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
+              <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-xl mb-6 text-sm flex items-center">
+                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 {loginError}
               </div>
             )}
 
             <form onSubmit={handleLogin} className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <div className="space-y-1.5">
+                <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider">
                   Username
                 </label>
                 <input
@@ -115,13 +124,13 @@ export default function AdminDashboard() {
                   value={loginForm.username}
                   onChange={(e) => setLoginForm(prev => ({ ...prev, username: e.target.value }))}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter username"
+                  className="w-full px-4 py-3.5 bg-black/50 border border-white/10 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all font-sans"
+                  placeholder="Enter your username"
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <div className="space-y-1.5">
+                <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider">
                   Password
                 </label>
                 <input
@@ -129,296 +138,152 @@ export default function AdminDashboard() {
                   value={loginForm.password}
                   onChange={(e) => setLoginForm(prev => ({ ...prev, password: e.target.value }))}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter password"
+                  className="w-full px-4 py-3.5 bg-black/50 border border-white/10 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all font-sans"
+                  placeholder="••••••••"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={loggingIn || !loginForm.username || !loginForm.password}
-                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center"
+                className="w-full relative group overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600 disabled:from-blue-600/50 disabled:to-purple-600/50 disabled:cursor-not-allowed text-white font-semibold py-3.5 px-6 rounded-xl transition duration-300 flex items-center justify-center shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40"
               >
-                {loggingIn ? (
-                  <>
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Logging in...
-                  </>
-                ) : (
-                  'Login'
-                )}
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out disabled:hidden"></div>
+                <span className="relative z-10 flex items-center">
+                  {loggingIn ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Authenticating...
+                    </>
+                  ) : (
+                    'Secure Login'
+                  )}
+                </span>
               </button>
             </form>
-
-            <div className="mt-6 text-center text-sm text-gray-500">
-              <p>Default credentials: admin / techbuddy2024</p>
-            </div>
           </div>
         </div>
       </div>
     );
   }
 
+  const navCards = [
+    { name: 'Applications', href: '/admin/applications', icon: '📋', desc: 'Review active internship submissions', color: 'from-blue-500/20 to-cyan-500/20', hoverBorder: 'hover:border-cyan-500/50', iconColor: 'text-cyan-400' },
+    { name: 'Templates', href: '/admin/templates', icon: '📄', desc: 'Manage system document templates', color: 'from-purple-500/20 to-pink-500/20', hoverBorder: 'hover:border-pink-500/50', iconColor: 'text-pink-400' },
+    { name: 'Tasks', href: '/admin/tasks', icon: '✅', desc: 'Monitor and assign intern tasks', color: 'from-emerald-500/20 to-teal-500/20', hoverBorder: 'hover:border-teal-500/50', iconColor: 'text-teal-400' },
+    { name: 'Interns', href: '/admin/interns', icon: '👥', desc: 'Directory of current team members', color: 'from-indigo-500/20 to-blue-500/20', hoverBorder: 'hover:border-blue-500/50', iconColor: 'text-blue-400' },
+    { name: 'Messages', href: '/admin/messages', icon: '💬', desc: 'Internal communication hub', color: 'from-rose-500/20 to-red-500/20', hoverBorder: 'hover:border-red-500/50', iconColor: 'text-rose-400' },
+    { name: 'Attendance', href: '/admin/attendance', icon: '⏰', desc: 'Time tracking and presence logs', color: 'from-amber-500/20 to-orange-500/20', hoverBorder: 'hover:border-orange-500/50', iconColor: 'text-orange-400' },
+    { name: 'Leaves', href: '/admin/leaves', icon: '🏖️', desc: 'Time-off requests & approvals', color: 'from-fuchsia-500/20 to-purple-500/20', hoverBorder: 'hover:border-purple-500/50', iconColor: 'text-fuchsia-400' },
+    { name: 'Leaderboard', href: '/admin/leaderboard', icon: '🏆', desc: 'Performance rankings & metrics', color: 'from-yellow-500/20 to-amber-500/20', hoverBorder: 'hover:border-yellow-400/50', iconColor: 'text-yellow-400' },
+    { name: 'Positions', href: '/admin/positions', icon: '💼', desc: 'Open roles and requirements', color: 'from-sky-500/20 to-blue-500/20', hoverBorder: 'hover:border-sky-500/50', iconColor: 'text-sky-400' },
+    { name: 'Doc Generator', href: '/dynamic-template', icon: '🔧', desc: 'Advanced document automation', color: 'from-lime-500/20 to-green-500/20', hoverBorder: 'hover:border-lime-500/50', iconColor: 'text-lime-400' },
+    { name: 'Quick Doc', href: '/appointment-simple', icon: '📝', desc: 'Fast appointment letter generation', color: 'from-violet-500/20 to-purple-500/20', hoverBorder: 'hover:border-violet-500/50', iconColor: 'text-violet-400' },
+    { name: 'Apply Portal', href: '/apply-internship', icon: '🎯', desc: 'External application frontend', color: 'from-red-500/20 to-orange-500/20', hoverBorder: 'hover:border-red-500/50', iconColor: 'text-red-400' },
+    { name: 'Main Site', href: '/', icon: '🏠', desc: 'Public facing company website', color: 'from-zinc-500/20 to-slate-500/20', hoverBorder: 'hover:border-slate-400/50', iconColor: 'text-slate-300' },
+    { name: 'Debug', href: '/admin/debug', icon: '⚙️', desc: 'System health and diagnostics', color: 'from-red-600/20 to-rose-600/20', hoverBorder: 'hover:border-red-500/50', iconColor: 'text-red-500' },
+    { name: 'Migration', href: '/admin/migrate', icon: '☁️', desc: 'Data transfer and cloud sync', color: 'from-yellow-600/20 to-orange-600/20', hoverBorder: 'hover:border-yellow-500/50', iconColor: 'text-yellow-500' },
+  ];
+
   // Admin dashboard
   return (
-    <div className="min-h-screen bg-gray-100 py-8 px-4">
-      <div className="max-w-6xl mx-auto">
-        <div className="bg-white rounded-lg shadow-xl">
-          {/* Header */}
-          <div className="bg-blue-600 text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
+    <div className="min-h-screen bg-[#050505] text-gray-200 font-sans selection:bg-blue-500/30 overflow-hidden relative">
+      {/* Background Ambient Effects */}
+      <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/10 blur-[150px] pointer-events-none"></div>
+      <div className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-purple-600/10 blur-[150px] pointer-events-none"></div>
+      
+      {/* Header */}
+      <header className="sticky top-0 z-50 backdrop-blur-2xl bg-black/40 border-b border-white/5">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-lg font-bold text-white shadow-lg shadow-blue-500/20">
+              TB
+            </div>
             <div>
-              <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-              <p className="text-blue-100">Tech Buddy Space Management</p>
+              <h1 className="text-xl font-bold text-white tracking-tight">Command Center</h1>
+              <p className="text-xs text-gray-400 font-medium tracking-wider uppercase">Tech Buddy Space</p>
             </div>
-            <button
-              onClick={handleLogout}
-              className="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-lg transition duration-200 flex items-center"
-            >
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-              Logout
-            </button>
           </div>
+          
+          <button
+            onClick={handleLogout}
+            className="group flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-5 py-2.5 rounded-xl transition-all duration-300 text-sm font-semibold text-gray-300 hover:text-white"
+          >
+            <svg className="w-4 h-4 text-gray-400 group-hover:text-red-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            Disconnect
+          </button>
+        </div>
+      </header>
 
-          {/* Dashboard Content */}
-          <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Applications Management */}
-              <Link href="/admin/applications">
-                <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="text-4xl">📋</div>
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">Applications</h3>
-                  <p className="text-blue-100">View and manage internship applications</p>
-                </div>
-              </Link>
-
-              {/* Template Management */}
-              <Link href="/admin/templates">
-                <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="text-4xl">📄</div>
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">Templates</h3>
-                  <p className="text-purple-100">Manage document templates</p>
-                </div>
-              </Link>
-
-              {/* Task Management */}
-              <Link href="/admin/tasks">
-                <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="text-4xl">✅</div>
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">Task Management</h3>
-                  <p className="text-indigo-100">Create and assign tasks to interns</p>
-                </div>
-              </Link>
-
-              {/* Interns Management */}
-              <Link href="/admin/interns">
-                <div className="bg-gradient-to-br from-teal-500 to-teal-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="text-4xl">👥</div>
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">Interns</h3>
-                  <p className="text-teal-100">Manage intern accounts and performance</p>
-                </div>
-              </Link>
-
-              {/* Messages */}
-              <Link href="/admin/messages">
-                <div className="bg-gradient-to-br from-pink-500 to-pink-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="text-4xl">💬</div>
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">Messages</h3>
-                  <p className="text-pink-100">Chat with interns and team</p>
-                </div>
-              </Link>
-
-              {/* Attendance */}
-              <Link href="/admin/attendance">
-                <div className="bg-gradient-to-br from-cyan-500 to-cyan-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="text-4xl">⏰</div>
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">Attendance</h3>
-                  <p className="text-cyan-100">Track intern attendance</p>
-                </div>
-              </Link>
-
-              {/* Leaves */}
-              <Link href="/admin/leaves">
-                <div className="bg-gradient-to-br from-amber-500 to-amber-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="text-4xl">🏖️</div>
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">Leave Management</h3>
-                  <p className="text-amber-100">Approve/reject leave requests</p>
-                </div>
-              </Link>
-
-              {/* Leaderboard */}
-              <Link href="/admin/leaderboard">
-                <div className="bg-gradient-to-br from-yellow-500 to-orange-500 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="text-4xl">🏆</div>
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">Leaderboard</h3>
-                  <p className="text-yellow-100">View top performing interns</p>
-                </div>
-              </Link>
-
-              {/* Position Management */}
-              <Link href="/admin/positions">
-                <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="text-4xl">💼</div>
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">Positions</h3>
-                  <p className="text-indigo-100">Manage available positions</p>
-                </div>
-              </Link>
-
-              {/* Document Generator */}
-              <Link href="/dynamic-template">
-                <div className="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="text-4xl">🔧</div>
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">Document Generator</h3>
-                  <p className="text-green-100">Generate documents from templates</p>
-                </div>
-              </Link>
-
-              {/* Simple Document Generator */}
-              <Link href="/appointment-simple">
-                <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="text-4xl">📝</div>
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">Simple Generator</h3>
-                  <p className="text-purple-100">Quick appointment letter generator</p>
-                </div>
-              </Link>
-
-              {/* Internship Application */}
-              <Link href="/apply-internship">
-                <div className="bg-gradient-to-br from-orange-500 to-orange-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="text-4xl">🎯</div>
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">Apply Internship</h3>
-                  <p className="text-orange-100">Internship application form</p>
-                </div>
-              </Link>
-
-              {/* Main Website */}
-              <Link href="/">
-                <div className="bg-gradient-to-br from-gray-500 to-gray-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="text-4xl">🏠</div>
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">Main Website</h3>
-                  <p className="text-gray-100">Go to Tech Buddy Space homepage</p>
-                </div>
-              </Link>
-
-              {/* Debug Information */}
-              <Link href="/admin/debug">
-                <div className="bg-gradient-to-br from-red-500 to-red-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="text-4xl">🔧</div>
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">Debug Info</h3>
-                  <p className="text-red-100">System diagnostics and troubleshooting</p>
-                </div>
-              </Link>
-
-              {/* Migration Tool */}
-              <Link href="/admin/migrate">
-                <div className="bg-gradient-to-br from-yellow-500 to-yellow-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="text-4xl">☁️</div>
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">Migrate to R2</h3>
-                  <p className="text-yellow-100">Move data to cloud storage</p>
-                </div>
-              </Link>
-            </div>
-
-            {/* Quick Stats */}
-            <div className="mt-8 bg-gray-50 rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Overview</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">📊</div>
-                  <p className="text-sm text-gray-600 mt-1">Analytics</p>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">✅</div>
-                  <p className="text-sm text-gray-600 mt-1">All Systems Operational</p>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-600">🚀</div>
-                  <p className="text-sm text-gray-600 mt-1">Ready to Go</p>
-                </div>
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-6 py-12 relative z-10">
+        
+        {/* Stats Row */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <div className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl backdrop-blur-sm flex items-center justify-between group hover:bg-white/[0.04] transition-colors">
+            <div>
+              <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-1">System Status</p>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)] animate-pulse"></div>
+                <h3 className="text-xl font-bold text-white">Optimal</h3>
               </div>
             </div>
+            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 text-xl group-hover:scale-110 transition-transform">✓</div>
+          </div>
+          
+          <div className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl backdrop-blur-sm flex items-center justify-between group hover:bg-white/[0.04] transition-colors">
+            <div>
+              <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-1">Network Traffic</p>
+              <h3 className="text-xl font-bold text-white">Encrypted</h3>
+            </div>
+            <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 text-xl group-hover:scale-110 transition-transform">🔐</div>
+          </div>
+
+          <div className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl backdrop-blur-sm flex items-center justify-between group hover:bg-white/[0.04] transition-colors">
+            <div>
+              <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-1">Active Modules</p>
+              <h3 className="text-xl font-bold text-white">{navCards.length} Online</h3>
+            </div>
+            <div className="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 text-xl group-hover:scale-110 transition-transform">⚡</div>
           </div>
         </div>
-      </div>
+
+        <div className="mb-8 flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-white tracking-tight">Modules & Tools</h2>
+          <div className="h-px bg-gradient-to-r from-white/10 to-transparent flex-1 ml-6"></div>
+        </div>
+
+        {/* Modules Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          {navCards.map((card, idx) => (
+            <Link key={idx} href={card.href}>
+              <div className={`group relative h-40 bg-white/[0.02] border border-white/5 rounded-2xl p-5 hover:bg-white/[0.04] transition-all duration-300 ${card.hoverBorder} overflow-hidden cursor-pointer flex flex-col justify-between`}>
+                <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${card.color} blur-[50px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-full translate-x-10 -translate-y-10`}></div>
+                
+                <div className="flex items-start justify-between relative z-10">
+                  <div className={`w-10 h-10 rounded-xl bg-black/40 border border-white/5 flex items-center justify-center text-xl shadow-inner ${card.iconColor}`}>
+                    {card.icon}
+                  </div>
+                  <svg className="w-5 h-5 text-gray-600 group-hover:text-white transition-colors duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </div>
+                
+                <div className="relative z-10">
+                  <h3 className="text-lg font-bold text-gray-200 group-hover:text-white mb-1 transition-colors">{card.name}</h3>
+                  <p className="text-xs text-gray-500 group-hover:text-gray-400 transition-colors line-clamp-2">{card.desc}</p>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+        
+      </main>
     </div>
   );
 }
