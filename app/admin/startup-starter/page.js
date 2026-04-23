@@ -8,18 +8,27 @@ import dynamic from 'next/dynamic';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   ArrowDownToLine,
+  Award,
   BadgeCheck,
   Building2,
   Camera,
+  Check,
+  Eye,
+  EyeOff,
   FileDown,
   LogOut,
+  MessageSquare,
   RefreshCw,
   ScanLine,
   Search,
   Shield,
+  Shuffle,
   Sunrise,
   Sunset,
-  Ticket
+  Ticket,
+  Trash2,
+  Users,
+  X
 } from 'lucide-react';
 
 // Dynamically import QRScanner to avoid SSR issues
@@ -36,6 +45,11 @@ export default function StartupStarterAdmin() {
   const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState('');
   const [departmentFilter, setDepartmentFilter] = useState('all');
+  const [teamSize, setTeamSize] = useState(3);
+  const [creatingTeams, setCreatingTeams] = useState(false);
+  const [teamMessage, setTeamMessage] = useState('');
+  const [showEvaluationModal, setShowEvaluationModal] = useState(false);
+  const [teams, setTeams] = useState([]);
 
   useEffect(() => {
     // Check if already authenticated
@@ -43,10 +57,23 @@ export default function StartupStarterAdmin() {
     if (auth === 'authenticated') {
       setIsAuthenticated(true);
       fetchRegistrations();
+      fetchTeams();
     } else {
       setLoading(false);
     }
   }, []);
+
+  const fetchTeams = async () => {
+    try {
+      const response = await fetch('/api/startup-starter/teams');
+      const data = await response.json();
+      if (data.success) {
+        setTeams(data.teams);
+      }
+    } catch (error) {
+      console.error('Error fetching teams:', error);
+    }
+  };
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -79,6 +106,65 @@ export default function StartupStarterAdmin() {
       console.error('Error fetching registrations:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCreateTeams = async () => {
+    if (!teamSize || teamSize < 1) {
+      setTeamMessage('Please enter a valid team size');
+      return;
+    }
+
+    try {
+      setCreatingTeams(true);
+      setTeamMessage('');
+
+      const response = await fetch('/api/startup-starter/teams', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ teamSize: parseInt(teamSize) })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setTeamMessage(`✓ ${data.message} with ${data.totalParticipants} participants`);
+        fetchRegistrations(); // Refresh to show team assignments
+      } else {
+        setTeamMessage(`✗ ${data.error}`);
+      }
+    } catch (error) {
+      setTeamMessage('✗ Failed to create teams');
+    } finally {
+      setCreatingTeams(false);
+    }
+  };
+
+  const handleClearTeams = async () => {
+    if (!confirm('Are you sure you want to clear all teams? This cannot be undone.')) {
+      return;
+    }
+
+    try {
+      setCreatingTeams(true);
+      setTeamMessage('');
+
+      const response = await fetch('/api/startup-starter/teams', {
+        method: 'DELETE'
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setTeamMessage(`✓ ${data.message}`);
+        fetchRegistrations(); // Refresh to show cleared teams
+      } else {
+        setTeamMessage(`✗ ${data.error}`);
+      }
+    } catch (error) {
+      setTeamMessage('✗ Failed to clear teams');
+    } finally {
+      setCreatingTeams(false);
     }
   };
 
@@ -441,11 +527,117 @@ export default function StartupStarterAdmin() {
           </div>
         </motion.div>
 
-        {/* Filters and Search */}
+        {/* Team Management */}
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.35, ease: 'easeOut' }}
+          className="mt-6 rounded-3xl bg-white/6 p-1 ring-1 ring-white/15 backdrop-blur"
+        >
+          <div className="rounded-[22px] bg-slate-950/40 p-5 ring-1 ring-white/10 md:p-6">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="grid h-10 w-10 place-items-center rounded-2xl bg-white/5 ring-1 ring-white/10">
+                <Users className="h-5 w-5 text-white/80" />
+              </div>
+              <div>
+                <h3 className="text-base font-semibold text-white/90">Team Formation</h3>
+                <p className="text-sm text-white/60">
+                  Create random teams from verified participants
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-4 md:flex-row md:items-end">
+              <div className="flex-1">
+                <label className="block text-xs font-medium text-white/70 mb-2">
+                  Team Size (members per team)
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  max="10"
+                  value={teamSize}
+                  onChange={(e) => setTeamSize(e.target.value)}
+                  className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/40 outline-none transition focus:border-white/20 focus:bg-white/8"
+                  placeholder="e.g., 3"
+                />
+                <p className="mt-1.5 text-xs text-white/50">
+                  Last team may have fewer members if participants don't divide evenly
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                <motion.button
+                  whileHover={{ y: -1 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleCreateTeams}
+                  disabled={creatingTeams}
+                  className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-400 to-cyan-300 px-5 py-3 text-sm font-semibold text-slate-950 shadow-[0_18px_40px_-22px_rgba(56,189,248,.5)] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Shuffle className="h-4 w-4" />
+                  {creatingTeams ? 'Creating...' : 'Create Teams'}
+                </motion.button>
+
+                <button
+                  onClick={handleClearTeams}
+                  disabled={creatingTeams}
+                  className="inline-flex items-center gap-2 rounded-2xl border border-red-500/30 bg-red-500/10 px-5 py-3 text-sm font-semibold text-red-200 transition hover:bg-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Clear All Teams
+                </button>
+              </div>
+            </div>
+
+            <AnimatePresence initial={false}>
+              {teamMessage && (
+                <motion.div
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  className={[
+                    'mt-4 rounded-2xl px-4 py-3 text-sm ring-1',
+                    teamMessage.includes('✓')
+                      ? 'bg-emerald-500/10 text-emerald-100 ring-emerald-400/20'
+                      : 'bg-red-500/10 text-red-100 ring-red-400/20'
+                  ].join(' ')}
+                >
+                  {teamMessage}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
+              <a
+                href="/startup-starter/team"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm text-cyan-300 hover:text-cyan-200 transition"
+              >
+                <Users className="h-4 w-4" />
+                View Team Dashboard
+                <span className="text-white/40">↗</span>
+              </a>
+
+              <button
+                onClick={() => {
+                  fetchTeams();
+                  setShowEvaluationModal(true);
+                }}
+                className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-amber-400/15 to-orange-400/15 px-4 py-2 text-sm font-semibold text-amber-200 ring-1 ring-amber-300/25 transition hover:from-amber-400/25 hover:to-orange-400/25"
+              >
+                <Award className="h-4 w-4" />
+                Evaluate Teams
+              </button>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Filters and Search */}
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.12, duration: 0.35, ease: 'easeOut' }}
           className="mt-6 rounded-3xl bg-white/6 p-1 ring-1 ring-white/15 backdrop-blur"
         >
           <div className="rounded-[22px] bg-slate-950/40 p-5 ring-1 ring-white/10 md:p-6">
@@ -538,7 +730,7 @@ export default function StartupStarterAdmin() {
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.12, duration: 0.35, ease: 'easeOut' }}
+          transition={{ delay: 0.14, duration: 0.35, ease: 'easeOut' }}
           className="mt-6 overflow-hidden rounded-3xl bg-white/6 p-1 ring-1 ring-white/15 backdrop-blur"
         >
           <div className="rounded-[22px] bg-slate-950/40 ring-1 ring-white/10">
@@ -554,13 +746,14 @@ export default function StartupStarterAdmin() {
             </div>
 
             <div className="overflow-x-auto">
-              <table className="min-w-[980px] w-full">
+              <table className="min-w-[1100px] w-full">
                 <thead className="sticky top-0 z-10 bg-slate-950/70 backdrop-blur">
                   <tr className="border-y border-white/10">
                     <Th>Ticket</Th>
                     <Th>Name</Th>
                     <Th>Roll No</Th>
                     <Th>Department</Th>
+                    <ThCenter>Team</ThCenter>
                     <Th>Phone</Th>
                     <ThCenter>Entry</ThCenter>
                     <ThCenter>Morning</ThCenter>
@@ -587,6 +780,16 @@ export default function StartupStarterAdmin() {
                         </Td>
                         <Td>{reg.rollNo}</Td>
                         <Td>{reg.department}</Td>
+                        <TdCenter>
+                          {reg.teamNumber ? (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-indigo-400/15 px-2.5 py-1 text-xs font-semibold text-indigo-200 ring-1 ring-indigo-300/25">
+                              <Users className="h-3 w-3" />
+                              {reg.teamNumber}
+                            </span>
+                          ) : (
+                            <span className="text-white/35 text-xs">—</span>
+                          )}
+                        </TdCenter>
                         <Td>{reg.phoneNo}</Td>
                         <TdCenter>
                           <StatusDot ok={!!reg.entryVerified} />
@@ -626,7 +829,458 @@ export default function StartupStarterAdmin() {
             />
           )}
         </AnimatePresence>
+
+        <AnimatePresence>
+          {showEvaluationModal && (
+            <EvaluationModal
+              teams={teams}
+              onClose={() => setShowEvaluationModal(false)}
+              onSuccess={() => {
+                fetchTeams();
+                setShowEvaluationModal(false);
+              }}
+            />
+          )}
+        </AnimatePresence>
       </div>
+    </div>
+  );
+}
+
+function EvaluationModal({ teams, onClose, onSuccess }) {
+  const [selectedTeam, setSelectedTeam] = useState(null);
+  const [problemScore, setProblemScore] = useState(0);
+  const [solutionScore, setSolutionScore] = useState(0);
+  const [businessModelScore, setBusinessModelScore] = useState(0);
+  const [pitchScore, setPitchScore] = useState(0);
+  const [innovationScore, setInnovationScore] = useState(0);
+  const [adminComments, setAdminComments] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [publishLoading, setPublishLoading] = useState(false);
+  const [publishMessage, setPublishMessage] = useState('');
+
+  // Filter teams based on search
+  const filteredTeams = teams.filter(team => {
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      team.teamNumber.toString().includes(searchLower) ||
+      (team.teamName && team.teamName.toLowerCase().includes(searchLower)) ||
+      (team.startupName && team.startupName.toLowerCase().includes(searchLower))
+    );
+  });
+
+  const totalScore = (
+    parseFloat(problemScore) +
+    parseFloat(solutionScore) +
+    parseFloat(businessModelScore) +
+    parseFloat(pitchScore) +
+    parseFloat(innovationScore)
+  );
+
+  const handleSelectTeam = (team) => {
+    setSelectedTeam(team);
+    if (team.evaluation) {
+      setProblemScore(team.evaluation.problemScore || 0);
+      setSolutionScore(team.evaluation.solutionScore || 0);
+      setBusinessModelScore(team.evaluation.businessModelScore || 0);
+      setPitchScore(team.evaluation.pitchScore || 0);
+      setInnovationScore(team.evaluation.innovationScore || 0);
+      setAdminComments(team.evaluation.adminComments || '');
+    } else {
+      setProblemScore(0);
+      setSolutionScore(0);
+      setBusinessModelScore(0);
+      setPitchScore(0);
+      setInnovationScore(0);
+      setAdminComments('');
+    }
+    setMessage('');
+  };
+
+  const handleSaveEvaluation = async () => {
+    if (!selectedTeam) return;
+
+    try {
+      setLoading(true);
+      setMessage('');
+
+      const response = await fetch('/api/startup-starter/teams/evaluate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          teamId: selectedTeam.teamId,
+          problemScore,
+          solutionScore,
+          businessModelScore,
+          pitchScore,
+          innovationScore,
+          adminComments,
+          evaluatedBy: 'Admin'
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage('✓ Evaluation saved successfully');
+        setTimeout(() => {
+          onSuccess();
+        }, 1500);
+      } else {
+        setMessage(`✗ ${data.error}`);
+      }
+    } catch (error) {
+      setMessage('✗ Failed to save evaluation');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePublishAllResults = async (publish) => {
+    try {
+      setPublishLoading(true);
+      setPublishMessage('');
+
+      const response = await fetch('/api/startup-starter/teams/publish-all', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ publish })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setPublishMessage(`✓ ${data.message}`);
+        setTimeout(() => {
+          onSuccess();
+        }, 1500);
+      } else {
+        setPublishMessage(`✗ ${data.error}`);
+      }
+    } catch (error) {
+      setPublishMessage('✗ Failed to update results status');
+    } finally {
+      setPublishLoading(false);
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+    >
+      <div 
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+      />
+      
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 20, scale: 0.95 }}
+        transition={{ type: 'spring', stiffness: 260, damping: 22 }}
+        className="relative w-full max-w-4xl max-h-[90vh] overflow-hidden"
+      >
+        <div className="rounded-3xl bg-white/6 p-1 ring-1 ring-white/15 backdrop-blur">
+          <div className="rounded-[22px] bg-slate-950/40 ring-1 ring-white/10 max-h-[88vh] overflow-y-auto">
+            {/* Header */}
+            <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-white/10 bg-slate-950/80 backdrop-blur px-6 py-5">
+              <div className="flex items-center gap-3">
+                <div className="grid h-10 w-10 place-items-center rounded-2xl bg-white/5 ring-1 ring-white/10">
+                  <Award className="h-5 w-5 text-white/80" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold tracking-tight text-white/90">
+                    Shark Tank Evaluation
+                  </h2>
+                  <p className="text-xs text-white/60">
+                    Evaluate teams and publish results
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={onClose}
+                className="grid h-9 w-9 place-items-center rounded-2xl border border-white/10 bg-white/5 text-white/80 transition hover:bg-white/8"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="p-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Team List */}
+                <div className="lg:col-span-1">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-sm font-semibold text-white/80">Select Team</h3>
+                    <span className="text-xs text-white/50">{filteredTeams.length} teams</span>
+                  </div>
+                  
+                  {/* Search Input */}
+                  <div className="mb-3">
+                    <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-3 py-2 transition focus-within:border-white/20 focus-within:bg-white/8">
+                      <Search className="h-4 w-4 text-white/55" />
+                      <input
+                        type="text"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder="Search teams..."
+                        className="w-full bg-transparent text-sm text-white placeholder:text-white/40 outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 max-h-[500px] overflow-y-auto pr-2">
+                    {filteredTeams.length === 0 ? (
+                      <div className="text-center py-8 text-white/50 text-sm">
+                        No teams found
+                      </div>
+                    ) : (
+                      filteredTeams.map((team) => (
+                        <button
+                          key={team.teamId}
+                          onClick={() => handleSelectTeam(team)}
+                          className={[
+                            'w-full text-left rounded-2xl border px-4 py-3 transition',
+                            selectedTeam?.teamId === team.teamId
+                              ? 'border-indigo-400/50 bg-indigo-400/15 ring-1 ring-indigo-300/25'
+                              : 'border-white/10 bg-white/5 hover:bg-white/8'
+                          ].join(' ')}
+                        >
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex-1 min-w-0">
+                              <div className="font-semibold text-white/90 text-sm truncate">
+                                {team.teamName || `Team ${team.teamNumber}`}
+                              </div>
+                              {team.startupName && (
+                                <div className="text-xs text-white/60 truncate mt-0.5">
+                                  {team.startupName}
+                                </div>
+                              )}
+                            </div>
+                            {team.evaluation && (
+                              <div className="flex-shrink-0 rounded-lg bg-amber-400/15 px-2 py-1 text-xs font-bold text-amber-200">
+                                {team.evaluation.totalScore}/50
+                              </div>
+                            )}
+                          </div>
+                          {team.resultsPublished && (
+                            <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-emerald-400/15 px-2 py-0.5 text-xs font-medium text-emerald-200 ring-1 ring-emerald-300/20">
+                              <Eye className="h-3 w-3" />
+                              Published
+                            </div>
+                          )}
+                          {!team.resultsPublished && team.evaluation && (
+                            <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-white/10 px-2 py-0.5 text-xs font-medium text-white/50 ring-1 ring-white/10">
+                              <EyeOff className="h-3 w-3" />
+                              Not Published
+                            </div>
+                          )}
+                        </button>
+                      ))
+                    )}
+                  </div>
+                </div>
+
+                {/* Evaluation Form */}
+                <div className="lg:col-span-2">
+                  {selectedTeam ? (
+                    <div className="space-y-4">
+                      <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                        <h3 className="text-base font-semibold text-white/90">
+                          {selectedTeam.teamName || `Team ${selectedTeam.teamNumber}`}
+                        </h3>
+                        {selectedTeam.startupName && (
+                          <p className="text-sm text-white/65 mt-1">{selectedTeam.startupName}</p>
+                        )}
+                        <p className="text-xs text-white/50 mt-2">
+                          {selectedTeam.members.length} members
+                        </p>
+                      </div>
+
+                      <div className="space-y-3">
+                        <ScoreInput
+                          label="Problem Identification"
+                          value={problemScore}
+                          onChange={setProblemScore}
+                        />
+                        <ScoreInput
+                          label="Solution Design"
+                          value={solutionScore}
+                          onChange={setSolutionScore}
+                        />
+                        <ScoreInput
+                          label="Business Model"
+                          value={businessModelScore}
+                          onChange={setBusinessModelScore}
+                        />
+                        <ScoreInput
+                          label="Pitch Quality"
+                          value={pitchScore}
+                          onChange={setPitchScore}
+                        />
+                        <ScoreInput
+                          label="Innovation"
+                          value={innovationScore}
+                          onChange={setInnovationScore}
+                        />
+                      </div>
+
+                      <div className="rounded-2xl bg-gradient-to-r from-amber-400/15 to-orange-400/15 px-4 py-3 ring-1 ring-amber-300/25">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-semibold text-amber-200">Total Score</span>
+                          <span className="text-2xl font-bold text-amber-100">{totalScore}/50</span>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-white/80">
+                          Admin Comments (Feedback for team)
+                        </label>
+                        <textarea
+                          value={adminComments}
+                          onChange={(e) => setAdminComments(e.target.value)}
+                          placeholder="Provide constructive feedback to help the team grow..."
+                          rows={4}
+                          className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/40 outline-none transition focus:border-white/20 focus:bg-white/8 resize-none"
+                        />
+                      </div>
+
+                      <AnimatePresence>
+                        {message && (
+                          <motion.div
+                            initial={{ opacity: 0, y: -6 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -6 }}
+                            className={[
+                              'rounded-2xl px-4 py-3 text-sm ring-1',
+                              message.includes('✓')
+                                ? 'bg-emerald-500/10 text-emerald-100 ring-emerald-400/20'
+                                : 'bg-red-500/10 text-red-100 ring-red-400/20'
+                            ].join(' ')}
+                          >
+                            {message}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+
+                      <button
+                        onClick={handleSaveEvaluation}
+                        disabled={loading}
+                        className="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-400 to-cyan-300 px-4 py-3 text-sm font-semibold text-slate-950 shadow-[0_18px_40px_-22px_rgba(56,189,248,.5)] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <Award className="h-4 w-4" />
+                        {loading ? 'Saving...' : 'Save Evaluation'}
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center py-20 text-center">
+                      <div>
+                        <Award className="h-16 w-16 text-white/30 mx-auto" />
+                        <p className="mt-4 text-white/60">Select a team to evaluate</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Overall Publish Button */}
+              <div className="mt-6 pt-6 border-t border-white/10">
+                <AnimatePresence>
+                  {publishMessage && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -6 }}
+                      className={[
+                        'mb-4 rounded-2xl px-4 py-3 text-sm ring-1',
+                        publishMessage.includes('✓')
+                          ? 'bg-emerald-500/10 text-emerald-100 ring-emerald-400/20'
+                          : 'bg-red-500/10 text-red-100 ring-red-400/20'
+                      ].join(' ')}
+                    >
+                      {publishMessage}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <h3 className="text-sm font-semibold text-white/90">Publish All Results</h3>
+                    <p className="text-xs text-white/60 mt-1">
+                      Make all evaluations visible to teams at once
+                    </p>
+                  </div>
+                  
+                  {teams.some(t => t.resultsPublished) ? (
+                    <button
+                      onClick={() => handlePublishAllResults(false)}
+                      disabled={publishLoading}
+                      className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white/85 transition hover:bg-white/8 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <EyeOff className="h-4 w-4" />
+                      {publishLoading ? 'Unpublishing...' : 'Unpublish All Results'}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handlePublishAllResults(true)}
+                      disabled={publishLoading}
+                      className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-400 to-cyan-300 px-5 py-3 text-sm font-semibold text-slate-950 shadow-[0_18px_40px_-22px_rgba(16,185,129,.5)] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <Eye className="h-4 w-4" />
+                      {publishLoading ? 'Publishing...' : 'Publish All Results'}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+function ScoreInput({ label, value, onChange }) {
+  const handleChange = (e) => {
+    let newValue = parseFloat(e.target.value);
+    
+    // Ensure value doesn't exceed 10
+    if (newValue > 10) {
+      newValue = 10;
+    }
+    
+    // Ensure value is not negative
+    if (newValue < 0) {
+      newValue = 0;
+    }
+    
+    onChange(newValue || 0);
+  };
+
+  return (
+    <div className="flex items-center gap-3">
+      <label className="flex-1 text-sm font-medium text-white/80">{label}</label>
+      <input
+        type="number"
+        min="0"
+        max="10"
+        step="0.5"
+        value={value}
+        onChange={handleChange}
+        onBlur={(e) => {
+          // Ensure value is within bounds on blur
+          let val = parseFloat(e.target.value) || 0;
+          if (val > 10) val = 10;
+          if (val < 0) val = 0;
+          onChange(val);
+        }}
+        className="w-20 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-center text-sm font-semibold text-white outline-none transition focus:border-white/20 focus:bg-white/8"
+      />
+      <span className="text-xs text-white/50 w-8">/10</span>
     </div>
   );
 }

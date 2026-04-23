@@ -83,7 +83,7 @@ export async function POST(request) {
     await StartupStarterRegistration.findOneAndUpdate(
       { ticketId },
       { $set: updateData },
-      { new: true, returnDocument: 'after' }
+      { returnDocument: 'after' }
     );
 
     return NextResponse.json({

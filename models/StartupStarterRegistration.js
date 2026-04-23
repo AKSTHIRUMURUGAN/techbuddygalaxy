@@ -54,6 +54,15 @@ const startupStarterRegistrationSchema = new mongoose.Schema({
   eveningAttendance: {
     type: Date,
     default: null
+  },
+  teamId: {
+    type: String,
+    default: null,
+    index: true
+  },
+  teamNumber: {
+    type: Number,
+    default: null
   }
 }, {
   timestamps: true

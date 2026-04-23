@@ -18,6 +18,20 @@ export default function QRScanner({ onScan, onError, onClose }) {
 
     const initScanner = async () => {
       try {
+        // Wait for DOM to be ready
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        // Check if element exists
+        const element = document.getElementById(qrcodeRegionId);
+        if (!element) {
+          console.error('Scanner element not found');
+          if (mounted) {
+            setError('Scanner initialization failed. Please try uploading an image instead.');
+            setIsScanning(false);
+          }
+          return;
+        }
+
         setIsScanning(true);
         
         const { Html5QrcodeScanner } = await import('html5-qrcode');
@@ -82,10 +96,14 @@ export default function QRScanner({ onScan, onError, onClose }) {
       }
     };
 
-    initScanner();
+    // Delay initialization to ensure DOM is ready
+    const timeoutId = setTimeout(() => {
+      initScanner();
+    }, 100);
 
     return () => {
       mounted = false;
+      clearTimeout(timeoutId);
       if (scannerRef.current) {
         scannerRef.current.clear().catch(error => {
           console.error("Cleanup error:", error);
