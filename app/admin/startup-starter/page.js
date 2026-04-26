@@ -17,6 +17,7 @@ import {
   Eye,
   EyeOff,
   FileDown,
+  FileText,
   LogOut,
   MessageSquare,
   RefreshCw,
@@ -1270,6 +1271,30 @@ function EvaluationModal({ teams, onClose, onSuccess }) {
                         <p className="text-xs text-white/50 mt-2">
                           {selectedTeam.members.length} members
                         </p>
+                        
+                        {/* Pitch Deck Link */}
+                        {selectedTeam.pitchDeck && selectedTeam.pitchDeck.fileUrl && (
+                          <div className="mt-3 pt-3 border-t border-white/10">
+                            <a
+                              href={selectedTeam.pitchDeck.fileUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-400/15 to-pink-400/15 px-3 py-2 text-sm font-medium text-purple-200 ring-1 ring-purple-300/25 transition hover:from-purple-400/25 hover:to-pink-400/25"
+                            >
+                              <FileText className="h-4 w-4" />
+                              View Pitch Deck
+                              <span className="text-xs text-purple-300/70">
+                                ({(selectedTeam.pitchDeck.fileSize / (1024 * 1024)).toFixed(2)} MB)
+                              </span>
+                            </a>
+                            <p className="text-xs text-white/50 mt-2">
+                              Uploaded {new Date(selectedTeam.pitchDeck.uploadedAt).toLocaleString('en-IN', {
+                                dateStyle: 'medium',
+                                timeStyle: 'short'
+                              })}
+                            </p>
+                          </div>
+                        )}
                       </div>
 
                       <div className="space-y-3">

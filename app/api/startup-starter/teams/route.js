@@ -21,6 +21,7 @@ export async function GET(request) {
         i2rMemberProfileUrls: td.i2rMemberProfileUrls,
         i2rIdeaProfileUrl: td.i2rIdeaProfileUrl,
         i2rCompanyProfileUrl: td.i2rCompanyProfileUrl,
+        pitchDeck: td.pitchDeck,
         evaluation: td.evaluation,
         resultsPublished: td.resultsPublished
       };
@@ -39,6 +40,7 @@ export async function GET(request) {
           i2rMemberProfileUrls: details.i2rMemberProfileUrls || null,
           i2rIdeaProfileUrl: details.i2rIdeaProfileUrl || null,
           i2rCompanyProfileUrl: details.i2rCompanyProfileUrl || null,
+          pitchDeck: details.pitchDeck || null,
           evaluation: details.evaluation || null,
           resultsPublished: details.resultsPublished || false,
           members: []

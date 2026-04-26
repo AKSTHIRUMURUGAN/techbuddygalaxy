@@ -32,6 +32,14 @@ const startupStarterTeamSchema = new mongoose.Schema({
     type: String,
     default: null
   },
+  // Pitch Deck
+  pitchDeck: {
+    fileName: { type: String, default: null },
+    fileUrl: { type: String, default: null },
+    fileSize: { type: Number, default: null },
+    uploadedBy: { type: String, default: null },
+    uploadedAt: { type: Date, default: null }
+  },
   // Shark Tank Evaluation
   evaluation: {
     problemScore: { type: Number, default: 0, min: 0, max: 10 },

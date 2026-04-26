@@ -25,7 +25,30 @@ function FadeIn({ children, delay = 0, className = '' }) {
   );
 }
 
-const departments = ['Computer Science','Information Technology','Electronics & Communication','Electrical & Electronics','Mechanical','Civil','Other'];
+const departments = [
+  'Aeronautical Engineering',
+  'Automobile Engineering',
+  'Biomedical Engineering',
+  'Biotechnology',
+  'Chemical Engineering',
+  'Civil Engineering',
+  'Computer Science & Engineering',
+  'Computer Science & Engineering (Cyber Security)',
+  'Computer Science & Business Systems',
+  'Computer Science & Design',
+  'Electrical & Electronics Engineering',
+  'Electronics & Communication Engineering',
+  'Food Technology',
+  'Information Technology',
+  'Artificial Intelligence & Machine Learning',
+  'Artificial Intelligence & Data Science',
+  'Mechanical Engineering',
+  'Mechatronics Engineering',
+  'Robotics & Automation',
+  'Humanities & Sciences',
+  'Management Studies',
+  'Other'
+];
 
 export default function App() {
   const [formData, setFormData] = useState({ name:'', email:'', rollNo:'', department:'', phoneNo:'', college:'REC' });

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, Building2, Ticket, RefreshCw, Loader2, Edit3, X, Mail, Check, Rocket, ExternalLink, Award, MessageSquare, User, TrendingUp, Trophy, Medal, Crown } from 'lucide-react';
+import { Users, Building2, Ticket, RefreshCw, Loader2, Edit3, X, Mail, Check, Rocket, ExternalLink, Award, MessageSquare, User, TrendingUp, Trophy, Medal, Crown, FileText } from 'lucide-react';
 
 export default function TeamDashboard() {
   const [teams, setTeams] = useState([]);
@@ -103,6 +103,13 @@ export default function TeamDashboard() {
                     View Evaluation
                   </a>
                 )}
+                <a
+                  href="/startup-starter/pitch-deck"
+                  className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-purple-400/15 to-pink-400/15 px-4 py-2 text-sm font-semibold text-purple-200 ring-1 ring-purple-300/25 transition hover:from-purple-400/25 hover:to-pink-400/25"
+                >
+                  <FileText className="h-4 w-4" />
+                  Submit Pitch Deck
+                </a>
                 <button
                   onClick={fetchTeams}
                   className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white/85 transition hover:bg-white/8"
