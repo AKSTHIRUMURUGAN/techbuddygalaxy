@@ -6,6 +6,7 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import dynamic from 'next/dynamic';
 import { AnimatePresence, motion } from 'framer-motion';
+import toast, { Toaster } from 'react-hot-toast';
 import {
   ArrowDownToLine,
   Award,
@@ -27,6 +28,7 @@ import {
   Sunset,
   Ticket,
   Trash2,
+  User,
   Users,
   X
 } from 'lucide-react';
@@ -50,6 +52,12 @@ export default function StartupStarterAdmin() {
   const [teamMessage, setTeamMessage] = useState('');
   const [showEvaluationModal, setShowEvaluationModal] = useState(false);
   const [teams, setTeams] = useState([]);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [studentToDelete, setStudentToDelete] = useState(null);
+  const [showDeleteAllModal, setShowDeleteAllModal] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
 
   useEffect(() => {
     // Check if already authenticated
@@ -165,6 +173,74 @@ export default function StartupStarterAdmin() {
       setTeamMessage('✗ Failed to clear teams');
     } finally {
       setCreatingTeams(false);
+    }
+  };
+
+  const handleViewProfile = (student) => {
+    setSelectedStudent(student);
+    setShowProfileModal(true);
+  };
+
+  const handleDeleteStudent = async (studentId) => {
+    setStudentToDelete(studentId);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteStudent = async () => {
+    if (!studentToDelete) return;
+
+    const loadingToast = toast.loading('Deleting student...');
+
+    try {
+      const response = await fetch(`/api/startup-starter/registrations/${studentToDelete}`, {
+        method: 'DELETE'
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success(`Student deleted successfully`, { id: loadingToast });
+        fetchRegistrations();
+        setShowDeleteModal(false);
+        setStudentToDelete(null);
+      } else {
+        toast.error(data.error || 'Failed to delete student', { id: loadingToast });
+      }
+    } catch (error) {
+      toast.error('Failed to delete student', { id: loadingToast });
+    }
+  };
+
+  const handleDeleteAll = () => {
+    setShowDeleteAllModal(true);
+    setDeleteConfirmText('');
+  };
+
+  const confirmDeleteAll = async () => {
+    if (deleteConfirmText !== 'YES') {
+      toast.error('Please type YES to confirm');
+      return;
+    }
+
+    const loadingToast = toast.loading('Deleting all registrations...');
+
+    try {
+      const response = await fetch('/api/startup-starter/registrations', {
+        method: 'DELETE'
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success(data.message, { id: loadingToast, duration: 4000 });
+        fetchRegistrations();
+        setShowDeleteAllModal(false);
+        setDeleteConfirmText('');
+      } else {
+        toast.error(data.error || 'Failed to delete registrations', { id: loadingToast });
+      }
+    } catch (error) {
+      toast.error('Failed to delete registrations', { id: loadingToast });
     }
   };
 
@@ -396,6 +472,32 @@ export default function StartupStarterAdmin() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: 'rgba(15, 23, 42, 0.95)',
+            color: '#fff',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '16px',
+            backdropFilter: 'blur(12px)',
+          },
+          success: {
+            iconTheme: {
+              primary: '#10b981',
+              secondary: '#fff',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: '#ef4444',
+              secondary: '#fff',
+            },
+          },
+        }}
+      />
+      
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -top-32 left-1/2 h-[620px] w-[620px] -translate-x-1/2 rounded-full bg-indigo-500/20 blur-3xl" />
         <div className="absolute -bottom-48 right-10 h-[560px] w-[560px] rounded-full bg-cyan-500/10 blur-3xl" />
@@ -739,14 +841,23 @@ export default function StartupStarterAdmin() {
                 <Building2 className="h-4 w-4 text-white/60" />
                 Registrations
               </div>
-              <div className="inline-flex items-center gap-2 text-xs text-white/55">
-                <ArrowDownToLine className="h-3.5 w-3.5" />
-                Exports use current filters
+              <div className="flex items-center gap-3">
+                <div className="inline-flex items-center gap-2 text-xs text-white/55">
+                  <ArrowDownToLine className="h-3.5 w-3.5" />
+                  Exports use current filters
+                </div>
+                <button
+                  onClick={handleDeleteAll}
+                  className="inline-flex items-center gap-2 rounded-2xl border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-200 transition hover:bg-red-500/20"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  Delete All
+                </button>
               </div>
             </div>
 
             <div className="overflow-x-auto">
-              <table className="min-w-[1100px] w-full">
+              <table className="min-w-[1200px] w-full">
                 <thead className="sticky top-0 z-10 bg-slate-950/70 backdrop-blur">
                   <tr className="border-y border-white/10">
                     <Th>Ticket</Th>
@@ -759,6 +870,7 @@ export default function StartupStarterAdmin() {
                     <ThCenter>Morning</ThCenter>
                     <ThCenter>Evening</ThCenter>
                     <ThCenter>OD</ThCenter>
+                    <ThCenter>Actions</ThCenter>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/6">
@@ -805,6 +917,24 @@ export default function StartupStarterAdmin() {
                             {odEligible ? '✓' : '—'}
                           </span>
                         </TdCenter>
+                        <TdCenter>
+                          <div className="flex items-center justify-center gap-1">
+                            <button
+                              onClick={() => handleViewProfile(reg)}
+                              className="grid h-8 w-8 place-items-center rounded-xl border border-white/10 bg-white/5 text-white/70 transition hover:bg-white/10 hover:text-white/90"
+                              title="View profile"
+                            >
+                              <User className="h-3.5 w-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteStudent(reg._id)}
+                              className="grid h-8 w-8 place-items-center rounded-xl border border-red-500/30 bg-red-500/10 text-red-300 transition hover:bg-red-500/20"
+                              title="Delete student"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+                        </TdCenter>
                       </tr>
                     );
                   })}
@@ -839,6 +969,47 @@ export default function StartupStarterAdmin() {
                 fetchTeams();
                 setShowEvaluationModal(false);
               }}
+            />
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {showProfileModal && selectedStudent && (
+            <StudentProfileModal
+              student={selectedStudent}
+              onClose={() => {
+                setShowProfileModal(false);
+                setSelectedStudent(null);
+              }}
+            />
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {showDeleteModal && (
+            <DeleteConfirmModal
+              title="Delete Student"
+              message="Are you sure you want to delete this student? This action cannot be undone."
+              onConfirm={confirmDeleteStudent}
+              onCancel={() => {
+                setShowDeleteModal(false);
+                setStudentToDelete(null);
+              }}
+            />
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {showDeleteAllModal && (
+            <DeleteAllConfirmModal
+              confirmText={deleteConfirmText}
+              setConfirmText={setDeleteConfirmText}
+              onConfirm={confirmDeleteAll}
+              onCancel={() => {
+                setShowDeleteAllModal(false);
+                setDeleteConfirmText('');
+              }}
+              totalCount={registrations.length}
             />
           )}
         </AnimatePresence>
@@ -1567,5 +1738,343 @@ function StatusDot({ ok }) {
     >
       {ok ? '✓' : '—'}
     </span>
+  );
+}
+
+function DeleteConfirmModal({ title, message, onConfirm, onCancel }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+    >
+      <div 
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onCancel}
+      />
+      
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 20, scale: 0.95 }}
+        transition={{ type: 'spring', stiffness: 260, damping: 22 }}
+        className="relative w-full max-w-md"
+      >
+        <div className="rounded-3xl bg-white/6 p-1 ring-1 ring-white/15 backdrop-blur">
+          <div className="rounded-[22px] bg-slate-950/40 ring-1 ring-white/10">
+            <div className="p-6">
+              <div className="flex items-start gap-4">
+                <div className="grid h-12 w-12 flex-shrink-0 place-items-center rounded-2xl bg-red-500/15 ring-1 ring-red-400/25">
+                  <Trash2 className="h-6 w-6 text-red-300" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-white/90">{title}</h3>
+                  <p className="mt-2 text-sm text-white/65">{message}</p>
+                </div>
+              </div>
+
+              <div className="mt-6 flex gap-3">
+                <button
+                  onClick={onCancel}
+                  className="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-white/85 transition hover:bg-white/8"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={onConfirm}
+                  className="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-500 to-red-600 px-4 py-3 text-sm font-semibold text-white shadow-[0_18px_40px_-22px_rgba(239,68,68,.5)] transition hover:from-red-600 hover:to-red-700"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+function DeleteAllConfirmModal({ confirmText, setConfirmText, onConfirm, onCancel, totalCount }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+    >
+      <div 
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onCancel}
+      />
+      
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 20, scale: 0.95 }}
+        transition={{ type: 'spring', stiffness: 260, damping: 22 }}
+        className="relative w-full max-w-md"
+      >
+        <div className="rounded-3xl bg-white/6 p-1 ring-1 ring-white/15 backdrop-blur">
+          <div className="rounded-[22px] bg-slate-950/40 ring-1 ring-white/10">
+            <div className="p-6">
+              <div className="flex items-start gap-4">
+                <div className="grid h-12 w-12 flex-shrink-0 place-items-center rounded-2xl bg-red-500/15 ring-1 ring-red-400/25">
+                  <Trash2 className="h-6 w-6 text-red-300" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-white/90">Delete All Registrations</h3>
+                  <p className="mt-2 text-sm text-white/65">
+                    ⚠️ This will permanently delete <span className="font-bold text-red-300">{totalCount}</span> registrations. This action cannot be undone.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-6 space-y-4">
+                <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 ring-1 ring-red-400/20">
+                  <p className="text-sm font-medium text-red-200">
+                    Type <span className="font-mono font-bold">YES</span> to confirm deletion
+                  </p>
+                </div>
+
+                <input
+                  type="text"
+                  value={confirmText}
+                  onChange={(e) => setConfirmText(e.target.value)}
+                  placeholder="Type YES"
+                  className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/40 outline-none transition focus:border-red-400/50 focus:bg-white/8"
+                  autoFocus
+                />
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={onCancel}
+                    className="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-white/85 transition hover:bg-white/8"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={onConfirm}
+                    disabled={confirmText !== 'YES'}
+                    className="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-500 to-red-600 px-4 py-3 text-sm font-semibold text-white shadow-[0_18px_40px_-22px_rgba(239,68,68,.5)] transition hover:from-red-600 hover:to-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Delete All
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+function StudentProfileModal({ student, onClose }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+    >
+      <div 
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+      />
+      
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 20, scale: 0.95 }}
+        transition={{ type: 'spring', stiffness: 260, damping: 22 }}
+        className="relative w-full max-w-2xl max-h-[90vh] overflow-hidden"
+      >
+        <div className="rounded-3xl bg-white/6 p-1 ring-1 ring-white/15 backdrop-blur">
+          <div className="rounded-[22px] bg-slate-950/40 ring-1 ring-white/10 max-h-[88vh] overflow-y-auto">
+            {/* Header */}
+            <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-white/10 bg-slate-950/80 backdrop-blur px-6 py-5">
+              <div className="flex items-center gap-3">
+                <div className="grid h-10 w-10 place-items-center rounded-2xl bg-white/5 ring-1 ring-white/10">
+                  <User className="h-5 w-5 text-white/80" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold tracking-tight text-white/90">
+                    Student Profile
+                  </h2>
+                  <p className="text-xs text-white/60">
+                    Complete registration details
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={onClose}
+                className="grid h-9 w-9 place-items-center rounded-2xl border border-white/10 bg-white/5 text-white/80 transition hover:bg-white/8"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Basic Info */}
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+                <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
+                  <BadgeCheck className="h-4 w-4" />
+                  Basic Information
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <InfoItem label="Full Name" value={student.name} />
+                  <InfoItem label="Ticket ID" value={student.ticketId} mono />
+                  <InfoItem label="Email" value={student.email} />
+                  <InfoItem label="Phone Number" value={student.phoneNo} />
+                  <InfoItem label="Roll Number" value={student.rollNo} />
+                  <InfoItem label="Department" value={student.department} />
+                  <InfoItem label="College" value={student.college} className="md:col-span-2" />
+                </div>
+              </div>
+
+              {/* Team Info */}
+              {student.teamNumber && (
+                <div className="rounded-2xl border border-indigo-400/30 bg-indigo-400/10 p-5 ring-1 ring-indigo-300/20">
+                  <h3 className="text-sm font-semibold text-indigo-200 mb-4 flex items-center gap-2">
+                    <Users className="h-4 w-4" />
+                    Team Assignment
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <InfoItem label="Team Number" value={student.teamNumber} light />
+                    <InfoItem label="Team ID" value={student.teamId} mono light />
+                  </div>
+                </div>
+              )}
+
+              {/* Attendance Info */}
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+                <h3 className="text-sm font-semibold text-white/80 mb-4 flex items-center gap-2">
+                  <Ticket className="h-4 w-4" />
+                  Attendance Records
+                </h3>
+                <div className="space-y-3">
+                  <AttendanceItem
+                    label="Entry Verified"
+                    verified={student.entryVerified}
+                    timestamp={student.entryVerifiedAt}
+                  />
+                  <AttendanceItem
+                    label="Morning Attendance"
+                    verified={student.morningAttendance}
+                    timestamp={student.morningAttendance}
+                  />
+                  <AttendanceItem
+                    label="Evening Attendance"
+                    verified={student.eveningAttendance}
+                    timestamp={student.eveningAttendance}
+                  />
+                  <div className="pt-3 border-t border-white/10">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-white/70">OD Eligible</span>
+                      <span className={[
+                        'inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ring-1',
+                        (student.morningAttendance && student.eveningAttendance)
+                          ? 'bg-emerald-400/15 text-emerald-200 ring-emerald-300/25'
+                          : 'bg-white/5 text-white/50 ring-white/10'
+                      ].join(' ')}>
+                        {(student.morningAttendance && student.eveningAttendance) ? (
+                          <>
+                            <Check className="h-3 w-3" />
+                            Eligible
+                          </>
+                        ) : (
+                          <>Not Eligible</>
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Registration Info */}
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+                <h3 className="text-sm font-semibold text-white/80 mb-4">Registration Details</h3>
+                <div className="space-y-2">
+                  <InfoItem 
+                    label="Registered At" 
+                    value={new Date(student.registeredAt).toLocaleString('en-IN', {
+                      dateStyle: 'full',
+                      timeStyle: 'short'
+                    })} 
+                  />
+                  <InfoItem 
+                    label="Database ID" 
+                    value={student._id} 
+                    mono 
+                  />
+                </div>
+              </div>
+
+              {/* Close Button */}
+              <button
+                onClick={onClose}
+                className="w-full inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-white/85 transition hover:bg-white/8"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+function InfoItem({ label, value, mono = false, light = false, className = '' }) {
+  return (
+    <div className={className}>
+      <div className={`text-xs font-medium mb-1 ${light ? 'text-indigo-300/70' : 'text-white/60'}`}>
+        {label}
+      </div>
+      <div className={[
+        'text-sm font-medium',
+        light ? 'text-indigo-100' : 'text-white/90',
+        mono ? 'font-mono text-xs' : ''
+      ].join(' ')}>
+        {value || '—'}
+      </div>
+    </div>
+  );
+}
+
+function AttendanceItem({ label, verified, timestamp }) {
+  return (
+    <div className="flex items-center justify-between py-2">
+      <span className="text-sm text-white/70">{label}</span>
+      <div className="flex items-center gap-3">
+        {timestamp && (
+          <span className="text-xs text-white/50">
+            {new Date(timestamp).toLocaleString('en-IN', {
+              dateStyle: 'short',
+              timeStyle: 'short'
+            })}
+          </span>
+        )}
+        <span className={[
+          'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ring-1',
+          verified
+            ? 'bg-emerald-400/15 text-emerald-200 ring-emerald-300/25'
+            : 'bg-white/5 text-white/50 ring-white/10'
+        ].join(' ')}>
+          {verified ? (
+            <>
+              <Check className="h-3 w-3" />
+              Marked
+            </>
+          ) : (
+            <>Not Marked</>
+          )}
+        </span>
+      </div>
+    </div>
   );
 }
