@@ -9,6 +9,7 @@ export default function PitchDeckSubmission() {
   const [email, setEmail] = useState('');
   const [step, setStep] = useState('verify'); // verify, upload
   const [verifiedTeam, setVerifiedTeam] = useState(null);
+  const [existingPitchDeck, setExistingPitchDeck] = useState(null);
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
@@ -34,6 +35,19 @@ export default function PitchDeckSubmission() {
       if (response.ok) {
         toast.success('Email verified!', { id: loadingToast });
         setVerifiedTeam(data.team);
+        
+        // Check for existing pitch deck
+        try {
+          const pitchDeckResponse = await fetch(`/api/startup-starter/pitch-deck/upload?teamId=${data.team.teamId}`);
+          if (pitchDeckResponse.ok) {
+            const pitchDeckData = await pitchDeckResponse.json();
+            setExistingPitchDeck(pitchDeckData.pitchDeck);
+          }
+        } catch (error) {
+          // No existing pitch deck, which is fine
+          setExistingPitchDeck(null);
+        }
+        
         setStep('upload');
       } else {
         toast.error(data.error || 'Email verification failed', { id: loadingToast });
@@ -117,13 +131,15 @@ export default function PitchDeckSubmission() {
       const data = await response.json();
 
       if (response.ok) {
-        toast.success('Pitch deck uploaded successfully!', { id: loadingToast, duration: 4000 });
+        const successMessage = existingPitchDeck ? 'Pitch deck replaced successfully!' : 'Pitch deck uploaded successfully!';
+        toast.success(successMessage, { id: loadingToast, duration: 4000 });
         // Reset form
         setTimeout(() => {
           setStep('verify');
           setEmail('');
           setFile(null);
           setVerifiedTeam(null);
+          setExistingPitchDeck(null);
         }, 2000);
       } else {
         toast.error(data.error || 'Upload failed', { id: loadingToast });
@@ -270,8 +286,37 @@ export default function PitchDeckSubmission() {
                 {/* Upload Area */}
                 <div className="space-y-3">
                   <label className="block text-sm font-medium text-white/80">
-                    Upload Pitch Deck
+                    {existingPitchDeck ? 'Replace Pitch Deck' : 'Upload Pitch Deck'}
                   </label>
+                  
+                  {/* Existing Pitch Deck Info */}
+                  {existingPitchDeck && (
+                    <div className="rounded-2xl border border-amber-400/30 bg-amber-400/10 p-4 ring-1 ring-amber-300/20">
+                      <div className="flex items-center gap-3">
+                        <FileText className="h-5 w-5 text-amber-300" />
+                        <div className="flex-1">
+                          <div className="text-sm font-medium text-amber-200">
+                            Current: {existingPitchDeck.fileName}
+                          </div>
+                          <div className="text-xs text-amber-300/70 mt-0.5">
+                            {(existingPitchDeck.fileSize / (1024 * 1024)).toFixed(2)} MB • 
+                            Uploaded {new Date(existingPitchDeck.uploadedAt).toLocaleString('en-IN', {
+                              dateStyle: 'medium',
+                              timeStyle: 'short'
+                            })}
+                          </div>
+                        </div>
+                        <a
+                          href={existingPitchDeck.fileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 rounded-xl bg-amber-400/20 px-3 py-1.5 text-xs font-medium text-amber-200 ring-1 ring-amber-300/25 transition hover:bg-amber-400/30"
+                        >
+                          View
+                        </a>
+                      </div>
+                    </div>
+                  )}
                   
                   <div
                     onDragEnter={handleDrag}
@@ -298,7 +343,7 @@ export default function PitchDeckSubmission() {
                         <Upload className="h-8 w-8 text-white/60" />
                       </div>
                       <p className="mt-4 text-sm font-medium text-white/80">
-                        {file ? file.name : 'Drop your file here or click to browse'}
+                        {file ? file.name : existingPitchDeck ? 'Drop new file here or click to browse' : 'Drop your file here or click to browse'}
                       </p>
                       <p className="mt-2 text-xs text-white/50">
                         PDF or PowerPoint (max 50MB)
@@ -353,6 +398,7 @@ export default function PitchDeckSubmission() {
                       setStep('verify');
                       setFile(null);
                       setVerifiedTeam(null);
+                      setExistingPitchDeck(null);
                     }}
                     disabled={loading}
                     className="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-white/85 transition hover:bg-white/8 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -367,12 +413,12 @@ export default function PitchDeckSubmission() {
                     {loading ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" />
-                        Uploading...
+                        {existingPitchDeck ? 'Replacing...' : 'Uploading...'}
                       </>
                     ) : (
                       <>
                         <Upload className="h-4 w-4" />
-                        Submit Pitch Deck
+                        {existingPitchDeck ? 'Replace Pitch Deck' : 'Submit Pitch Deck'}
                       </>
                     )}
                   </button>

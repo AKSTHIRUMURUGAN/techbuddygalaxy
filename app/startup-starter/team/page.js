@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, Building2, Ticket, RefreshCw, Loader2, Edit3, X, Mail, Check, Rocket, ExternalLink, Award, MessageSquare, User, TrendingUp, Trophy, Medal, Crown, FileText } from 'lucide-react';
+import { Users, Building2, Ticket, RefreshCw, Loader2, Edit3, X, Mail, Check, Rocket, ExternalLink, Award, MessageSquare, User, TrendingUp, Trophy, Medal, Crown, FileText, Upload, CheckCircle } from 'lucide-react';
 
 export default function TeamDashboard() {
   const [teams, setTeams] = useState([]);
@@ -395,6 +395,8 @@ function EditTeamModal({ team, onClose, onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [verifiedEmail, setVerifiedEmail] = useState('');
+  const [pitchDeckFile, setPitchDeckFile] = useState(null);
+  const [uploadingPitchDeck, setUploadingPitchDeck] = useState(false);
 
   const handleVerifyEmail = () => {
     setError('');
@@ -446,6 +448,66 @@ function EditTeamModal({ team, onClose, onSuccess }) {
       setError('Failed to update team details');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handlePitchDeckUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    const validTypes = [
+      'application/pdf',
+      'application/vnd.ms-powerpoint',
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+    ];
+
+    if (!validTypes.includes(file.type)) {
+      setError('Please upload a PDF or PowerPoint file');
+      return;
+    }
+
+    // Validate file size (max 50MB)
+    if (file.size > 50 * 1024 * 1024) {
+      setError('File size must be less than 50MB');
+      return;
+    }
+
+    setPitchDeckFile(file);
+    setError('');
+  };
+
+  const handleUploadPitchDeck = async () => {
+    if (!pitchDeckFile) return;
+
+    try {
+      setUploadingPitchDeck(true);
+      setError('');
+
+      const formData = new FormData();
+      formData.append('file', pitchDeckFile);
+      formData.append('email', verifiedEmail);
+      formData.append('teamId', team.teamId);
+
+      const response = await fetch('/api/startup-starter/pitch-deck/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setPitchDeckFile(null);
+        onSuccess(); // Refresh team data
+        setError(''); // Clear any errors
+        // Don't close modal, just show success
+      } else {
+        setError(data.error || 'Failed to upload pitch deck');
+      }
+    } catch (error) {
+      setError('Failed to upload pitch deck');
+    } finally {
+      setUploadingPitchDeck(false);
     }
   };
 
@@ -613,6 +675,102 @@ function EditTeamModal({ team, onClose, onSuccess }) {
                           className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-white/40 outline-none transition focus:border-white/20 focus:bg-white/8"
                         />
                       </div>
+                    </div>
+                  </div>
+
+                  {/* Pitch Deck Upload Section */}
+                  <div className="pt-3 border-t border-white/10">
+                    <h3 className="text-sm font-semibold text-white/80 mb-3">Pitch Deck</h3>
+                    
+                    {/* Current Pitch Deck Status */}
+                    {team.pitchDeck && team.pitchDeck.fileUrl ? (
+                      <div className="mb-3 rounded-2xl border border-emerald-400/30 bg-emerald-400/10 p-3 ring-1 ring-emerald-300/20">
+                        <div className="flex items-center gap-3">
+                          <CheckCircle className="h-5 w-5 text-emerald-300" />
+                          <div className="flex-1">
+                            <div className="text-sm font-medium text-emerald-200">
+                              Pitch deck uploaded
+                            </div>
+                            <div className="text-xs text-emerald-300/70 mt-0.5">
+                              {team.pitchDeck.fileName} • {(team.pitchDeck.fileSize / (1024 * 1024)).toFixed(2)} MB
+                            </div>
+                          </div>
+                          <a
+                            href={team.pitchDeck.fileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 rounded-xl bg-emerald-400/20 px-3 py-1.5 text-xs font-medium text-emerald-200 ring-1 ring-emerald-300/25 transition hover:bg-emerald-400/30"
+                          >
+                            View
+                          </a>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="mb-3 rounded-2xl border border-amber-400/30 bg-amber-400/10 p-3 ring-1 ring-amber-300/20">
+                        <div className="flex items-center gap-3">
+                          <FileText className="h-5 w-5 text-amber-300" />
+                          <div className="text-sm text-amber-200">
+                            No pitch deck uploaded yet
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Upload New Pitch Deck */}
+                    <div className="space-y-3">
+                      <div className="space-y-2">
+                        <label className="block text-xs font-medium text-white/70">
+                          {team.pitchDeck && team.pitchDeck.fileUrl ? 'Replace Pitch Deck' : 'Upload Pitch Deck'}
+                        </label>
+                        <input
+                          type="file"
+                          accept=".pdf,.ppt,.pptx"
+                          onChange={handlePitchDeckUpload}
+                          className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white file:mr-3 file:rounded-xl file:border-0 file:bg-white/10 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-white/80 outline-none transition focus:border-white/20 focus:bg-white/8"
+                        />
+                        <p className="text-xs text-white/50">
+                          PDF or PowerPoint files only (max 50MB)
+                        </p>
+                      </div>
+
+                      {pitchDeckFile && (
+                        <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
+                          <div className="flex items-center gap-2">
+                            <FileText className="h-4 w-4 text-indigo-300" />
+                            <div>
+                              <div className="text-sm font-medium text-white/90">{pitchDeckFile.name}</div>
+                              <div className="text-xs text-white/50">
+                                {(pitchDeckFile.size / (1024 * 1024)).toFixed(2)} MB
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={handleUploadPitchDeck}
+                              disabled={uploadingPitchDeck}
+                              className="inline-flex items-center gap-1 rounded-xl bg-emerald-400/20 px-3 py-1.5 text-xs font-medium text-emerald-200 ring-1 ring-emerald-300/25 transition hover:bg-emerald-400/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {uploadingPitchDeck ? (
+                                <>
+                                  <Loader2 className="h-3 w-3 animate-spin" />
+                                  Uploading...
+                                </>
+                              ) : (
+                                <>
+                                  <Upload className="h-3 w-3" />
+                                  Upload
+                                </>
+                              )}
+                            </button>
+                            <button
+                              onClick={() => setPitchDeckFile(null)}
+                              className="grid h-7 w-7 place-items-center rounded-xl border border-white/10 bg-white/5 text-white/70 transition hover:bg-white/10"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
 
