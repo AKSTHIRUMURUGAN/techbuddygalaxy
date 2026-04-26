@@ -75,8 +75,14 @@ export default function App() {
       const data = await res.json();
       if (res.ok) {
         setMsgType('success');
-        setMessage("You're in. Check your email for your QR ticket.");
+        setMessage("You're in! Check your email for your QR ticket. Redirecting to WhatsApp group...");
         setFormData({ name:'', email:'', rollNo:'', department:'', phoneNo:'', college:'REC' });
+        // Redirect to WhatsApp group after 2 seconds
+        if (data.whatsappGroupUrl) {
+          setTimeout(() => {
+            window.open(data.whatsappGroupUrl, '_blank');
+          }, 2000);
+        }
       } else {
         setMsgType('error');
         if (data.alreadyRegistered) {
@@ -97,7 +103,15 @@ export default function App() {
         method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ email: resendEmail })
       });
       const data = await res.json();
-      if (res.ok) { setMsgType('success'); setMessage('Ticket resent. Check your inbox.'); setShowResend(false); }
+      if (res.ok) { 
+        setMsgType('success'); 
+        setMessage('Ticket resent. Check your inbox. Redirecting to WhatsApp group...'); 
+        setShowResend(false);
+        // Redirect to WhatsApp group after 2 seconds
+        setTimeout(() => {
+          window.open('https://chat.whatsapp.com/Fr8RQtkjnGyGKovtqiVX68', '_blank');
+        }, 2000);
+      }
       else { setMsgType('error'); setMessage(data.error || 'Failed to resend.'); }
     } catch { setMsgType('error'); setMessage('Network error. Try again.'); }
     finally { setLoading(false); }
@@ -308,6 +322,8 @@ export default function App() {
                   {message}
                 </div>
               )}
+
+
 
               {showResend && (
                 <button type="button" onClick={handleResend} disabled={loading} style={{ padding: '14px', background: 'transparent', border: '1px solid rgba(249,115,22,0.4)', borderRadius: 6, color: '#f97316', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
