@@ -528,12 +528,12 @@ function EditTeamModal({ team, onClose, onSuccess }) {
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 20, scale: 0.95 }}
         transition={{ type: 'spring', stiffness: 260, damping: 22 }}
-        className="relative w-full max-w-md"
+        className="relative w-full max-w-2xl max-h-[90vh] overflow-hidden"
       >
         <div className="rounded-3xl bg-white/6 p-1 ring-1 ring-white/15 backdrop-blur">
-          <div className="rounded-[22px] bg-slate-950/40 ring-1 ring-white/10">
+          <div className="rounded-[22px] bg-slate-950/40 ring-1 ring-white/10 max-h-[88vh] overflow-y-auto">
             {/* Header */}
-            <div className="flex items-start justify-between gap-4 border-b border-white/10 px-6 py-5">
+            <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-white/10 bg-slate-950/80 backdrop-blur px-6 py-5">
               <div className="flex items-center gap-3">
                 <div className="grid h-10 w-10 place-items-center rounded-2xl bg-white/5 ring-1 ring-white/10">
                   <Edit3 className="h-5 w-5 text-white/80" />
