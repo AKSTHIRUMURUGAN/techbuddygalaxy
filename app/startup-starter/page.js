@@ -175,7 +175,7 @@ export default function App() {
             animation: 'fadeUp 0.6s ease both'
           }}>
             <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#f97316', display: 'inline-block', animation: 'pulse 2s infinite' }} />
-            April 28, 2026 · REC Campus
+            April 30, 2026 · REC Campus
           </div>
 
           <h1 style={{
@@ -280,10 +280,8 @@ export default function App() {
       <section id="register" style={{ padding: '120px 40px' }}>
         <div style={{ maxWidth: 520, margin: '0 auto' }}>
           <FadeIn>
-            <p style={{ fontSize: 11, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#f97316', marginBottom: 16, fontWeight: 600 }}>April 28, 2026</p>
-            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: 48, lineHeight: 1.1 }}>
-              Reserve your seat.
-            </h2>
+            <p style={{ fontSize: 11, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#f97316', marginBottom: 16, fontWeight: 600 }}>April 30, 2026</p>
+           
           </FadeIn>
 
           <FadeIn delay={100}>
@@ -306,7 +304,7 @@ export default function App() {
                 fontSize: 15, color: 'rgba(255,255,255,0.5)',
                 lineHeight: 1.7, maxWidth: 360, margin: '0 auto'
               }}>
-                Registration is now closed. We've received an overwhelming response and look forward to seeing everyone on <span style={{ color: '#f97316', fontWeight: 500 }}>April 28, 2026</span>.
+                Registration is now closed. We've received an overwhelming response and look forward to seeing everyone on <span style={{ color: '#f97316', fontWeight: 500 }}>April 30, 2026</span>.
               </p>
             </div>
           </FadeIn>
