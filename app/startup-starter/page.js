@@ -66,7 +66,7 @@ export default function App() {
   }, []);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault();now 
     setLoading(true); setMessage(''); setShowResend(false);
     try {
       const res = await fetch('/api/startup-starter/register', {
@@ -145,11 +145,11 @@ export default function App() {
         <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, letterSpacing: '-0.02em' }}>
           Startup<span style={{ color: '#f97316' }}>Starter</span>
         </span>
-        <a href="#register" style={{
-          background: '#f97316', color: '#fff', padding: '10px 22px',
+        <span style={{
+          background: 'rgba(249,115,22,0.15)', color: 'rgba(249,115,22,0.6)', padding: '10px 22px',
           borderRadius: 6, fontSize: 13, fontWeight: 600, letterSpacing: '0.04em',
-          textDecoration: 'none', textTransform: 'uppercase', transition: 'opacity 0.2s'
-        }}>Register</a>
+          textTransform: 'uppercase', border: '1px solid rgba(249,115,22,0.2)'
+        }}>Registration Closed</span>
       </nav>
 
       {/* HERO */}
@@ -200,14 +200,14 @@ export default function App() {
           </p>
 
           <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center', animation: 'fadeUp 0.7s 0.3s ease both' }}>
-            <a href="#register" style={{
-              background: '#f97316', color: '#fff', padding: '16px 36px',
-              borderRadius: 8, fontSize: 15, fontWeight: 600, textDecoration: 'none',
-              letterSpacing: '0.02em', transition: 'transform 0.2s, box-shadow 0.2s',
-              boxShadow: '0 0 40px rgba(249,115,22,0.3)'
+            <span style={{
+              display: 'inline-block',
+              background: 'rgba(249,115,22,0.1)', color: 'rgba(249,115,22,0.5)', padding: '16px 36px',
+              borderRadius: 8, fontSize: 15, fontWeight: 600,
+              letterSpacing: '0.02em', border: '1px solid rgba(249,115,22,0.2)'
             }}>
-              Secure your spot
-            </a>
+              Registration Closed
+            </span>
             <div style={{ display: 'flex', gap: 20, alignItems: 'center', color: 'rgba(255,255,255,0.3)', fontSize: 13 }}>
               <span>8.1 hrs</span>
               <span style={{ width: 3, height: 3, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'inline-block' }} />
@@ -287,54 +287,28 @@ export default function App() {
           </FadeIn>
 
           <FadeIn delay={100}>
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-              {[
-                { label: 'Full Name', key: 'name', type: 'text', placeholder: 'Your name' },
-                { label: 'College Email', key: 'email', type: 'email', placeholder: 'you@rec.ac.in' },
-                { label: 'Roll Number', key: 'rollNo', type: 'text', placeholder: 'e.g. 221601053' },
-                { label: 'WhatsApp Number', key: 'phoneNo', type: 'tel', placeholder: '10-digit number' },
-              ].map(({ label, key, type, placeholder }) => (
-                <div key={key}>
-                  <label style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.06em', textTransform: 'uppercase', display: 'block', marginBottom: 8 }}>{label}</label>
-                  <input
-                    type={type} required
-                    value={(formData)[key]}
-                    onChange={e => setFormData({ ...formData, [key]: e.target.value })}
-                    placeholder={placeholder}
-                    style={{ width: '100%', padding: '14px 16px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, color: '#fff', fontSize: 15, outline: 'none', boxSizing: 'border-box', transition: 'border-color 0.2s', fontFamily: "'DM Sans', sans-serif" }}
-                    onFocus={e => e.target.style.borderColor = 'rgba(249,115,22,0.5)'}
-                    onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
-                  />
-                </div>
-              ))}
-
-              <div>
-                <label style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.06em', textTransform: 'uppercase', display: 'block', marginBottom: 8 }}>Department</label>
-                <select required value={formData.department} onChange={e => setFormData({ ...formData, department: e.target.value })}
-                  style={{ width: '100%', padding: '14px 16px', background: '#18181b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, color: formData.department ? '#fff' : 'rgba(255,255,255,0.3)', fontSize: 15, outline: 'none', boxSizing: 'border-box', fontFamily: "'DM Sans', sans-serif" }}>
-                  <option value="" disabled>Select department</option>
-                  {departments.map(d => <option key={d} value={d} style={{ background: '#18181b', color: '#fff' }}>{d}</option>)}
-                </select>
-              </div>
-
-              {message && (
-                <div style={{ padding: '14px 16px', borderRadius: 6, fontSize: 14, background: msgType === 'success' ? 'rgba(34,197,94,0.1)' : 'rgba(249,115,22,0.1)', border: `1px solid ${msgType === 'success' ? 'rgba(34,197,94,0.2)' : 'rgba(249,115,22,0.2)'}`, color: msgType === 'success' ? '#86efac' : '#fdba74' }}>
-                  {message}
-                </div>
-              )}
-
-
-
-              {showResend && (
-                <button type="button" onClick={handleResend} disabled={loading} style={{ padding: '14px', background: 'transparent', border: '1px solid rgba(249,115,22,0.4)', borderRadius: 6, color: '#f97316', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
-                  Resend my ticket →
-                </button>
-              )}
-
-              <button type="submit" disabled={loading} style={{ padding: '16px', background: '#f97316', border: 'none', borderRadius: 6, color: '#fff', fontSize: 15, fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1, fontFamily: "'DM Sans', sans-serif", letterSpacing: '0.02em', boxShadow: '0 0 30px rgba(249,115,22,0.25)', transition: 'opacity 0.2s' }}>
-                {loading ? 'Registering…' : 'Register for free'}
-              </button>
-            </form>
+            <div style={{
+              padding: '40px 32px', borderRadius: 12,
+              border: '1px solid rgba(249,115,22,0.2)',
+              background: 'rgba(249,115,22,0.05)',
+              textAlign: 'center'
+            }}>
+              <div style={{ fontSize: 40, marginBottom: 20 }}>🎉</div>
+              <h3 style={{
+                fontFamily: "'Playfair Display', serif",
+                fontSize: 'clamp(22px, 3vw, 30px)',
+                fontWeight: 700, letterSpacing: '-0.02em',
+                marginBottom: 12, color: '#fff'
+              }}>
+                Thank you for your interest!
+              </h3>
+              <p style={{
+                fontSize: 15, color: 'rgba(255,255,255,0.5)',
+                lineHeight: 1.7, maxWidth: 360, margin: '0 auto'
+              }}>
+                Registration is now closed. We've received an overwhelming response and look forward to seeing everyone on <span style={{ color: '#f97316', fontWeight: 500 }}>April 28, 2026</span>.
+              </p>
+            </div>
           </FadeIn>
         </div>
       </section>
@@ -359,3 +333,4 @@ export default function App() {
     </div>
   );
 }
+```
