@@ -276,9 +276,11 @@ export default function QuotationViewPage() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-14 h-14 bg-[#e8b86d] flex items-center justify-center">
-                    <span className="text-[#1a1a2e] font-black text-2xl">TBG</span>
-                  </div>
+                  <img 
+                    src="https://galaxy.techbuddyspace.in/tbg.png" 
+                    alt="Tech Buddy Galaxy" 
+                    className="h-14 w-auto"
+                  />
                   <div>
                     <h1 className="text-2xl font-black tracking-widest uppercase text-[#e8b86d]">
                       Tech Buddy Galaxy
@@ -416,6 +418,37 @@ export default function QuotationViewPage() {
                 ))}
               </tbody>
             </table>
+
+            {/* Add-ons Section */}
+            {selectedAddOns.length > 0 && (
+              <div className="mt-8">
+                <p className="text-xs uppercase tracking-widest font-black text-gray-400 mb-4">
+                  Add-ons & Extras
+                </p>
+                <div className="bg-amber-50 border-2 border-[#e8b86d] rounded-lg p-4">
+                  <div className="space-y-3">
+                    {selectedAddOns.map((addon, index) => (
+                      <div
+                        key={addon.id || index}
+                        className="flex items-center justify-between py-2 border-b border-amber-200 last:border-b-0"
+                      >
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="text-green-600" size={18} />
+                          <span className="font-bold text-[#1a1a2e]">{addon.name}</span>
+                        </div>
+                        <span className="font-black text-[#1a1a2e] font-mono">
+                          {addon.price === 0 ? (
+                            <span className="text-green-600 text-sm">FREE ✓</span>
+                          ) : (
+                            `₹${addon.price.toLocaleString()}`
+                          )}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Totals */}
             <div className="flex justify-end mt-8">
