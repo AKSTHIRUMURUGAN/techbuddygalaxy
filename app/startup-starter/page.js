@@ -66,7 +66,7 @@ export default function App() {
   }, []);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault();now 
     setLoading(true); setMessage(''); setShowResend(false);
     try {
       const res = await fetch('/api/startup-starter/register', {
@@ -171,6 +171,7 @@ export default function App() {
           }}>
             <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#f97316', display: 'inline-block', animation: 'pulse 2s infinite' }} />
             April 30, 2026 · REC Campus
+            April 30, 2026 · REC Campus
           </div>
 
           <h1 style={{
@@ -195,14 +196,14 @@ export default function App() {
           </p>
 
           <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center', animation: 'fadeUp 0.7s 0.3s ease both' }}>
-            <a href="#register" style={{
-              background: '#f97316', color: '#fff', padding: '16px 36px',
-              borderRadius: 8, fontSize: 15, fontWeight: 600, textDecoration: 'none',
-              letterSpacing: '0.02em', transition: 'transform 0.2s, box-shadow 0.2s',
-              boxShadow: '0 0 40px rgba(249,115,22,0.3)'
+            <span style={{
+              display: 'inline-block',
+              background: 'rgba(249,115,22,0.1)', color: 'rgba(249,115,22,0.5)', padding: '16px 36px',
+              borderRadius: 8, fontSize: 15, fontWeight: 600,
+              letterSpacing: '0.02em', border: '1px solid rgba(249,115,22,0.2)'
             }}>
-              Secure your spot
-            </a>
+              Registration Closed
+            </span>
             <div style={{ display: 'flex', gap: 20, alignItems: 'center', color: 'rgba(255,255,255,0.3)', fontSize: 13 }}>
               <span>8.1 hrs</span>
               <span style={{ width: 3, height: 3, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'inline-block' }} />
