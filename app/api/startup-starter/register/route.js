@@ -75,7 +75,7 @@ export async function POST(request) {
 }
 
 async function sendConfirmationEmail(registration, qrCodeDataURL) {
-  const transporter = nodemailer.createTransport({
+  const transport = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: process.env.EMAIL_USER,
@@ -585,7 +585,7 @@ async function sendConfirmationEmail(registration, qrCodeDataURL) {
 </html>
   `;
 
-  await transporter.sendMail({
+  await transport.sendMail({
     from: `"Startup Starter - TECHBUDDYSPACE" <${process.env.EMAIL_USER}>`,
     to: registration.email,
     subject: '🎉 Registration Confirmed - Startup Starter | Your QR Ticket Inside',
@@ -600,3 +600,4 @@ async function sendConfirmationEmail(registration, qrCodeDataURL) {
     ]
   });
 }
+

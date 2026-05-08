@@ -145,11 +145,6 @@ export default function App() {
         <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, letterSpacing: '-0.02em' }}>
           Startup<span style={{ color: '#f97316' }}>Starter</span>
         </span>
-        <a href="#register" style={{
-          background: '#f97316', color: '#fff', padding: '10px 22px',
-          borderRadius: 6, fontSize: 13, fontWeight: 600, letterSpacing: '0.04em',
-          textDecoration: 'none', textTransform: 'uppercase', transition: 'opacity 0.2s'
-        }}>Register</a>
       </nav>
 
       {/* HERO */}
@@ -175,7 +170,7 @@ export default function App() {
             animation: 'fadeUp 0.6s ease both'
           }}>
             <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#f97316', display: 'inline-block', animation: 'pulse 2s infinite' }} />
-            April 28, 2026 · REC Campus
+            April 30, 2026 · REC Campus
           </div>
 
           <h1 style={{
@@ -276,65 +271,158 @@ export default function App() {
         </div>
       </section>
 
-      {/* REGISTER */}
+      {/* THANK YOU MESSAGE */}
       <section id="register" style={{ padding: '120px 40px' }}>
-        <div style={{ maxWidth: 520, margin: '0 auto' }}>
+        <div style={{ maxWidth: 680, margin: '0 auto', textAlign: 'center' }}>
           <FadeIn>
-            <p style={{ fontSize: 11, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#f97316', marginBottom: 16, fontWeight: 600 }}>April 28, 2026</p>
-            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: 48, lineHeight: 1.1 }}>
-              Reserve your seat.
+            <div style={{ 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              width: 80, 
+              height: 80, 
+              borderRadius: '50%', 
+              background: 'rgba(34,197,94,0.1)', 
+              border: '2px solid rgba(34,197,94,0.3)',
+              marginBottom: 32
+            }}>
+              <span style={{ fontSize: 40 }}>✓</span>
+            </div>
+            
+            <h2 style={{ 
+              fontFamily: "'Playfair Display', serif", 
+              fontSize: 'clamp(36px, 5vw, 56px)', 
+              fontWeight: 800, 
+              letterSpacing: '-0.03em', 
+              marginBottom: 24, 
+              lineHeight: 1.1,
+              color: '#fff'
+            }}>
+              Thanks for the huge response!
             </h2>
+            
+            <p style={{ 
+              fontSize: 18, 
+              color: 'rgba(255,255,255,0.6)', 
+              marginBottom: 48,
+              lineHeight: 1.6
+            }}>
+              We've closed the registration form.
+            </p>
           </FadeIn>
 
           <FadeIn delay={100}>
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-              {[
-                { label: 'Full Name', key: 'name', type: 'text', placeholder: 'Your name' },
-                { label: 'College Email', key: 'email', type: 'email', placeholder: 'you@rec.ac.in' },
-                { label: 'Roll Number', key: 'rollNo', type: 'text', placeholder: 'e.g. 221601053' },
-                { label: 'WhatsApp Number', key: 'phoneNo', type: 'tel', placeholder: '10-digit number' },
-              ].map(({ label, key, type, placeholder }) => (
-                <div key={key}>
-                  <label style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.06em', textTransform: 'uppercase', display: 'block', marginBottom: 8 }}>{label}</label>
-                  <input
-                    type={type} required
-                    value={(formData)[key]}
-                    onChange={e => setFormData({ ...formData, [key]: e.target.value })}
-                    placeholder={placeholder}
-                    style={{ width: '100%', padding: '14px 16px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, color: '#fff', fontSize: 15, outline: 'none', boxSizing: 'border-box', transition: 'border-color 0.2s', fontFamily: "'DM Sans', sans-serif" }}
-                    onFocus={e => e.target.style.borderColor = 'rgba(249,115,22,0.5)'}
-                    onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
-                  />
+            <div style={{ 
+              background: 'rgba(249,115,22,0.08)', 
+              border: '1px solid rgba(249,115,22,0.2)', 
+              borderRadius: 12, 
+              padding: '48px 40px',
+              marginBottom: 40
+            }}>
+              <h3 style={{ 
+                fontSize: 24, 
+                fontWeight: 700, 
+                marginBottom: 32,
+                color: '#f97316',
+                letterSpacing: '-0.02em'
+              }}>
+                See you there!
+              </h3>
+              
+              <div style={{ 
+                display: 'grid', 
+                gap: 24, 
+                textAlign: 'left',
+                maxWidth: 480,
+                margin: '0 auto'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+                  <span style={{ fontSize: 24, marginTop: 4 }}>📅</span>
+                  <div>
+                    <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Date</div>
+                    <div style={{ fontSize: 18, fontWeight: 600, color: '#fff' }}>April 30, 2026</div>
+                  </div>
                 </div>
-              ))}
-
-              <div>
-                <label style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.06em', textTransform: 'uppercase', display: 'block', marginBottom: 8 }}>Department</label>
-                <select required value={formData.department} onChange={e => setFormData({ ...formData, department: e.target.value })}
-                  style={{ width: '100%', padding: '14px 16px', background: '#18181b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, color: formData.department ? '#fff' : 'rgba(255,255,255,0.3)', fontSize: 15, outline: 'none', boxSizing: 'border-box', fontFamily: "'DM Sans', sans-serif" }}>
-                  <option value="" disabled>Select department</option>
-                  {departments.map(d => <option key={d} value={d} style={{ background: '#18181b', color: '#fff' }}>{d}</option>)}
-                </select>
+                
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+                  <span style={{ fontSize: 24, marginTop: 4 }}>⏰</span>
+                  <div>
+                    <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Time</div>
+                    <div style={{ fontSize: 18, fontWeight: 600, color: '#fff' }}>8:00 AM - 5:00 PM</div>
+                  </div>
+                </div>
+                
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+                  <span style={{ fontSize: 24, marginTop: 4 }}>📍</span>
+                  <div>
+                    <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Venue</div>
+                    <div style={{ fontSize: 18, fontWeight: 600, color: '#fff' }}>KSL01 - Idea Factory, REC</div>
+                  </div>
+                </div>
               </div>
+            </div>
+          </FadeIn>
 
-              {message && (
-                <div style={{ padding: '14px 16px', borderRadius: 6, fontSize: 14, background: msgType === 'success' ? 'rgba(34,197,94,0.1)' : 'rgba(249,115,22,0.1)', border: `1px solid ${msgType === 'success' ? 'rgba(34,197,94,0.2)' : 'rgba(249,115,22,0.2)'}`, color: msgType === 'success' ? '#86efac' : '#fdba74' }}>
-                  {message}
-                </div>
-              )}
-
-
-
-              {showResend && (
-                <button type="button" onClick={handleResend} disabled={loading} style={{ padding: '14px', background: 'transparent', border: '1px solid rgba(249,115,22,0.4)', borderRadius: 6, color: '#f97316', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
-                  Resend my ticket →
-                </button>
-              )}
-
-              <button type="submit" disabled={loading} style={{ padding: '16px', background: '#f97316', border: 'none', borderRadius: 6, color: '#fff', fontSize: 15, fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1, fontFamily: "'DM Sans', sans-serif", letterSpacing: '0.02em', boxShadow: '0 0 30px rgba(249,115,22,0.25)', transition: 'opacity 0.2s' }}>
-                {loading ? 'Registering…' : 'Register for free'}
-              </button>
-            </form>
+          <FadeIn delay={200}>
+            <div style={{ 
+              background: 'rgba(255,255,255,0.03)', 
+              border: '1px solid rgba(255,255,255,0.08)', 
+              borderRadius: 12, 
+              padding: '32px',
+              marginBottom: 24
+            }}>
+              <h4 style={{ 
+                fontSize: 20, 
+                fontWeight: 700, 
+                marginBottom: 16,
+                color: '#fff',
+                letterSpacing: '-0.02em'
+              }}>
+                Are you ready to make this event unforgettable?
+              </h4>
+              <p style={{ 
+                fontSize: 16, 
+                color: 'rgba(255,255,255,0.5)',
+                lineHeight: 1.6,
+                marginBottom: 24
+              }}>
+                Reach the venue on time. We don't waste a minute!
+              </p>
+              
+              <a 
+                href="https://chat.whatsapp.com/Fr8RQtkjnGyGKovtqiVX68" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  background: '#25D366',
+                  color: '#fff',
+                  padding: '14px 28px',
+                  borderRadius: 8,
+                  fontSize: 15,
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                  transition: 'transform 0.2s, box-shadow 0.2s',
+                  boxShadow: '0 4px 20px rgba(37, 211, 102, 0.3)',
+                  cursor: 'pointer'
+                }}
+                onMouseOver={e => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 6px 30px rgba(37, 211, 102, 0.4)';
+                }}
+                onMouseOut={e => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 20px rgba(37, 211, 102, 0.3)';
+                }}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" fill="currentColor"/>
+                </svg>
+                Still not joined? Join WhatsApp Group
+              </a>
+            </div>
           </FadeIn>
         </div>
       </section>
