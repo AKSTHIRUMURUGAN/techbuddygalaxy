@@ -150,6 +150,7 @@ export default function CreateStep({ data, clients, onChange, onNext, onQuotatio
         }),
         addOns: data.addOns || [],
         subtotal: subtotal,
+        discount: data.discount || 0,
         taxAmount: taxAmount,
         totalAmount: totalAmount,
         taxRate: data.taxRate,

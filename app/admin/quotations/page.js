@@ -98,6 +98,29 @@ export default function QuotationsPage() {
     }
   };
 
+  const handleDelete = async (quotation) => {
+    if (!confirm(`Are you sure you want to delete quotation ${quotation.quotationNumber}? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/quotations/${quotation._id}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        toast.success('Quotation deleted successfully!');
+        fetchQuotations();
+      } else {
+        toast.error(data.error || 'Failed to delete quotation');
+      }
+    } catch (error) {
+      console.error('Error deleting quotation:', error);
+      toast.error('An error occurred');
+    }
+  };
+
   const filteredQuotations = quotations.filter(q => {
     const matchesSearch = q.quotationNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          q.clientName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -192,6 +215,7 @@ export default function QuotationsPage() {
                 onSendEmail={() => handleSendEmail(quotation)}
                 onViewFeedback={handleViewFeedback}
                 onConvertToInvoice={handleConvertToInvoice}
+                onDelete={handleDelete}
               />
             ))}
           </div>
@@ -266,7 +290,7 @@ export default function QuotationsPage() {
   );
 }
 
-function QuotationCard({ quotation, index, onPreview, onEdit, onSendEmail, onViewFeedback, onConvertToInvoice }) {
+function QuotationCard({ quotation, index, onPreview, onEdit, onSendEmail, onViewFeedback, onConvertToInvoice, onDelete }) {
   const getStatusColor = (status) => {
     const colors = {
       draft: 'bg-gray-100 text-gray-700 border-gray-300',
@@ -381,6 +405,15 @@ function QuotationCard({ quotation, index, onPreview, onEdit, onSendEmail, onVie
               title="Download PDF"
             >
               <Download size={18} className="text-blue-600" />
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => onDelete(quotation)}
+              className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+              title="Delete Quotation"
+            >
+              <Trash2 size={18} className="text-red-600" />
             </motion.button>
           </div>
         </div>

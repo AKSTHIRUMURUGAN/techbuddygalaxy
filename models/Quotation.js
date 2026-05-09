@@ -81,6 +81,11 @@ const QuotationSchema = new mongoose.Schema({
     required: true,
     default: 0,
   },
+  discount: {
+    type: Number,
+    default: 0,
+    min: 0,
+  },
   taxRate: {
     type: Number,
     default: 18, // GST 18%
