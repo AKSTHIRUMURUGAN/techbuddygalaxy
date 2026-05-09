@@ -455,9 +455,39 @@ export default function QuotationViewPage() {
               <div className="w-80">
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between py-1 border-b border-gray-100">
-                    <span className="text-gray-500 uppercase text-xs tracking-widest">Subtotal</span>
+                    <span className="text-gray-500 uppercase text-xs tracking-widest">Services Subtotal</span>
                     <span className="font-mono">₹{quotation.subtotal.toLocaleString()}</span>
                   </div>
+                  {selectedAddOns.length > 0 && selectedAddOns.some(a => a.price > 0) && (
+                    <div className="flex justify-between py-1 border-b border-gray-100">
+                      <span className="text-gray-500 uppercase text-xs tracking-widest">Add-ons</span>
+                      <span className="font-mono">
+                        ₹{selectedAddOns.reduce((sum, a) => sum + a.price, 0).toLocaleString()}
+                      </span>
+                    </div>
+                  )}
+                  {(quotation.subtotal + selectedAddOns.reduce((sum, a) => sum + a.price, 0)) > quotation.subtotal && (
+                    <div className="flex justify-between py-1 border-b border-gray-100 font-semibold">
+                      <span className="text-gray-700 uppercase text-xs tracking-widest">Overall Cost</span>
+                      <span className="font-mono">
+                        ₹{(quotation.subtotal + selectedAddOns.reduce((sum, a) => sum + a.price, 0)).toLocaleString()}
+                      </span>
+                    </div>
+                  )}
+                  {quotation.discount > 0 && (
+                    <div className="flex justify-between py-1 border-b border-gray-100 text-green-600">
+                      <span className="uppercase text-xs tracking-widest font-bold">Discount</span>
+                      <span className="font-mono">−₹{quotation.discount.toLocaleString()}</span>
+                    </div>
+                  )}
+                  {quotation.discount > 0 && (
+                    <div className="flex justify-between py-1 border-b-2 border-blue-200 font-bold text-blue-700">
+                      <span className="uppercase text-xs tracking-widest">Offered Price</span>
+                      <span className="font-mono text-base">
+                        ₹{(quotation.subtotal + selectedAddOns.reduce((sum, a) => sum + a.price, 0) - quotation.discount).toLocaleString()}
+                      </span>
+                    </div>
+                  )}
                   {quotation.taxRate > 0 && (
                     <div className="flex justify-between py-1 border-b border-gray-100">
                       <span className="text-gray-500 uppercase text-xs tracking-widest">

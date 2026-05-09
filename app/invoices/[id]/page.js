@@ -485,9 +485,39 @@ export default function InvoiceViewPage() {
               <div className="w-full md:w-80 bg-slate-50 rounded-xl p-6">
                 <div className="space-y-3">
                   <div className="flex justify-between text-slate-600">
-                    <span>Subtotal</span>
+                    <span>Services Subtotal</span>
                     <span className="font-semibold">₹{invoice.subtotal.toLocaleString('en-IN')}</span>
                   </div>
+                  {invoice.addOns && invoice.addOns.filter(a => a.selected && a.price > 0).length > 0 && (
+                    <div className="flex justify-between text-slate-600">
+                      <span>Add-ons</span>
+                      <span className="font-semibold">
+                        ₹{invoice.addOns.filter(a => a.selected).reduce((sum, a) => sum + a.price, 0).toLocaleString('en-IN')}
+                      </span>
+                    </div>
+                  )}
+                  {invoice.addOns && invoice.addOns.filter(a => a.selected && a.price > 0).length > 0 && (
+                    <div className="flex justify-between text-slate-700 font-semibold">
+                      <span>Overall Cost</span>
+                      <span>
+                        ₹{(invoice.subtotal + invoice.addOns.filter(a => a.selected).reduce((sum, a) => sum + a.price, 0)).toLocaleString('en-IN')}
+                      </span>
+                    </div>
+                  )}
+                  {invoice.discount > 0 && (
+                    <div className="flex justify-between text-emerald-600">
+                      <span className="font-semibold">Discount</span>
+                      <span className="font-semibold">−₹{invoice.discount.toLocaleString('en-IN')}</span>
+                    </div>
+                  )}
+                  {invoice.discount > 0 && (
+                    <div className="flex justify-between text-blue-700 font-bold border-t-2 border-blue-200 pt-3">
+                      <span>Offered Price</span>
+                      <span>
+                        ₹{(invoice.subtotal + (invoice.addOns?.filter(a => a.selected).reduce((sum, a) => sum + a.price, 0) || 0) - invoice.discount).toLocaleString('en-IN')}
+                      </span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-slate-600">
                     <span>GST ({invoice.taxRate}%)</span>
                     <span className="font-semibold">₹{invoice.taxAmount.toLocaleString('en-IN')}</span>

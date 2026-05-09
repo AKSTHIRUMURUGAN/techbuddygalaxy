@@ -91,10 +91,11 @@ export default function QuotationWorkflow({ initialData, clients, onClose, onSuc
   };
 
   const handleQuotationSaved = (quotation) => {
-    // Merge the saved quotation with the current quotationData to preserve addOns
+    // Merge the saved quotation with the current quotationData to preserve addOns and discount
     const mergedQuotation = {
       ...quotation,
       addOns: quotation.addOns && quotation.addOns.length > 0 ? quotation.addOns : quotationData.addOns,
+      discount: quotation.discount !== undefined ? quotation.discount : quotationData.discount,
     };
     setSavedQuotation(mergedQuotation);
   };
@@ -189,7 +190,10 @@ export default function QuotationWorkflow({ initialData, clients, onClose, onSuc
                 ...(savedQuotation || quotationData),
                 addOns: (savedQuotation?.addOns && savedQuotation.addOns.length > 0) 
                   ? savedQuotation.addOns 
-                  : quotationData.addOns
+                  : quotationData.addOns,
+                discount: savedQuotation?.discount !== undefined 
+                  ? savedQuotation.discount 
+                  : quotationData.discount
               }}
               onBack={() => handleBack('create')}
               onNext={() => handleNext('email')}

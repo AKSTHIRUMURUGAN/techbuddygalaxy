@@ -15,12 +15,15 @@ const STATUS_STYLES = {
 export default function PreviewStep({ data, onBack, onNext }) {
   const previewRef = useRef(null);
 
-  // Debug: Log the data to see if addOns are present
+  // Debug: Log the data to see if discount is present
   console.log('PreviewStep data:', {
     hasAddOns: !!data.addOns,
     addOnsLength: data.addOns?.length,
     selectedAddOns: data.addOns?.filter(a => a.selected).length,
-    addOns: data.addOns
+    addOns: data.addOns,
+    discount: data.discount,
+    subtotal: data.subtotal,
+    totalAmount: data.totalAmount
   });
 
   const calculateTotals = () => {
