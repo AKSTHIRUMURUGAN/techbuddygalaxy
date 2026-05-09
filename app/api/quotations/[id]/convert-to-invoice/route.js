@@ -79,6 +79,7 @@ export async function POST(request, { params }) {
       services: quotation.services,
       addOns: quotation.addOns,
       subtotal: quotation.subtotal,
+      discount: quotation.discount || 0,
       taxRate: quotation.taxRate,
       taxAmount: quotation.taxAmount,
       totalAmount: quotation.totalAmount,

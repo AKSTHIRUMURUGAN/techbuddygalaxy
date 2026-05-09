@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
 import Invoice from '@/models/Invoice';
+import Quotation from '@/models/Quotation';
 import crypto from 'crypto';
 
 export async function POST(request, { params }) {
@@ -50,6 +51,18 @@ export async function POST(request, { params }) {
 
     // The pre-save hook will automatically update paymentStatus and balanceAmount
     await invoice.save();
+
+    // Update the related quotation's payment status if it exists
+    if (invoice.quotation) {
+      const quotation = await Quotation.findById(invoice.quotation);
+      if (quotation) {
+        quotation.paymentStatus = invoice.paymentStatus === 'paid' ? 'completed' : 'processing';
+        quotation.paidAmount = invoice.paidAmount;
+        quotation.paidAt = invoice.paidAt;
+        quotation.razorpayPaymentId = razorpay_payment_id;
+        await quotation.save();
+      }
+    }
 
     return NextResponse.json({
       success: true,
