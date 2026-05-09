@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Plus, Search, Receipt, Send, Eye, Edit, 
   Download, Calendar, DollarSign, User, Building2,
-  X, Check, AlertCircle, Loader2, CheckCircle, CreditCard
+  X, Check, AlertCircle, Loader2, CheckCircle, CreditCard, ExternalLink, Link2
 } from 'lucide-react';
 import { toast } from 'sonner';
 import SendEmailModal from '@/components/admin/SendEmailModal';
@@ -178,6 +178,12 @@ function InvoiceCard({ invoice, index, onSendEmail, onMarkPaid }) {
 
   const canMarkPaid = invoice.paymentStatus !== 'paid' && invoice.balanceAmount > 0;
 
+  const copyInvoiceLink = () => {
+    const invoiceUrl = `${window.location.origin}/invoices/${invoice._id}`;
+    navigator.clipboard.writeText(invoiceUrl);
+    toast.success('Invoice link copied to clipboard!');
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -245,6 +251,15 @@ function InvoiceCard({ invoice, index, onSendEmail, onMarkPaid }) {
                 Mark Paid
               </motion.button>
             )}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={copyInvoiceLink}
+              className="p-2 hover:bg-purple-50 rounded-lg transition-colors"
+              title="Copy Invoice Link"
+            >
+              <Link2 size={18} className="text-purple-600" />
+            </motion.button>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}

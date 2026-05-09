@@ -292,7 +292,7 @@ export default function QuotationViewPage() {
                 </div>
                 <div className="text-xs text-gray-400 space-y-1 mt-4">
                   <p>📧 contact@techbuddyspace.in</p>
-                  <p>🌐 www.techbuddyspace.in</p>
+                  <p>🌐 galaxy.techbuddyspace.in</p>
                   <p>📞 +91 98765 43210</p>
                 </div>
               </div>
@@ -506,7 +506,7 @@ export default function QuotationViewPage() {
                 <p className="text-[#e8b86d] font-black uppercase tracking-widest mb-1">
                   Connect With Us
                 </p>
-                <p>🌐 www.techbuddyspace.in</p>
+                <p>🌐 galaxy.techbuddyspace.in</p>
                 <p>📧 contact@techbuddyspace.in</p>
                 <p>📱 +91 98765 43210</p>
               </div>
@@ -515,7 +515,8 @@ export default function QuotationViewPage() {
                   For Tech Buddy Galaxy
                 </p>
                 <div className="mt-6 border-t border-gray-600 pt-2 text-right">
-                  <p>Authorized Signatory</p>
+                  <p className="font-semibold text-white">A K S THIRUMURUGAN</p>
+                  <p className="text-xs text-gray-500 mt-1">Authorized Signatory</p>
                 </div>
               </div>
             </div>

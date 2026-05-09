@@ -256,7 +256,7 @@ export default function CreateStep({ data, clients, onChange, onNext, onQuotatio
                       });
                     }
                   }}
-                  className="w-full px-3 py-2 border-2 border-gray-200 text-sm focus:outline-none focus:border-[#1a1a2e]"
+                  className="w-full px-3 py-2 border-2 border-gray-200 text-sm text-gray-900 focus:outline-none focus:border-[#1a1a2e]"
                 >
                   <option value="">Choose a client</option>
                   {clients.map(client => (
@@ -284,7 +284,7 @@ export default function CreateStep({ data, clients, onChange, onNext, onQuotatio
                       value={data[field] || ''}
                       onChange={(e) => updateData({ [field]: e.target.value })}
                       placeholder={placeholder}
-                      className="w-full px-3 py-2 border-2 border-gray-200 text-sm focus:outline-none focus:border-[#1a1a2e]"
+                      className="w-full px-3 py-2 border-2 border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#1a1a2e]"
                     />
                   </div>
                 ))}
@@ -297,7 +297,7 @@ export default function CreateStep({ data, clients, onChange, onNext, onQuotatio
                     value={data.gstNumber || ''}
                     onChange={(e) => updateData({ gstNumber: e.target.value.toUpperCase() })}
                     placeholder="22AAAAA0000A1Z5"
-                    className="w-full px-3 py-2 border-2 border-gray-200 text-sm focus:outline-none focus:border-[#1a1a2e]"
+                    className="w-full px-3 py-2 border-2 border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#1a1a2e]"
                   />
                 </div>
                 <div>
@@ -308,7 +308,7 @@ export default function CreateStep({ data, clients, onChange, onNext, onQuotatio
                     value={data.clientAddress || ''}
                     onChange={(e) => updateData({ clientAddress: e.target.value })}
                     placeholder="Client address..."
-                    className="w-full px-3 py-2 border-2 border-gray-200 text-sm focus:outline-none focus:border-[#1a1a2e] resize-none"
+                    className="w-full px-3 py-2 border-2 border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#1a1a2e] resize-none"
                     rows={2}
                   />
                 </div>
@@ -354,7 +354,7 @@ export default function CreateStep({ data, clients, onChange, onNext, onQuotatio
                       value={addOn.name}
                       onChange={(e) => updateAddOn(addOn.id, 'name', e.target.value)}
                       placeholder="Add-on name"
-                      className="w-full px-2 py-1 border text-xs font-bold focus:outline-none focus:border-[#1a1a2e]"
+                      className="w-full px-2 py-1 border text-xs font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#1a1a2e]"
                     />
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-gray-500">Price:</span>
@@ -364,7 +364,7 @@ export default function CreateStep({ data, clients, onChange, onNext, onQuotatio
                         onChange={(e) => updateAddOn(addOn.id, 'price', parseFloat(e.target.value) || 0)}
                         min="0"
                         placeholder="0"
-                        className="w-24 px-2 py-1 border text-xs text-right focus:outline-none focus:border-[#1a1a2e]"
+                        className="w-24 px-2 py-1 border text-xs text-right text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#1a1a2e]"
                       />
                       <span className="text-xs text-gray-500">
                         {addOn.price === 0 ? (
@@ -409,7 +409,7 @@ export default function CreateStep({ data, clients, onChange, onNext, onQuotatio
                 value={data.projectTitle || ''}
                 onChange={(e) => updateData({ projectTitle: e.target.value })}
                 placeholder="E.g., E-commerce Website Development"
-                className="w-full px-3 py-2 border-2 border-gray-200 text-sm focus:outline-none focus:border-[#1a1a2e]"
+                className="w-full px-3 py-2 border-2 border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#1a1a2e]"
               />
             </div>
             <div>
@@ -420,7 +420,7 @@ export default function CreateStep({ data, clients, onChange, onNext, onQuotatio
                 type="date"
                 value={data.validUntil || ''}
                 onChange={(e) => updateData({ validUntil: e.target.value })}
-                className="w-full px-3 py-2 border-2 border-gray-200 text-sm focus:outline-none focus:border-[#1a1a2e]"
+                className="w-full px-3 py-2 border-2 border-gray-200 text-sm text-gray-900 focus:outline-none focus:border-[#1a1a2e]"
               />
             </div>
             <div>
@@ -432,7 +432,7 @@ export default function CreateStep({ data, clients, onChange, onNext, onQuotatio
                 value={data.poNumber || ''}
                 onChange={(e) => updateData({ poNumber: e.target.value })}
                 placeholder="Purchase Order Number"
-                className="w-full px-3 py-2 border-2 border-gray-200 text-sm focus:outline-none focus:border-[#1a1a2e]"
+                className="w-full px-3 py-2 border-2 border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#1a1a2e]"
               />
             </div>
             <div>
@@ -444,7 +444,7 @@ export default function CreateStep({ data, clients, onChange, onNext, onQuotatio
                 value={data.deliveryTimeline || ''}
                 onChange={(e) => updateData({ deliveryTimeline: e.target.value })}
                 placeholder="E.g., 4-6 weeks"
-                className="w-full px-3 py-2 border-2 border-gray-200 text-sm focus:outline-none focus:border-[#1a1a2e]"
+                className="w-full px-3 py-2 border-2 border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#1a1a2e]"
               />
             </div>
             <div className="md:col-span-2">
@@ -455,7 +455,7 @@ export default function CreateStep({ data, clients, onChange, onNext, onQuotatio
                 value={data.projectDescription || ''}
                 onChange={(e) => updateData({ projectDescription: e.target.value })}
                 placeholder="Brief description of the project..."
-                className="w-full px-3 py-2 border-2 border-gray-200 text-sm focus:outline-none focus:border-[#1a1a2e] resize-none"
+                className="w-full px-3 py-2 border-2 border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#1a1a2e] resize-none"
                 rows={3}
               />
             </div>
@@ -513,7 +513,7 @@ export default function CreateStep({ data, clients, onChange, onNext, onQuotatio
                           value={service.name}
                           onChange={(e) => updateService(service.id, 'name', e.target.value)}
                           placeholder="Service name"
-                          className="w-full border h-8 px-2 text-xs focus:outline-none focus:border-[#1a1a2e]"
+                          className="w-full border h-8 px-2 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#1a1a2e]"
                         />
                       </td>
                       <td className="py-2 px-2">
@@ -522,7 +522,7 @@ export default function CreateStep({ data, clients, onChange, onNext, onQuotatio
                           value={service.description}
                           onChange={(e) => updateService(service.id, 'description', e.target.value)}
                           placeholder="Brief description"
-                          className="w-full border h-8 px-2 text-xs focus:outline-none focus:border-[#1a1a2e]"
+                          className="w-full border h-8 px-2 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#1a1a2e]"
                         />
                       </td>
                       <td className="py-2 px-2">
@@ -531,7 +531,7 @@ export default function CreateStep({ data, clients, onChange, onNext, onQuotatio
                           value={service.quantity}
                           onChange={(e) => updateService(service.id, 'quantity', parseFloat(e.target.value) || 1)}
                           min="1"
-                          className="w-16 border h-8 px-2 text-xs text-center focus:outline-none focus:border-[#1a1a2e]"
+                          className="w-16 border h-8 px-2 text-xs text-center text-gray-900 focus:outline-none focus:border-[#1a1a2e]"
                         />
                       </td>
                       <td className="py-2 px-2">
@@ -540,7 +540,7 @@ export default function CreateStep({ data, clients, onChange, onNext, onQuotatio
                           value={service.unitPrice}
                           onChange={(e) => updateService(service.id, 'unitPrice', parseFloat(e.target.value) || 0)}
                           min="0"
-                          className="w-24 border h-8 px-2 text-xs text-right focus:outline-none focus:border-[#1a1a2e]"
+                          className="w-24 border h-8 px-2 text-xs text-right text-gray-900 focus:outline-none focus:border-[#1a1a2e]"
                         />
                       </td>
                       <td className="py-2 px-2">
@@ -550,7 +550,7 @@ export default function CreateStep({ data, clients, onChange, onNext, onQuotatio
                           onChange={(e) => updateService(service.id, 'discount', parseFloat(e.target.value) || 0)}
                           min="0"
                           max="100"
-                          className="w-16 border h-8 px-2 text-xs text-center focus:outline-none focus:border-[#1a1a2e]"
+                          className="w-16 border h-8 px-2 text-xs text-center text-gray-900 focus:outline-none focus:border-[#1a1a2e]"
                         />
                       </td>
                       <td className="py-2 px-2 text-right">
@@ -609,7 +609,7 @@ export default function CreateStep({ data, clients, onChange, onNext, onQuotatio
                       onChange={(e) => updateData({ discount: parseFloat(e.target.value) || 0 })}
                       min="0"
                       placeholder="0"
-                      className="w-24 px-2 py-1 border text-xs text-right focus:outline-none focus:border-[#1a1a2e]"
+                      className="w-24 px-2 py-1 border text-xs text-right text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#1a1a2e]"
                     />
                     <span className="text-green-600 font-bold">
                       {data.discount > 0 ? `−₹${data.discount.toLocaleString()}` : '₹0'}
@@ -759,7 +759,7 @@ export default function CreateStep({ data, clients, onChange, onNext, onQuotatio
                 value={data.paymentTerms || '50% advance, 50% on completion'}
                 onChange={(e) => updateData({ paymentTerms: e.target.value })}
                 placeholder="E.g., 50% advance, 50% on completion"
-                className="w-full px-3 py-2 border-2 border-gray-200 text-sm focus:outline-none focus:border-[#1a1a2e]"
+                className="w-full px-3 py-2 border-2 border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#1a1a2e]"
               />
             </div>
             <div>
@@ -770,7 +770,7 @@ export default function CreateStep({ data, clients, onChange, onNext, onQuotatio
                 value={data.paymentMilestones || ''}
                 onChange={(e) => updateData({ paymentMilestones: e.target.value })}
                 placeholder="E.g., Milestone 1: 30% on project kickoff&#10;Milestone 2: 40% on design approval&#10;Milestone 3: 30% on final delivery"
-                className="w-full px-3 py-2 border-2 border-gray-200 text-sm focus:outline-none focus:border-[#1a1a2e] resize-none"
+                className="w-full px-3 py-2 border-2 border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#1a1a2e] resize-none"
                 rows={4}
               />
             </div>
@@ -782,7 +782,7 @@ export default function CreateStep({ data, clients, onChange, onNext, onQuotatio
                 value={data.notes || ''}
                 onChange={(e) => updateData({ notes: e.target.value })}
                 placeholder="Special conditions, delivery timeline, warranty information..."
-                className="w-full px-3 py-2 border-2 border-gray-200 text-sm focus:outline-none focus:border-[#1a1a2e] resize-none"
+                className="w-full px-3 py-2 border-2 border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#1a1a2e] resize-none"
                 rows={4}
               />
             </div>
